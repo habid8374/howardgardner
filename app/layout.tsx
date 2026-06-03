@@ -15,11 +15,16 @@ export const metadata: Metadata = {
     "#1 en el ranking ICFES municipal 2025 con 297 puntos, categoría A+ Excelencia. La única institución bilingüe en Sabanalarga, Atlántico.",
   keywords:
     "colegio bilingüe sabanalarga, howard gardner, icfes 2025, mejor colegio atlántico, bilingual school",
+  icons: {
+    icon: "/favicon_256.png",
+    apple: "/favicon_256.png",
+  },
   openGraph: {
     title: "Howard Gardner Bilingual School",
     description: "#1 ICFES Municipal 2025 · Categoría A+ · Sabanalarga, Atlántico",
     locale: "es_CO",
     type: "website",
+    images: [{ url: "/howard_gardner_logo_sin_fondo.png" }],
   },
 };
 

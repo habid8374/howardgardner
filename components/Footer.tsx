@@ -1,6 +1,6 @@
 "use client";
 
-import ShieldLogo from "./ShieldLogo";
+import Image from "next/image";
 
 const navLinks = [
   { href: "#inicio", label: "Inicio" },
@@ -29,7 +29,14 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <a href="#inicio" className="flex items-center gap-3 no-underline mb-4">
-              <ShieldLogo size={40} />
+              <Image
+                src="/howard_gardner_logo_sin_fondo.png"
+                alt="Howard Gardner Bilingual School"
+                width={48}
+                height={48}
+                className="object-contain"
+                style={{ filter: "drop-shadow(0 2px 8px rgba(255,215,0,0.35))" }}
+              />
               <div className="flex flex-col leading-tight">
                 <span style={{ color: "#fff", fontWeight: 800, fontSize: "0.9rem", letterSpacing: "0.06em" }}>HOWARD GARDNER</span>
                 <span style={{ color: "#FFD700", fontSize: "0.6rem", fontWeight: 500, letterSpacing: "0.12em", textTransform: "uppercase" }}>Bilingual School</span>

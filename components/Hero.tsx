@@ -1,41 +1,95 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { MapPin, GraduationCap, Trophy } from "lucide-react";
-import ShieldLogo from "./ShieldLogo";
+import Image from "next/image";
+
+const slides = [
+  "/hero1.jpeg",
+  "/hero2.jpeg",
+  "/hero3.jpeg",
+  "/hero4.jpeg",
+  "/hero5.jpeg",
+  "/hero6.jpeg",
+];
 
 export default function Hero() {
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <section
       id="inicio"
       className="relative min-h-screen flex items-center justify-center text-center overflow-hidden"
-      style={{
-        background: "linear-gradient(135deg, #050530 0%, #13136b 35%, #1e1e8f 60%, #2929b0 85%, #13136b 100%)",
-        paddingTop: "80px",
-      }}
+      style={{ paddingTop: "80px" }}
     >
-      {/* Animated grid background */}
+      {/* ── Background image carousel ── */}
+      <AnimatePresence>
+        <motion.div
+          key={current}
+          initial={{ opacity: 0, scale: 1.06 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1.2, ease: "easeInOut" }}
+          className="absolute inset-0"
+        >
+          <Image
+            src={slides[current]}
+            alt="Howard Gardner Bilingual School"
+            fill
+            className="object-cover"
+            priority={current === 0}
+            quality={85}
+          />
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Dark overlay gradient */}
       <div
-        className="absolute inset-0 opacity-[0.07]"
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(8,8,62,0.75) 0%, rgba(19,19,107,0.82) 50%, rgba(8,8,62,0.92) 100%)",
+        }}
+      />
+
+      {/* Subtle grid overlay */}
+      <div
+        className="absolute inset-0 opacity-[0.04]"
         style={{
           backgroundImage:
-            "linear-gradient(rgba(255,215,0,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,215,0,0.6) 1px, transparent 1px)",
+            "linear-gradient(rgba(255,215,0,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,215,0,1) 1px, transparent 1px)",
           backgroundSize: "60px 60px",
         }}
       />
 
-      {/* Radial glows */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div
-          className="absolute top-1/4 left-1/4 rounded-full opacity-20 blur-3xl"
-          style={{ width: 500, height: 500, background: "radial-gradient(circle, #FFD700, transparent)" }}
-        />
-        <div
-          className="absolute bottom-1/4 right-1/4 rounded-full opacity-10 blur-3xl"
-          style={{ width: 400, height: 400, background: "radial-gradient(circle, #2929b0, transparent)" }}
-        />
+      {/* Slide dots */}
+      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrent(i)}
+            className="rounded-full transition-all duration-300"
+            style={{
+              width: i === current ? 24 : 8,
+              height: 8,
+              background: i === current ? "#FFD700" : "rgba(255,255,255,0.35)",
+              border: "none",
+              cursor: "pointer",
+            }}
+            aria-label={`Slide ${i + 1}`}
+          />
+        ))}
       </div>
 
+      {/* ── Content ── */}
       <div className="relative z-10 max-w-4xl mx-auto px-6 py-16">
 
         {/* Top badge */}
@@ -46,7 +100,7 @@ export default function Hero() {
           className="inline-flex items-center gap-2 rounded-full mb-8 px-4 py-2 text-xs font-semibold tracking-widest uppercase"
           style={{
             background: "rgba(255,215,0,0.12)",
-            border: "1px solid rgba(255,215,0,0.35)",
+            border: "1px solid rgba(255,215,0,0.4)",
             color: "#FFD700",
           }}
         >
@@ -54,7 +108,7 @@ export default function Hero() {
           #1 Ranking ICFES Municipal 2025 · Categoría A+ Excelencia
         </motion.div>
 
-        {/* Floating shield */}
+        {/* Floating real logo */}
         <motion.div
           initial={{ opacity: 0, scale: 0.7 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -64,9 +118,16 @@ export default function Hero() {
           <motion.div
             animate={{ y: [0, -12, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            style={{ filter: "drop-shadow(0 12px 40px rgba(255,215,0,0.5))" }}
+            style={{ filter: "drop-shadow(0 12px 40px rgba(255,215,0,0.55))" }}
           >
-            <ShieldLogo size={130} />
+            <Image
+              src="/howard_gardner_logo_sin_fondo.png"
+              alt="Howard Gardner Bilingual School Logo"
+              width={150}
+              height={150}
+              className="object-contain"
+              priority
+            />
           </motion.div>
         </motion.div>
 
@@ -87,7 +148,7 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.3 }}
           className="font-light tracking-widest uppercase mb-2"
-          style={{ fontSize: "clamp(0.85rem, 2vw, 1.15rem)", color: "rgba(255,255,255,0.65)" }}
+          style={{ fontSize: "clamp(0.85rem, 2vw, 1.15rem)", color: "rgba(255,255,255,0.7)" }}
         >
           Bilingual School
         </motion.p>
@@ -107,7 +168,7 @@ export default function Hero() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7, delay: 0.4 }}
           className="flex items-center justify-center gap-2 mb-10"
-          style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.875rem" }}
+          style={{ color: "rgba(255,255,255,0.55)", fontSize: "0.875rem" }}
         >
           <MapPin size={14} style={{ color: "#FFD700" }} />
           Calle 12 #34 B-2, Sabanalarga, Atlántico, Colombia
@@ -129,7 +190,7 @@ export default function Hero() {
               background: "#FFD700",
               color: "#13136b",
               padding: "0.95rem 2rem",
-              boxShadow: "0 4px 24px rgba(255,215,0,0.45)",
+              boxShadow: "0 4px 24px rgba(255,215,0,0.5)",
               fontSize: "1rem",
             }}
           >
@@ -143,7 +204,8 @@ export default function Hero() {
             whileTap={{ scale: 0.97 }}
             className="inline-flex items-center justify-center gap-2 font-semibold rounded-xl no-underline"
             style={{
-              background: "transparent",
+              background: "rgba(255,255,255,0.1)",
+              backdropFilter: "blur(8px)",
               color: "#fff",
               padding: "0.95rem 2rem",
               border: "2px solid rgba(255,255,255,0.3)",
@@ -160,8 +222,8 @@ export default function Hero() {
       <motion.div
         animate={{ y: [0, 8, 0] }}
         transition={{ duration: 2, repeat: Infinity }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        style={{ color: "rgba(255,255,255,0.3)", fontSize: "1.5rem" }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
+        style={{ color: "rgba(255,255,255,0.35)", fontSize: "1.4rem" }}
       >
         ↓
       </motion.div>

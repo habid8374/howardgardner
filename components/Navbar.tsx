@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
-import ShieldLogo from "./ShieldLogo";
+import Image from "next/image";
 
 const links = [
   { href: "#inicio", label: "Inicio" },
@@ -43,7 +43,14 @@ export default function Navbar() {
 
         {/* Brand */}
         <a href="#inicio" className="flex items-center gap-3 no-underline">
-          <ShieldLogo size={40} />
+          <Image
+            src="/howard_gardner_logo_sin_fondo.png"
+            alt="Howard Gardner Bilingual School"
+            width={48}
+            height={48}
+            className="object-contain"
+            style={{ filter: "drop-shadow(0 2px 6px rgba(255,215,0,0.4))" }}
+          />
           <div className="flex flex-col leading-tight">
             <span style={{ color: "#fff", fontWeight: 800, fontSize: "0.92rem", letterSpacing: "0.06em" }}>
               HOWARD GARDNER
