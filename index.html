@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Howard Gardner Bilingual School | Sabanalarga, Atlántico</title>
+  <meta name="description" content="Howard Gardner Bilingual School — #1 en el ranking ICFES municipal 2025, categoría A+. La única institución bilingüe en Sabanalarga, Atlántico." />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'%3E%3Cdefs%3E%3ClinearGradient id='g1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%232929b0'/%3E%3Cstop offset='100%25' stop-color='%2313136b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M50 4 L96 22 L96 62 Q96 98 50 116 Q4 98 4 62 L4 22 Z' fill='url(%23g1)' stroke='%23FFD700' stroke-width='3'/%3E%3Cpolygon points='50,20 53,29 62,29 55,35 58,44 50,38 42,44 45,35 38,29 47,29' fill='%23FFD700'/%3E%3Ctext x='50' y='85' text-anchor='middle' fill='%23FFD700' font-size='22' font-weight='900' font-family='Arial'%3EHG%3C/text%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:       #1e1e8f;
+      --navy-dark:  #13136b;
+      --navy-light: #2929b0;
+      --gold:       #FFD700;
+      --gold-dark:  #e6c200;
+      --white:      #ffffff;
+      --off-white:  #f5f7ff;
+      --gray:       #6b7280;
+      --text:       #1a1a2e;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: var(--text);
+      background: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ── NAVBAR ── */
+    nav {
+      position: fixed;
+      top: 0; width: 100%;
+      z-index: 1000;
+      background: rgba(30,30,143,0.97);
+      backdrop-filter: blur(10px);
+      padding: 0.7rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: padding 0.3s;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    }
+    nav.scrolled { padding: 0.45rem 2rem; }
+
+    .nav-brand {
+      display: flex; align-items: center; gap: 0.75rem;
+      text-decoration: none;
+    }
+    .nav-logo { width: 46px; height: 54px; }
+    .nav-brand-text { display: flex; flex-direction: column; line-height: 1.15; }
+    .nav-brand-name { color: #fff; font-weight: 800; font-size: 0.95rem; letter-spacing: 0.05em; }
+    .nav-brand-sub  { color: var(--gold); font-size: 0.62rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; }
+
+    .nav-links { display: flex; list-style: none; gap: 0.2rem; align-items: center; }
+    .nav-links a {
+      color: rgba(255,255,255,0.85); text-decoration: none;
+      font-size: 0.84rem; font-weight: 500;
+      padding: 0.45rem 0.85rem; border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold); background: rgba(255,215,0,0.1); }
+    .nav-links .btn-cta {
+      background: var(--gold) !important; color: var(--navy-dark) !important;
+      font-weight: 700 !important; border-radius: 8px !important;
+    }
+    .nav-links .btn-cta:hover { background: #ffe033 !important; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(255,215,0,0.4) !important; }
+
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 5px; }
+    .hamburger span { width: 25px; height: 3px; background: white; border-radius: 3px; transition: all 0.3s; }
+
+    /* ── HERO ── */
+    #inicio {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #08083e 0%, #1e1e8f 45%, #2929b0 75%, #13136b 100%);
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; position: relative; overflow: hidden;
+      padding: 110px 2rem 5rem;
+    }
+    #inicio::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 20% 50%, rgba(255,215,0,0.07) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255,215,0,0.05) 0%, transparent 40%);
+    }
+    #inicio::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(255,215,0,0.5) 1px, transparent 1px),
+        radial-gradient(circle, rgba(255,255,255,0.25) 1px, transparent 1px);
+      background-size: 80px 80px, 40px 40px;
+      background-position: 0 0, 20px 20px;
+      opacity: 0.25;
+    }
+
+    .hero-content { position: relative; z-index: 2; max-width: 860px; }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(255,215,0,0.14);
+      border: 1px solid rgba(255,215,0,0.4);
+      border-radius: 50px; padding: 0.4rem 1.1rem;
+      margin-bottom: 1.75rem;
+      color: var(--gold); font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      animation: fadeInDown 0.8s ease both;
+    }
+
+    .hero-shield {
+      width: 140px; height: 165px;
+      filter: drop-shadow(0 8px 30px rgba(255,215,0,0.45));
+      margin-bottom: 1.5rem;
+      animation: fadeInDown 0.8s ease 0.1s both, float 4s ease-in-out 1s infinite;
+    }
+
+    .hero-title {
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      font-weight: 900; color: #fff; line-height: 1.05;
+      margin-bottom: 0.4rem;
+      animation: fadeInUp 0.8s ease 0.2s both;
+    }
+    .hero-title span { color: var(--gold); }
+
+    .hero-sub {
+      font-size: clamp(0.95rem, 2.2vw, 1.25rem);
+      color: rgba(255,255,255,0.7); font-weight: 400;
+      letter-spacing: 0.04em; margin-bottom: 0.75rem;
+      animation: fadeInUp 0.8s ease 0.3s both;
+    }
+
+    .hero-tagline {
+      font-size: clamp(0.85rem, 1.8vw, 1.05rem);
+      color: var(--gold); font-style: italic; font-weight: 500;
+      margin-bottom: 2rem;
+      animation: fadeInUp 0.8s ease 0.35s both;
+    }
+
+    .hero-location {
+      display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+      color: rgba(255,255,255,0.55); font-size: 0.875rem;
+      margin-bottom: 2.5rem;
+      animation: fadeInUp 0.8s ease 0.4s both;
+    }
+    .hero-location i { color: var(--gold); }
+
+    .hero-ctas {
+      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+      animation: fadeInUp 0.8s ease 0.5s both;
+    }
+
+    .btn-primary {
+      background: var(--gold); color: var(--navy-dark);
+      font-weight: 700; font-size: 1rem;
+      padding: 0.9rem 2rem; border-radius: 10px;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;
+      transition: all 0.3s; box-shadow: 0 4px 20px rgba(255,215,0,0.4);
+    }
+    .btn-primary:hover { background: #ffe033; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,215,0,0.5); }
+
+    .btn-outline {
+      background: transparent; color: #fff;
+      font-weight: 600; font-size: 1rem;
+      padding: 0.9rem 2rem; border-radius: 10px;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;
+      border: 2px solid rgba(255,255,255,0.35); transition: all 0.3s;
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+    .scroll-hint {
+      position: absolute; bottom: 2rem; left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.4); font-size: 1.4rem;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      background: var(--navy-dark); padding: 2rem 2rem;
+    }
+    .stats-grid {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; text-align: center;
+    }
+    .stat-item { padding: 1rem; border-right: 1px solid rgba(255,215,0,0.2); }
+    .stat-item:last-child { border-right: none; }
+    .stat-num { font-size: 2.6rem; font-weight: 900; color: var(--gold); line-height: 1; display: block; }
+    .stat-lbl { color: rgba(255,255,255,0.7); font-size: 0.77rem; font-weight: 500; margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* ── COMMONS ── */
+    section { padding: 5rem 2rem; }
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    .tag {
+      display: inline-block;
+      border-radius: 50px; padding: 0.3rem 1rem;
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 0.85rem;
+    }
+    .tag.blue  { background: rgba(30,30,143,0.1); color: var(--navy); }
+    .tag.gold  { background: rgba(255,215,0,0.15); color: #a07800; }
+    .tag.white { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.9); }
+
+    .section-title {
+      font-size: clamp(1.75rem, 4vw, 2.75rem);
+      font-weight: 800; color: var(--navy-dark); line-height: 1.2; margin-bottom: 0.9rem;
+    }
+    .section-title .hl  { color: var(--navy-light); }
+    .section-title .gld { color: #a07800; }
+    .section-title .wht { color: #fff; }
+
+    .section-desc { color: var(--gray); font-size: 0.98rem; max-width: 620px; line-height: 1.75; }
+
+    .s-header { margin-bottom: 3rem; }
+    .s-header.center { text-align: center; }
+    .s-header.center .section-desc { margin: 0 auto; }
+
+    /* ── LOGROS ── */
+    #logros { background: var(--off-white); }
+
+    .ach-grid {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem;
+    }
+    .ach-card {
+      background: #fff; border-radius: 18px; padding: 2.25rem 1.75rem;
+      text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      transition: all 0.3s; border-top: 4px solid var(--navy);
+      position: relative; overflow: hidden;
+    }
+    .ach-card.gld { border-top-color: var(--gold-dark); }
+    .ach-card:hover { transform: translateY(-6px); box-shadow: 0 14px 40px rgba(30,30,143,0.13); }
+
+    .ach-icon {
+      width: 68px; height: 68px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--navy), var(--navy-light));
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.25rem; font-size: 1.8rem; color: var(--gold);
+      box-shadow: 0 4px 15px rgba(30,30,143,0.25);
+    }
+    .ach-icon.gold { background: linear-gradient(135deg, #a07800, #FFD700); color: #fff; }
+
+    .ach-num { font-size: 3rem; font-weight: 900; color: var(--navy); line-height: 1; display: block; }
+    .ach-num.gld { color: #a07800; }
+    .ach-title { font-size: 1rem; font-weight: 700; color: var(--text); margin: 0.5rem 0 0.35rem; }
+    .ach-desc { font-size: 0.82rem; color: var(--gray); line-height: 1.55; }
+
+    /* ── BILINGÜISMO ── */
+    #bilinguismo {
+      background: linear-gradient(135deg, #08083e 0%, var(--navy-dark) 40%, var(--navy) 80%, var(--navy-light) 100%);
+      color: #fff; position: relative; overflow: hidden;
+    }
+    #bilinguismo::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at 25% 60%, rgba(255,215,0,0.07) 0%, transparent 55%);
+    }
+
+    .bili-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; position: relative; }
+
+    .bili-features { list-style: none; margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.8rem; }
+    .bili-features li { display: flex; align-items: center; gap: 0.8rem; color: rgba(255,255,255,0.85); font-size: 0.95rem; }
+    .bili-features li i { color: var(--gold); width: 20px; flex-shrink: 0; }
+
+    .lang-visual { display: flex; flex-direction: column; gap: 1rem; align-items: center; }
+    .lang-card {
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 16px; padding: 1.5rem 2rem;
+      text-align: center; width: 100%; max-width: 270px;
+      transition: all 0.3s; backdrop-filter: blur(6px);
+    }
+    .lang-card:hover { background: rgba(255,255,255,0.14); transform: scale(1.02); }
+    .lang-flag { font-size: 2.4rem; display: block; margin-bottom: 0.4rem; }
+    .lang-name { font-size: 1.25rem; font-weight: 800; color: #fff; }
+    .lang-sub  { font-size: 0.78rem; color: rgba(255,255,255,0.55); margin-top: 0.2rem; }
+    .lang-plus { font-size: 1.6rem; color: var(--gold); font-weight: 900; }
+
+    .lang-result {
+      background: rgba(255,215,0,0.12);
+      border: 1px solid rgba(255,215,0,0.3);
+      border-radius: 12px; padding: 1rem 1.5rem;
+      text-align: center; width: 100%; max-width: 270px;
+    }
+    .lang-result-num { color: var(--gold); font-size: 1.8rem; font-weight: 900; }
+    .lang-result-lbl { color: rgba(255,255,255,0.65); font-size: 0.78rem; margin-top: 0.2rem; }
+
+    /* ── ACADÉMICO ── */
+    #academico { background: #fff; }
+
+    .subj-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.25rem; }
+    .subj-card {
+      border-radius: 14px; padding: 1.75rem 1.25rem;
+      text-align: center; transition: all 0.3s;
+    }
+    .subj-card.gold   { background: linear-gradient(135deg,#fffde7,#fff9c4); border: 2px solid var(--gold); }
+    .subj-card.silver { background: linear-gradient(135deg,#f5f5f5,#eee); border: 2px solid #bbb; }
+    .subj-card:hover  { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+
+    .subj-medal { font-size: 3rem; display: block; margin-bottom: 0.75rem; }
+    .subj-rank  { font-size: 0.88rem; font-weight: 800; color: var(--navy); text-transform: uppercase; letter-spacing: 0.05em; }
+    .subj-name  { font-size: 1.05rem; font-weight: 700; color: var(--text); margin: 0.35rem 0; }
+    .subj-desc  { font-size: 0.76rem; color: var(--gray); }
+
+    /* ── NOSOTROS ── */
+    #nosotros { background: var(--off-white); }
+
+    .feat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+    .feat-card {
+      background: #fff; border-radius: 14px; padding: 2rem;
+      transition: all 0.3s; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .feat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(30,30,143,0.1); }
+
+    .feat-icon {
+      width: 54px; height: 54px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--navy), var(--navy-light));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.35rem; color: var(--gold); margin-bottom: 1rem;
+    }
+    .feat-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+    .feat-desc  { font-size: 0.84rem; color: var(--gray); line-height: 1.65; }
+
+    /* ── ADMISIONES CTA ── */
+    #admisiones {
+      background: linear-gradient(135deg, var(--navy-dark), var(--navy));
+      text-align: center; padding: 5.5rem 2rem;
+    }
+    .cta-wrap { max-width: 720px; margin: 0 auto; }
+    .cta-wrap p { color: rgba(255,255,255,0.72); font-size: 1rem; margin-bottom: 2rem; line-height: 1.75; }
+
+    .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    .btn-wa {
+      background: #25D366; color: #fff;
+      font-weight: 700; font-size: 1rem;
+      padding: 0.9rem 2rem; border-radius: 10px;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;
+      transition: all 0.3s; box-shadow: 0 4px 15px rgba(37,211,102,0.4);
+    }
+    .btn-wa:hover { background: #1fba58; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(37,211,102,0.5); }
+
+    /* ── CONTACTO ── */
+    #contacto { background: #fff; }
+
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 3rem; align-items: start; }
+
+    .c-info { display: flex; flex-direction: column; gap: 1.5rem; }
+    .c-item { display: flex; align-items: flex-start; gap: 1rem; }
+    .c-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--navy), var(--navy-light));
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold); font-size: 1rem; flex-shrink: 0;
+    }
+    .c-text strong { display: block; font-weight: 700; color: var(--text); margin-bottom: 0.2rem; }
+    .c-text span, .c-text a { color: var(--gray); font-size: 0.88rem; text-decoration: none; }
+    .c-text a:hover { color: var(--navy); }
+
+    .c-form { background: var(--off-white); border-radius: 18px; padding: 2rem; }
+    .c-form-title { font-size: 1.2rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 1.25rem; }
+
+    .f-group { margin-bottom: 1rem; }
+    .f-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text); margin-bottom: 0.4rem; }
+    .f-group input,
+    .f-group select,
+    .f-group textarea {
+      width: 100%; padding: 0.7rem 1rem;
+      border: 1.5px solid #e5e7eb; border-radius: 8px;
+      font-family: 'Poppins', sans-serif; font-size: 0.88rem;
+      color: var(--text); background: #fff;
+      transition: border-color 0.2s; outline: none;
+    }
+    .f-group input:focus, .f-group select:focus, .f-group textarea:focus {
+      border-color: var(--navy); box-shadow: 0 0 0 3px rgba(30,30,143,0.08);
+    }
+    .f-group textarea { resize: vertical; min-height: 95px; }
+
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, var(--navy), var(--navy-light));
+      color: #fff; font-weight: 700; font-size: 1rem;
+      padding: 0.875rem; border-radius: 10px; border: none;
+      cursor: pointer; transition: all 0.3s;
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+      font-family: 'Poppins', sans-serif;
+    }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(30,30,143,0.35); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy-dark);
+      color: rgba(255,255,255,0.72);
+      padding: 3.5rem 2rem 1.5rem;
+    }
+    .foot-grid {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 2fr 1fr 1fr;
+      gap: 2.5rem; margin-bottom: 2.5rem;
+    }
+    .foot-brand p { font-size: 0.875rem; line-height: 1.7; margin-top: 1rem; max-width: 280px; }
+
+    .foot-title { color: var(--gold); font-size: 0.77rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1rem; }
+
+    .foot-links { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .foot-links a { color: rgba(255,255,255,0.62); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; }
+    .foot-links a:hover { color: var(--gold); }
+
+    .social-row { display: flex; gap: 0.75rem; margin-top: 1.25rem; }
+    .soc-link {
+      width: 38px; height: 38px; border-radius: 8px;
+      background: rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    .soc-link:hover { background: var(--gold); color: var(--navy-dark); }
+
+    .foot-bottom {
+      max-width: 1100px; margin: 0 auto;
+      padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.78rem; flex-wrap: wrap; gap: 0.5rem;
+    }
+    .foot-bottom a { color: var(--gold); text-decoration: none; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50%     { transform: translateY(-10px); }
+    }
+    @keyframes bounce {
+      0%,100% { transform: translateX(-50%) translateY(0); }
+      50%     { transform: translateX(-50%) translateY(9px); }
+    }
+
+    .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* stagger helper */
+    .reveal:nth-child(2) { transition-delay: 0.12s; }
+    .reveal:nth-child(3) { transition-delay: 0.24s; }
+    .reveal:nth-child(4) { transition-delay: 0.36s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 920px) {
+      .nav-links { display: none; }
+      .nav-links.open {
+        display: flex; flex-direction: column;
+        position: absolute; top: 100%; left: 0; right: 0;
+        background: var(--navy-dark);
+        padding: 1rem; gap: 0.25rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      }
+      .hamburger { display: flex; }
+
+      .stats-grid { grid-template-columns: repeat(2,1fr); }
+      .stat-item { border-right: none; border-bottom: 1px solid rgba(255,215,0,0.2); }
+      .stat-item:nth-child(2n) { border-bottom: none; }
+
+      .ach-grid    { grid-template-columns: 1fr; }
+      .bili-grid   { grid-template-columns: 1fr; gap: 2.5rem; }
+      .subj-grid   { grid-template-columns: repeat(2,1fr); }
+      .feat-grid   { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .foot-grid   { grid-template-columns: 1fr; gap: 2rem; }
+      .foot-bottom { flex-direction: column; text-align: center; }
+    }
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .subj-grid  { grid-template-columns: 1fr; }
+      .hero-ctas  { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════ NAVBAR ════════ -->
+<nav id="navbar">
+  <a href="#inicio" class="nav-brand">
+    <!-- Shield SVG logo -->
+    <svg class="nav-logo" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="nSh" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#2929b0"/>
+          <stop offset="100%" stop-color="#13136b"/>
+        </linearGradient>
+        <linearGradient id="nGl" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#FFE55C"/>
+          <stop offset="100%" stop-color="#FFD700"/>
+        </linearGradient>
+      </defs>
+      <path d="M50 4 L96 22 L96 62 Q96 98 50 116 Q4 98 4 62 L4 22 Z" fill="url(#nSh)" stroke="url(#nGl)" stroke-width="3"/>
+      <path d="M50 13 L88 28 L88 60 Q88 90 50 105 Q12 90 12 60 L12 28 Z" fill="white" opacity="0.1"/>
+      <!-- Globe -->
+      <circle cx="50" cy="67" r="20" fill="rgba(255,255,255,0.92)" stroke="url(#nGl)" stroke-width="1.5"/>
+      <circle cx="50" cy="67" r="16" fill="#1a7acc"/>
+      <ellipse cx="46" cy="62" rx="6" ry="8" fill="#4CAF50" opacity="0.85"/>
+      <ellipse cx="56" cy="60" rx="5" ry="7" fill="#4CAF50" opacity="0.8"/>
+      <ellipse cx="43" cy="72" rx="3.5" ry="4.5" fill="#4CAF50" opacity="0.7"/>
+      <!-- Star -->
+      <polygon points="50,19 52.9,27.8 62,27.8 54.5,33.2 57.4,42 50,36.6 42.6,42 45.5,33.2 38,27.8 47.1,27.8" fill="url(#nGl)"/>
+      <!-- Wreaths -->
+      <g fill="url(#nGl)" opacity="0.75">
+        <ellipse cx="19" cy="57" rx="2.8" ry="5" transform="rotate(-20,19,57)"/>
+        <ellipse cx="16" cy="50" rx="2.8" ry="5" transform="rotate(-35,16,50)"/>
+        <ellipse cx="21" cy="64" rx="2.8" ry="5" transform="rotate(-10,21,64)"/>
+      </g>
+      <g fill="url(#nGl)" opacity="0.75">
+        <ellipse cx="81" cy="57" rx="2.8" ry="5" transform="rotate(20,81,57)"/>
+        <ellipse cx="84" cy="50" rx="2.8" ry="5" transform="rotate(35,84,50)"/>
+        <ellipse cx="79" cy="64" rx="2.8" ry="5" transform="rotate(10,79,64)"/>
+      </g>
+      <!-- Banner -->
+      <rect x="12" y="88" width="76" height="14" rx="2" fill="url(#nGl)"/>
+      <text x="50" y="98" text-anchor="middle" fill="#13136b" font-size="5.5" font-weight="900" font-family="Arial">BILINGUAL SCHOOL</text>
+    </svg>
+    <div class="nav-brand-text">
+      <span class="nav-brand-name">HOWARD GARDNER</span>
+      <span class="nav-brand-sub">Bilingual School · Sabanalarga</span>
+    </div>
+  </a>
+
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#inicio">Inicio</a></li>
+    <li><a href="#logros">Logros</a></li>
+    <li><a href="#bilinguismo">Bilingüismo</a></li>
+    <li><a href="#academico">Académico</a></li>
+    <li><a href="#nosotros">Nosotros</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+    <li><a href="#admisiones" class="btn-cta">Inscríbete</a></li>
+  </ul>
+
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+
+<!-- ════════ HERO ════════ -->
+<section id="inicio">
+  <div class="hero-content">
+
+    <div class="hero-badge">
+      <i class="fas fa-star"></i>
+      #1 Ranking ICFES Municipal 2025 · Categoría A+ Excelencia
+    </div>
+
+    <!-- Hero shield SVG -->
+    <svg class="hero-shield" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="hSh" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#2929b0"/>
+          <stop offset="100%" stop-color="#0d0d5a"/>
+        </linearGradient>
+        <linearGradient id="hGl" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#FFE55C"/>
+          <stop offset="100%" stop-color="#FFD700"/>
+        </linearGradient>
+      </defs>
+      <path d="M50 4 L96 22 L96 62 Q96 98 50 116 Q4 98 4 62 L4 22 Z" fill="url(#hSh)" stroke="url(#hGl)" stroke-width="3.5"/>
+      <path d="M50 13 L88 28 L88 60 Q88 90 50 105 Q12 90 12 60 L12 28 Z" fill="white" opacity="0.1"/>
+      <circle cx="50" cy="67" r="22" fill="rgba(255,255,255,0.92)" stroke="url(#hGl)" stroke-width="1.5"/>
+      <circle cx="50" cy="67" r="18" fill="#1a7acc"/>
+      <ellipse cx="46" cy="62" rx="7" ry="9" fill="#4CAF50" opacity="0.85"/>
+      <ellipse cx="57" cy="60" rx="5.5" ry="7" fill="#4CAF50" opacity="0.8"/>
+      <ellipse cx="43" cy="73" rx="4" ry="5" fill="#4CAF50" opacity="0.7"/>
+      <polygon points="50,19 52.9,27.8 62,27.8 54.5,33.2 57.4,42 50,36.6 42.6,42 45.5,33.2 38,27.8 47.1,27.8" fill="url(#hGl)"/>
+      <g fill="url(#hGl)" opacity="0.8">
+        <ellipse cx="18" cy="57" rx="3" ry="5.5" transform="rotate(-20,18,57)"/>
+        <ellipse cx="15" cy="49" rx="3" ry="5.5" transform="rotate(-35,15,49)"/>
+        <ellipse cx="21" cy="65" rx="3" ry="5.5" transform="rotate(-10,21,65)"/>
+      </g>
+      <g fill="url(#hGl)" opacity="0.8">
+        <ellipse cx="82" cy="57" rx="3" ry="5.5" transform="rotate(20,82,57)"/>
+        <ellipse cx="85" cy="49" rx="3" ry="5.5" transform="rotate(35,85,49)"/>
+        <ellipse cx="79" cy="65" rx="3" ry="5.5" transform="rotate(10,79,65)"/>
+      </g>
+      <rect x="11" y="88" width="78" height="15" rx="2.5" fill="url(#hGl)"/>
+      <text x="50" y="98.5" text-anchor="middle" fill="#13136b" font-size="6" font-weight="900" font-family="Arial">BILINGUAL SCHOOL</text>
+      <text x="50" y="107" text-anchor="middle" fill="#13136b" font-size="3.8" font-weight="600" font-family="Arial">SABANALARGA · ATLÁNTICO</text>
+    </svg>
+
+    <h1 class="hero-title">Howard <span>Gardner</span></h1>
+    <p class="hero-sub">Bilingual School · Sabanalarga, Atlántico</p>
+    <p class="hero-tagline">"Your Vision Is Our Inspiration"</p>
+
+    <div class="hero-location">
+      <i class="fas fa-map-marker-alt"></i>
+      Calle 12 #34 B-2, Sabanalarga, Atlántico, Colombia
+    </div>
+
+    <div class="hero-ctas">
+      <a href="#admisiones" class="btn-primary">
+        <i class="fas fa-graduation-cap"></i>
+        Inscripciones 2026
+      </a>
+      <a href="#logros" class="btn-outline">
+        <i class="fas fa-trophy"></i>
+        Ver nuestros logros
+      </a>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><i class="fas fa-chevron-down"></i></div>
+</section>
+
+
+<!-- ════════ STATS BAR ════════ -->
+<div class="stats-bar">
+  <div class="stats-grid">
+    <div class="stat-item">
+      <span class="stat-num" data-count="297">0</span>
+      <div class="stat-lbl">Puntaje Global ICFES 2025</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" data-prefix="#" data-count="1">0</span>
+      <div class="stat-lbl">Ranking Municipal ICFES</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" data-prefix="Top " data-count="74">0</span>
+      <div class="stat-lbl">Atlántico (de 542 colegios)</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" data-prefix="+" data-count="13">0</span>
+      <div class="stat-lbl">Puntos vs 2024 en ICFES</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════ LOGROS ════════ -->
+<section id="logros">
+  <div class="container">
+    <div class="s-header center reveal">
+      <span class="tag blue">Reconocimientos</span>
+      <h2 class="section-title">Nuestra excelencia, <span class="gld">comprobada</span></h2>
+      <p class="section-desc">Resultados que nos posicionan como la institución más destacada de Sabanalarga, con reconocimiento a nivel departamental.</p>
+    </div>
+
+    <div class="ach-grid">
+      <div class="ach-card reveal">
+        <div class="ach-icon"><i class="fas fa-trophy"></i></div>
+        <span class="ach-num">#1</span>
+        <h3 class="ach-title">Ranking ICFES Municipal 2025</h3>
+        <p class="ach-desc">Primeros en Sabanalarga con <strong>297 puntos globales</strong> y la máxima categoría <strong>A+ (Excelencia)</strong> en las Pruebas Saber 11°.</p>
+      </div>
+
+      <div class="ach-card gld reveal">
+        <div class="ach-icon gold"><i class="fas fa-medal"></i></div>
+        <span class="ach-num gld">A+</span>
+        <h3 class="ach-title">Mejor Colegio de Sabanalarga</h3>
+        <p class="ach-desc">Reconocidos con categoría <strong>A+ Excelencia</strong> según el <strong>Ranking Milton Ochoa 2025</strong>, el referente nacional más importante.</p>
+      </div>
+
+      <div class="ach-card reveal">
+        <div class="ach-icon"><i class="fas fa-star"></i></div>
+        <span class="ach-num">74°</span>
+        <h3 class="ach-title">Top 100 del Atlántico</h3>
+        <p class="ach-desc">Entre los <strong>100 mejores colegios del departamento</strong>, puesto 74 de 542 instituciones. Un logro que nos enorgullece.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════ BILINGÜISMO ════════ -->
+<section id="bilinguismo">
+  <div class="container">
+    <div class="bili-grid">
+
+      <div class="reveal">
+        <span class="tag white">Bilingüismo</span>
+        <h2 class="section-title"><span class="wht">Líderes en </span><span style="color:var(--gold)">Bilingüismo</span><span class="wht"> en Sabanalarga</span></h2>
+        <p class="section-desc" style="color:rgba(255,255,255,0.72)">La <strong style="color:#fff">única institución bilingüe</strong> en Sabanalarga y una de las más destacadas del Atlántico. Con sobresaliente puntaje en Inglés en las pruebas ICFES, reafirmamos nuestra posición como referente en educación bilingüe.</p>
+        <ul class="bili-features">
+          <li><i class="fas fa-check-circle"></i> Clases bilingües en todas las áreas del conocimiento</li>
+          <li><i class="fas fa-check-circle"></i> Docentes certificados en lengua inglesa</li>
+          <li><i class="fas fa-check-circle"></i> Inmersión lingüística desde preescolar</li>
+          <li><i class="fas fa-check-circle"></i> #1 en inglés — Pruebas Saber 11° municipio</li>
+          <li><i class="fas fa-check-circle"></i> Preparación para certificaciones internacionales</li>
+          <li><i class="fas fa-check-circle"></i> Intercambios culturales y experiencias globales</li>
+        </ul>
+      </div>
+
+      <div class="lang-visual reveal">
+        <div class="lang-card">
+          <span class="lang-flag">🇨🇴</span>
+          <div class="lang-name">Español</div>
+          <div class="lang-sub">Lengua materna</div>
+        </div>
+        <div class="lang-plus">+</div>
+        <div class="lang-card">
+          <span class="lang-flag">🇺🇸</span>
+          <div class="lang-name">English</div>
+          <div class="lang-sub">Second language</div>
+        </div>
+        <div class="lang-result">
+          <div class="lang-result-num">= Futuro</div>
+          <div class="lang-result-lbl">Ciudadanos globales del siglo XXI</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════ ACADÉMICO ════════ -->
+<section id="academico">
+  <div class="container">
+    <div class="s-header center reveal">
+      <span class="tag gold">Resultados ICFES 2025</span>
+      <h2 class="section-title">Primeros lugares en <span class="hl">áreas académicas</span></h2>
+      <p class="section-desc">Nuestros estudiantes brillan en las Pruebas Saber 11°, liderando el municipio en las principales áreas del conocimiento.</p>
+    </div>
+
+    <div class="subj-grid">
+      <div class="subj-card gold reveal">
+        <span class="subj-medal">🥇</span>
+        <div class="subj-rank">1° Lugar Municipal</div>
+        <div class="subj-name">Matemáticas</div>
+        <div class="subj-desc">Mejor puntaje del municipio</div>
+      </div>
+      <div class="subj-card gold reveal">
+        <span class="subj-medal">🥇</span>
+        <div class="subj-rank">1° Lugar Municipal</div>
+        <div class="subj-name">Ciencias Sociales</div>
+        <div class="subj-desc">Mejor puntaje del municipio</div>
+      </div>
+      <div class="subj-card gold reveal">
+        <span class="subj-medal">🥇</span>
+        <div class="subj-rank">1° Lugar Municipal</div>
+        <div class="subj-name">Lectura Crítica</div>
+        <div class="subj-desc">Mejor puntaje del municipio</div>
+      </div>
+      <div class="subj-card silver reveal">
+        <span class="subj-medal">🥈</span>
+        <div class="subj-rank">2° Lugar Municipal</div>
+        <div class="subj-name">Ciencias Naturales</div>
+        <div class="subj-desc">2do puntaje del municipio</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════ NOSOTROS ════════ -->
+<section id="nosotros">
+  <div class="container">
+    <div class="s-header center reveal">
+      <span class="tag blue">¿Por qué elegirnos?</span>
+      <h2 class="section-title">Una educación que <span class="hl">transforma</span></h2>
+      <p class="section-desc">En Howard Gardner formamos estudiantes íntegros, bilingües y preparados para los retos del mundo moderno.</p>
+    </div>
+
+    <div class="feat-grid">
+      <div class="feat-card reveal">
+        <div class="feat-icon"><i class="fas fa-globe"></i></div>
+        <h3 class="feat-title">Educación Bilingüe</h3>
+        <p class="feat-desc">Única institución bilingüe en Sabanalarga. Formamos ciudadanos globales con dominio del inglés desde los primeros años.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon"><i class="fas fa-chart-line"></i></div>
+        <h3 class="feat-title">Excelencia Académica</h3>
+        <p class="feat-desc">Categoría A+ según Ranking Milton Ochoa 2025. Primeros en el municipio en las Pruebas ICFES Saber 11°, con 297 puntos.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon"><i class="fas fa-brain"></i></div>
+        <h3 class="feat-title">Pedagogía Innovadora</h3>
+        <p class="feat-desc">Inspirados en la teoría de las Inteligencias Múltiples de Howard Gardner, desarrollamos el potencial único de cada estudiante.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon"><i class="fas fa-users"></i></div>
+        <h3 class="feat-title">Comunidad Educativa</h3>
+        <p class="feat-desc">Un ambiente de formación integral donde padres, docentes y estudiantes construyen juntos el camino al éxito.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon"><i class="fas fa-laptop"></i></div>
+        <h3 class="feat-title">Tecnología Educativa</h3>
+        <p class="feat-desc">Infraestructura tecnológica moderna que potencia el aprendizaje y prepara a los estudiantes para el futuro digital.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon"><i class="fas fa-shield-alt"></i></div>
+        <h3 class="feat-title">Valores y Liderazgo</h3>
+        <p class="feat-desc">Formamos líderes con valores sólidos, sentido crítico y compromiso con su comunidad y con Colombia.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════ CTA ADMISIONES ════════ -->
+<section id="admisiones">
+  <div class="cta-wrap reveal">
+    <span class="tag white" style="display:inline-block; margin-bottom:1rem;">Admisiones 2026</span>
+    <h2 class="section-title"><span class="wht">¿Listo para ser parte del </span><span style="color:var(--gold)">mejor colegio</span><span class="wht"> de Sabanalarga?</span></h2>
+    <p>Las inscripciones para el año lectivo 2026 están abiertas. Contáctanos hoy y da el primer paso hacia una educación de excelencia bilingüe.</p>
+    <div class="cta-btns">
+      <a href="https://wa.me/573012028756?text=Hola%2C%20me%20interesa%20información%20sobre%20inscripciones%20en%20Howard%20Gardner%20Bilingual%20School" class="btn-wa" target="_blank" rel="noopener">
+        <i class="fab fa-whatsapp"></i>
+        Escríbenos por WhatsApp
+      </a>
+      <a href="#contacto" class="btn-outline">
+        <i class="fas fa-envelope"></i>
+        Enviar mensaje
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════ CONTACTO ════════ -->
+<section id="contacto">
+  <div class="container">
+    <div class="s-header reveal">
+      <span class="tag blue">Contacto</span>
+      <h2 class="section-title">¿Tienes <span class="hl">preguntas?</span></h2>
+      <p class="section-desc">Estamos aquí para ayudarte. Contáctanos por cualquiera de nuestros canales.</p>
+    </div>
+
+    <div class="contact-grid">
+      <div class="c-info reveal">
+        <div class="c-item">
+          <div class="c-icon"><i class="fas fa-map-marker-alt"></i></div>
+          <div class="c-text">
+            <strong>Dirección</strong>
+            <span>Calle 12 #34 B-2, Sabanalarga, Atlántico</span>
+          </div>
+        </div>
+        <div class="c-item">
+          <div class="c-icon"><i class="fas fa-phone"></i></div>
+          <div class="c-text">
+            <strong>Teléfono</strong>
+            <a href="tel:+573012028756">+57 301 202 8756</a>
+          </div>
+        </div>
+        <div class="c-item">
+          <div class="c-icon"><i class="fab fa-whatsapp"></i></div>
+          <div class="c-text">
+            <strong>WhatsApp</strong>
+            <a href="https://wa.me/573012028756" target="_blank" rel="noopener">+57 301 202 8756</a>
+          </div>
+        </div>
+        <div class="c-item">
+          <div class="c-icon"><i class="fab fa-instagram"></i></div>
+          <div class="c-text">
+            <strong>Instagram</strong>
+            <a href="https://www.instagram.com/howard_gardner_sabanalarga" target="_blank" rel="noopener">@howard_gardner_sabanalarga</a>
+          </div>
+        </div>
+        <div class="c-item">
+          <div class="c-icon"><i class="fas fa-clock"></i></div>
+          <div class="c-text">
+            <strong>Horario de Atención</strong>
+            <span>Lunes a Viernes: 7:00 a.m. – 5:00 p.m.</span>
+          </div>
+        </div>
+        <div class="c-item">
+          <div class="c-icon"><i class="fas fa-id-card"></i></div>
+          <div class="c-text">
+            <strong>NIT</strong>
+            <span>900.419.545-7</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="c-form reveal">
+        <h3 class="c-form-title">Envíanos un mensaje</h3>
+        <form onsubmit="handleSubmit(event)">
+          <div class="f-group">
+            <label>Nombre completo *</label>
+            <input type="text" placeholder="Tu nombre completo" required />
+          </div>
+          <div class="f-group">
+            <label>Teléfono / WhatsApp *</label>
+            <input type="tel" placeholder="+57 300 000 0000" required />
+          </div>
+          <div class="f-group">
+            <label>Asunto</label>
+            <select>
+              <option value="">Selecciona un asunto</option>
+              <option>Información sobre inscripciones</option>
+              <option>Tarifas y pensiones</option>
+              <option>Visita al colegio</option>
+              <option>Programa bilingüe</option>
+              <option>Otro</option>
+            </select>
+          </div>
+          <div class="f-group">
+            <label>Mensaje</label>
+            <textarea placeholder="¿En qué podemos ayudarte?"></textarea>
+          </div>
+          <button type="submit" class="btn-submit">
+            <i class="fas fa-paper-plane"></i>
+            Enviar mensaje
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════ FOOTER ════════ -->
+<footer>
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a href="#inicio" class="nav-brand" style="text-decoration:none;">
+        <svg width="40" height="48" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 4 L96 22 L96 62 Q96 98 50 116 Q4 98 4 62 L4 22 Z" fill="#2929b0" stroke="#FFD700" stroke-width="3"/>
+          <polygon points="50,19 52.9,27.8 62,27.8 54.5,33.2 57.4,42 50,36.6 42.6,42 45.5,33.2 38,27.8 47.1,27.8" fill="#FFD700"/>
+          <text x="50" y="85" text-anchor="middle" fill="#FFD700" font-size="22" font-weight="900" font-family="Arial">HG</text>
+        </svg>
+        <div class="nav-brand-text">
+          <span class="nav-brand-name">HOWARD GARDNER</span>
+          <span class="nav-brand-sub">Bilingual School</span>
+        </div>
+      </a>
+      <p>"Your Vision Is Our Inspiration" — Formando los líderes bilingües del mañana en Sabanalarga, Atlántico, Colombia.</p>
+      <div class="social-row">
+        <a href="https://www.instagram.com/howard_gardner_sabanalarga" class="soc-link" target="_blank" rel="noopener" title="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://wa.me/573012028756" class="soc-link" target="_blank" rel="noopener" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <a href="#" class="soc-link" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="soc-link" title="YouTube"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+
+    <div>
+      <div class="foot-title">Navegación</div>
+      <ul class="foot-links">
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#logros">Logros</a></li>
+        <li><a href="#bilinguismo">Bilingüismo</a></li>
+        <li><a href="#academico">Académico</a></li>
+        <li><a href="#nosotros">Nosotros</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="foot-title">Información</div>
+      <ul class="foot-links">
+        <li><a href="#admisiones">Admisiones 2026</a></li>
+        <li><a href="#bilinguismo">Programa Bilingüe</a></li>
+        <li><a href="#logros">Resultados ICFES</a></li>
+        <li><a href="#contacto">Ubicación</a></li>
+        <li><a href="#">Política de Privacidad</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="foot-bottom">
+    <p>© 2025 Howard Gardner De Sabanalarga S.A.S. · NIT 900.419.545-7 · Todos los derechos reservados.</p>
+    <p>Categoría <a href="#logros">A+ ICFES 2025</a> · #1 Sabanalarga</p>
+  </div>
+</footer>
+
+
+<script>
+  // Navbar scroll
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60));
+
+  // Mobile menu
+  function toggleMenu() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.addEventListener('click', () => document.getElementById('navLinks').classList.remove('open'));
+  });
+
+  // Counter animation
+  function animateCount(el) {
+    const target = parseInt(el.dataset.count);
+    const prefix = el.dataset.prefix || '';
+    const duration = 1800;
+    const start = performance.now();
+    (function tick(now) {
+      const p = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = prefix + Math.floor(eased * target);
+      if (p < 1) requestAnimationFrame(tick);
+      else el.textContent = prefix + target;
+    })(start);
+  }
+
+  // Intersection observer — reveals
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+  // Intersection observer — counters
+  const countObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { animateCount(e.target); countObs.unobserve(e.target); } });
+  }, { threshold: 0.6 });
+  document.querySelectorAll('[data-count]').forEach(el => countObs.observe(el));
+
+  // Contact form feedback
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.btn-submit');
+    btn.innerHTML = '<i class="fas fa-check"></i> ¡Mensaje enviado!';
+    btn.style.background = '#16a34a';
+    setTimeout(() => {
+      btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar mensaje';
+      btn.style.background = '';
+      e.target.reset();
+    }, 3000);
+  }
+</script>
+
+</body>
+</html>
