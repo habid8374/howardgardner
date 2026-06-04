@@ -1,29 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { MapPin, GraduationCap, Trophy } from "lucide-react";
 import Image from "next/image";
 
-const slides = [
-  "/hero1.jpeg",
-  "/hero2.jpeg",
-  "/hero3.jpeg",
-  "/hero4.jpeg",
-  "/hero5.jpeg",
-  "/hero6.jpeg",
-];
-
 export default function Hero() {
-  const [current, setCurrent] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % slides.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
-
   return (
     <section
       id="inicio"
@@ -36,27 +17,18 @@ export default function Hero() {
         background: "#0a0a3a",
       }}
     >
-      {/* ── Background image carousel ── */}
-      <AnimatePresence initial={false}>
-        <motion.div
-          key={current}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1.3, ease: "easeInOut" }}
-          style={{ position: "absolute", inset: 0, zIndex: 0 }}
-        >
-          <Image
-            src={slides[current]}
-            alt="Howard Gardner Bilingual School"
-            fill
-            sizes="100vw"
-            className="object-cover object-center"
-            priority={current === 0}
-            quality={92}
-          />
-        </motion.div>
-      </AnimatePresence>
+      {/* ── Background photo (patio del colegio) ── */}
+      <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
+        <Image
+          src="/patio.jpg"
+          alt="Patio del Howard Gardner Bilingual School"
+          fill
+          sizes="100vw"
+          className="object-cover object-center"
+          priority
+          quality={92}
+        />
+      </div>
 
       {/* Neutral dark scrim — solo para legibilidad, sin tinte azul */}
       <div
@@ -66,33 +38,10 @@ export default function Hero() {
           inset: 0,
           zIndex: 1,
           background:
-            "linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.25) 35%, rgba(0,0,0,0.35) 70%, rgba(0,0,0,0.6) 100%)",
+            "linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 35%, rgba(0,0,0,0.4) 70%, rgba(0,0,0,0.65) 100%)",
           pointerEvents: "none",
         }}
       />
-
-      {/* Slide dots */}
-      <div
-        className="absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-2"
-        style={{ zIndex: 20 }}
-      >
-        {slides.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrent(i)}
-            aria-label={`Imagen ${i + 1}`}
-            className="rounded-full transition-all duration-300"
-            style={{
-              width: i === current ? 24 : 8,
-              height: 8,
-              background: i === current ? "#FFD700" : "rgba(255,255,255,0.4)",
-              border: "none",
-              cursor: "pointer",
-              padding: 0,
-            }}
-          />
-        ))}
-      </div>
 
       {/* ── Content ── */}
       <div
@@ -126,7 +75,7 @@ export default function Hero() {
           <motion.div
             animate={{ y: [0, -12, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            style={{ filter: "drop-shadow(0 12px 40px rgba(0,0,0,0.55))" }}
+            style={{ filter: "drop-shadow(0 12px 40px rgba(0,0,0,0.6))" }}
           >
             <Image
               src="/howard_gardner_logo_sin_fondo.png"
@@ -148,7 +97,7 @@ export default function Hero() {
           style={{
             fontSize: "clamp(2.8rem, 8vw, 5.5rem)",
             color: "#fff",
-            textShadow: "0 4px 30px rgba(0,0,0,0.5)",
+            textShadow: "0 4px 30px rgba(0,0,0,0.55)",
           }}
         >
           Howard <span style={{ color: "#FFD700" }}>Gardner</span>
@@ -162,7 +111,7 @@ export default function Hero() {
           style={{
             fontSize: "clamp(0.85rem, 2vw, 1.15rem)",
             color: "rgba(255,255,255,0.85)",
-            textShadow: "0 2px 12px rgba(0,0,0,0.5)",
+            textShadow: "0 2px 12px rgba(0,0,0,0.55)",
           }}
         >
           Bilingual School
@@ -176,7 +125,7 @@ export default function Hero() {
           style={{
             fontSize: "clamp(0.9rem, 2vw, 1.1rem)",
             color: "#FFD700",
-            textShadow: "0 2px 12px rgba(0,0,0,0.5)",
+            textShadow: "0 2px 12px rgba(0,0,0,0.55)",
           }}
         >
           &quot;Your Vision Is Our Inspiration&quot;
@@ -188,9 +137,9 @@ export default function Hero() {
           transition={{ duration: 0.7, delay: 0.4 }}
           className="flex items-center justify-center gap-2 mb-10"
           style={{
-            color: "rgba(255,255,255,0.8)",
+            color: "rgba(255,255,255,0.85)",
             fontSize: "0.875rem",
-            textShadow: "0 2px 10px rgba(0,0,0,0.6)",
+            textShadow: "0 2px 10px rgba(0,0,0,0.65)",
           }}
         >
           <MapPin size={14} style={{ color: "#FFD700" }} />
@@ -213,7 +162,7 @@ export default function Hero() {
               background: "#FFD700",
               color: "#13136b",
               padding: "0.95rem 2rem",
-              boxShadow: "0 4px 24px rgba(0,0,0,0.35)",
+              boxShadow: "0 4px 24px rgba(0,0,0,0.4)",
               fontSize: "1rem",
             }}
           >
@@ -246,7 +195,7 @@ export default function Hero() {
         animate={{ y: [0, 8, 0] }}
         transition={{ duration: 2, repeat: Infinity }}
         className="absolute bottom-6 left-1/2 -translate-x-1/2"
-        style={{ zIndex: 20, color: "rgba(255,255,255,0.5)", fontSize: "1.4rem" }}
+        style={{ zIndex: 20, color: "rgba(255,255,255,0.55)", fontSize: "1.4rem" }}
       >
         ↓
       </motion.div>

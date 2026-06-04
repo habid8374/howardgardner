@@ -10,6 +10,7 @@ const links = [
   { href: "#logros", label: "Logros" },
   { href: "#bilinguismo", label: "Bilingüismo" },
   { href: "#academico", label: "Académico" },
+  { href: "#galeria", label: "Galería" },
   { href: "#nosotros", label: "Nosotros" },
   { href: "#contacto", label: "Contacto" },
 ];
