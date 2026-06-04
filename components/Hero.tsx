@@ -27,51 +27,61 @@ export default function Hero() {
   return (
     <section
       id="inicio"
-      className="relative min-h-screen flex items-center justify-center text-center overflow-hidden"
-      style={{ paddingTop: "80px" }}
+      className="relative min-h-screen flex items-center justify-center text-center"
+      style={{ paddingTop: "80px", overflow: "hidden", isolation: "isolate" }}
     >
       {/* ── Background image carousel ── */}
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         <motion.div
           key={current}
-          initial={{ opacity: 0, scale: 1.06 }}
+          initial={{ opacity: 0, scale: 1.04 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 1.2, ease: "easeInOut" }}
-          className="absolute inset-0"
+          transition={{ duration: 1.4, ease: "easeInOut" }}
+          style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 0,
+          }}
         >
           <Image
             src={slides[current]}
             alt="Howard Gardner Bilingual School"
             fill
-            className="object-cover"
+            className="object-cover object-center"
             priority={current === 0}
-            quality={85}
+            quality={90}
           />
         </motion.div>
       </AnimatePresence>
 
-      {/* Dark overlay gradient */}
+      {/* Dark overlay — más suave para ver bien las fotos */}
       <div
-        className="absolute inset-0"
         style={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 1,
           background:
-            "linear-gradient(180deg, rgba(8,8,62,0.75) 0%, rgba(19,19,107,0.82) 50%, rgba(8,8,62,0.92) 100%)",
+            "linear-gradient(180deg, rgba(8,8,62,0.48) 0%, rgba(19,19,107,0.52) 50%, rgba(8,8,62,0.72) 100%)",
         }}
       />
 
       {/* Subtle grid overlay */}
       <div
-        className="absolute inset-0 opacity-[0.04]"
         style={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 2,
+          opacity: 0.04,
           backgroundImage:
             "linear-gradient(rgba(255,215,0,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,215,0,1) 1px, transparent 1px)",
           backgroundSize: "60px 60px",
+          pointerEvents: "none",
         }}
       />
 
       {/* Slide dots */}
-      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-2" style={{ zIndex: 20 }}>
         {slides.map((_, i) => (
           <button
             key={i}
@@ -90,7 +100,7 @@ export default function Hero() {
       </div>
 
       {/* ── Content ── */}
-      <div className="relative z-10 max-w-4xl mx-auto px-6 py-16">
+      <div className="relative max-w-4xl mx-auto px-6 py-16" style={{ zIndex: 10 }}>
 
         {/* Top badge */}
         <motion.div
@@ -222,8 +232,8 @@ export default function Hero() {
       <motion.div
         animate={{ y: [0, 8, 0] }}
         transition={{ duration: 2, repeat: Infinity }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
-        style={{ color: "rgba(255,255,255,0.35)", fontSize: "1.4rem" }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        style={{ zIndex: 20, color: "rgba(255,255,255,0.35)", fontSize: "1.4rem" }}
       >
         ↓
       </motion.div>
