@@ -1,5 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import Rector from "@/components/Rector";
+import Story from "@/components/Story";
 import Stats from "@/components/Stats";
 import Achievements from "@/components/Achievements";
 import Bilingual from "@/components/Bilingual";
@@ -16,6 +18,8 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
+        <Rector />
+        <Story />
         <Stats />
         <Achievements />
         <Bilingual />
