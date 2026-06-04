@@ -6,6 +6,7 @@ import Stats from "@/components/Stats";
 import Achievements from "@/components/Achievements";
 import Bilingual from "@/components/Bilingual";
 import Academic from "@/components/Academic";
+import Propuesta from "@/components/Propuesta";
 import Gallery from "@/components/Gallery";
 import Features from "@/components/Features";
 import CTA from "@/components/CTA";
@@ -25,6 +26,7 @@ export default function Home() {
         <Achievements />
         <Bilingual />
         <Academic />
+        <Propuesta />
         <Gallery />
         <Features />
         <CTA />
