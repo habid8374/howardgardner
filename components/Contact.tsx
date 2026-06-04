@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Phone, MessageCircle, ExternalLink, Clock, CreditCard, Send, Check } from "lucide-react";
+import { MapPin, Phone, Clock, CreditCard, Send, Check } from "lucide-react";
+import { WhatsAppIcon, InstagramIcon } from "./BrandIcons";
 
 const info = [
-  { icon: MapPin,       label: "Dirección",         value: "Calle 12 #34 B-2, Sabanalarga, Atlántico" },
-  { icon: Phone,        label: "Teléfono",           value: "+57 301 202 8756",  href: "tel:+573012028756" },
-  { icon: MessageCircle,label: "WhatsApp",            value: "+57 301 202 8756",  href: "https://wa.me/573012028756" },
-  { icon: ExternalLink, label: "Instagram",            value: "@howard_gardner_sabanalarga", href: "https://www.instagram.com/howard_gardner_sabanalarga" },
+  { icon: MapPin,        label: "Dirección",         value: "Calle 12 #34 B-2, Sabanalarga, Atlántico" },
+  { icon: Phone,         label: "Teléfono",           value: "+57 301 202 8756",  href: "tel:+573012028756" },
+  { icon: WhatsAppIcon,  label: "WhatsApp",            value: "+57 301 202 8756",  href: "https://wa.me/573012028756" },
+  { icon: InstagramIcon, label: "Instagram",            value: "@howard_gardner_sabanalarga", href: "https://www.instagram.com/howard_gardner_sabanalarga" },
   { icon: Clock,        label: "Horario de Atención",value: "Lunes a Viernes: 7:00 a.m. – 5:00 p.m." },
   { icon: CreditCard,   label: "NIT",                value: "900.419.545-7" },
 ];

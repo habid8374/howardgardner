@@ -1,6 +1,14 @@
 "use client";
 
 import Image from "next/image";
+import { InstagramIcon, WhatsAppIcon, FacebookIcon, YouTubeIcon } from "./BrandIcons";
+
+const socials = [
+  { href: "https://www.instagram.com/howard_gardner_sabanalarga", label: "Instagram", Icon: InstagramIcon },
+  { href: "https://wa.me/573012028756",                          label: "WhatsApp",  Icon: WhatsAppIcon },
+  { href: "#",                                                   label: "Facebook",  Icon: FacebookIcon },
+  { href: "#",                                                   label: "YouTube",   Icon: YouTubeIcon },
+];
 
 const navLinks = [
   { href: "#inicio", label: "Inicio" },
@@ -47,28 +55,26 @@ export default function Footer() {
             </p>
 
             <div className="flex gap-3 mt-5">
-              {[
-                { href: "https://www.instagram.com/howard_gardner_sabanalarga", label: "IG", icon: "📸" },
-                { href: "https://wa.me/573012028756",                            label: "WA", icon: "💬" },
-                { href: "#",                                                     label: "FB", icon: "📘" },
-                { href: "#",                                                     label: "YT", icon: "▶️" },
-              ].map((s) => (
+              {socials.map((s) => (
                 <a
                   key={s.label}
                   href={s.href}
                   target="_blank"
                   rel="noopener noreferrer"
                   title={s.label}
-                  className="w-9 h-9 rounded-lg flex items-center justify-center text-sm no-underline transition-all"
+                  aria-label={s.label}
+                  className="w-9 h-9 rounded-lg flex items-center justify-center no-underline transition-all"
                   style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.7)" }}
                   onMouseEnter={(e) => {
                     (e.currentTarget as HTMLAnchorElement).style.background = "#FFD700";
+                    (e.currentTarget as HTMLAnchorElement).style.color = "#13136b";
                   }}
                   onMouseLeave={(e) => {
                     (e.currentTarget as HTMLAnchorElement).style.background = "rgba(255,255,255,0.08)";
+                    (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.7)";
                   }}
                 >
-                  {s.icon}
+                  <s.Icon size={18} />
                 </a>
               ))}
             </div>
