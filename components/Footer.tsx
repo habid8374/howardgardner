@@ -6,7 +6,7 @@ import { InstagramIcon, WhatsAppIcon, FacebookIcon, YouTubeIcon } from "./BrandI
 const socials = [
   { href: "https://www.instagram.com/howard_gardner_sabanalarga", label: "Instagram", Icon: InstagramIcon },
   { href: "https://wa.me/573012028756",                          label: "WhatsApp",  Icon: WhatsAppIcon },
-  { href: "https://www.facebook.com/share/18oAGhXZjt/",          label: "Facebook",  Icon: FacebookIcon },
+  { href: "https://www.facebook.com/gardneristaoficial",          label: "Facebook",  Icon: FacebookIcon },
   { href: "#",                                                   label: "YouTube",   Icon: YouTubeIcon },
 ];
 
