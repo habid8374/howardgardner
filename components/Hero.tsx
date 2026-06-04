@@ -20,220 +20,269 @@ export default function Hero() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
-    }, 5000);
+    }, 4500);
     return () => clearInterval(timer);
   }, []);
 
   return (
     <section
       id="inicio"
-      className="relative min-h-screen flex items-center justify-center text-center"
-      style={{ paddingTop: "80px", overflow: "hidden", isolation: "isolate" }}
+      className="relative flex items-center"
+      style={{
+        minHeight: "100vh",
+        paddingTop: "80px",
+        overflow: "hidden",
+        isolation: "isolate",
+        background:
+          "linear-gradient(135deg, #050530 0%, #0d0d5a 35%, #13136b 65%, #1a1a85 100%)",
+      }}
     >
-      {/* ── Background image carousel ── */}
-      <AnimatePresence initial={false}>
-        <motion.div
-          key={current}
-          initial={{ opacity: 0, scale: 1.04 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1.4, ease: "easeInOut" }}
-          style={{
-            position: "absolute",
-            inset: 0,
-            zIndex: 0,
-          }}
-        >
-          <Image
-            src={slides[current]}
-            alt="Howard Gardner Bilingual School"
-            fill
-            className="object-cover object-center"
-            priority={current === 0}
-            quality={90}
-          />
-        </motion.div>
-      </AnimatePresence>
-
-      {/* Dark overlay — más suave para ver bien las fotos */}
+      {/* Soft decorative glows */}
       <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          top: "-10%",
+          left: "-5%",
+          width: 520,
+          height: 520,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(255,215,0,0.10), transparent 70%)",
+          filter: "blur(40px)",
+          zIndex: 0,
+          pointerEvents: "none",
+        }}
+      />
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          bottom: "-15%",
+          right: "10%",
+          width: 460,
+          height: 460,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(41,41,176,0.35), transparent 70%)",
+          filter: "blur(40px)",
+          zIndex: 0,
+          pointerEvents: "none",
+        }}
+      />
+      {/* Faint grid */}
+      <div
+        aria-hidden
         style={{
           position: "absolute",
           inset: 0,
           zIndex: 1,
-          background:
-            "linear-gradient(180deg, rgba(8,8,62,0.48) 0%, rgba(19,19,107,0.52) 50%, rgba(8,8,62,0.72) 100%)",
-        }}
-      />
-
-      {/* Subtle grid overlay */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          zIndex: 2,
-          opacity: 0.04,
+          opacity: 0.035,
           backgroundImage:
             "linear-gradient(rgba(255,215,0,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,215,0,1) 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
+          backgroundSize: "64px 64px",
           pointerEvents: "none",
         }}
       />
 
-      {/* Slide dots */}
-      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-2" style={{ zIndex: 20 }}>
-        {slides.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrent(i)}
-            className="rounded-full transition-all duration-300"
-            style={{
-              width: i === current ? 24 : 8,
-              height: 8,
-              background: i === current ? "#FFD700" : "rgba(255,255,255,0.35)",
-              border: "none",
-              cursor: "pointer",
-            }}
-            aria-label={`Slide ${i + 1}`}
-          />
-        ))}
-      </div>
+      {/* ── Content grid ── */}
+      <div
+        className="relative w-full mx-auto px-6 py-16 grid items-center gap-12 lg:gap-8"
+        style={{ maxWidth: "1150px", zIndex: 10, gridTemplateColumns: "1fr" }}
+      >
+        <div className="grid items-center gap-12 lg:gap-10 lg:grid-cols-2">
 
-      {/* ── Content ── */}
-      <div className="relative max-w-4xl mx-auto px-6 py-16" style={{ zIndex: 10 }}>
+          {/* Left — text */}
+          <div className="text-center lg:text-left flex flex-col items-center lg:items-start">
 
-        {/* Top badge */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 rounded-full mb-8 px-4 py-2 text-xs font-semibold tracking-widest uppercase"
-          style={{
-            background: "rgba(255,215,0,0.12)",
-            border: "1px solid rgba(255,215,0,0.4)",
-            color: "#FFD700",
-          }}
-        >
-          <Trophy size={13} />
-          #1 Ranking ICFES Municipal 2025 · Categoría A+ Excelencia
-        </motion.div>
+            {/* Logo */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+              className="mb-5"
+              style={{ filter: "drop-shadow(0 8px 28px rgba(255,215,0,0.4))" }}
+            >
+              <Image
+                src="/howard_gardner_logo_sin_fondo.png"
+                alt="Howard Gardner Bilingual School Logo"
+                width={96}
+                height={96}
+                className="object-contain"
+                priority
+              />
+            </motion.div>
 
-        {/* Floating real logo */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.7 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
-          className="flex justify-center mb-6"
-        >
+            {/* Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: -16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="inline-flex items-center gap-2 rounded-full mb-6 px-4 py-2 text-xs font-semibold tracking-wider uppercase"
+              style={{
+                background: "rgba(255,215,0,0.12)",
+                border: "1px solid rgba(255,215,0,0.4)",
+                color: "#FFD700",
+              }}
+            >
+              <Trophy size={13} />
+              #1 ICFES Municipal 2025 · A+ Excelencia
+            </motion.div>
+
+            {/* Title */}
+            <motion.h1
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="font-black leading-none mb-3"
+              style={{ fontSize: "clamp(2.6rem, 6vw, 4.5rem)", color: "#fff" }}
+            >
+              Howard <span style={{ color: "#FFD700" }}>Gardner</span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.28 }}
+              className="font-light tracking-widest uppercase mb-2"
+              style={{ fontSize: "clamp(0.8rem, 1.6vw, 1.05rem)", color: "rgba(255,255,255,0.7)" }}
+            >
+              Bilingual School
+            </motion.p>
+
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.34 }}
+              className="font-medium italic mb-6"
+              style={{ fontSize: "clamp(0.85rem, 1.6vw, 1.05rem)", color: "#FFD700" }}
+            >
+              &quot;Your Vision Is Our Inspiration&quot;
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.7, delay: 0.4 }}
+              className="flex items-center gap-2 mb-9 justify-center lg:justify-start"
+              style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.85rem" }}
+            >
+              <MapPin size={14} style={{ color: "#FFD700", flexShrink: 0 }} />
+              Calle 12 #34 B-2, Sabanalarga, Atlántico
+            </motion.div>
+
+            {/* CTAs */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.48 }}
+              className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center lg:justify-start"
+            >
+              <motion.a
+                href="#admisiones"
+                whileHover={{ scale: 1.04, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                className="inline-flex items-center justify-center gap-2 font-bold rounded-xl no-underline"
+                style={{
+                  background: "#FFD700",
+                  color: "#13136b",
+                  padding: "0.9rem 1.9rem",
+                  boxShadow: "0 4px 24px rgba(255,215,0,0.45)",
+                  fontSize: "0.98rem",
+                }}
+              >
+                <GraduationCap size={18} />
+                Inscripciones 2026
+              </motion.a>
+
+              <motion.a
+                href="#logros"
+                whileHover={{ scale: 1.04, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                className="inline-flex items-center justify-center gap-2 font-semibold rounded-xl no-underline"
+                style={{
+                  background: "rgba(255,255,255,0.08)",
+                  color: "#fff",
+                  padding: "0.9rem 1.9rem",
+                  border: "2px solid rgba(255,255,255,0.25)",
+                  fontSize: "0.98rem",
+                }}
+              >
+                <Trophy size={18} />
+                Ver logros
+              </motion.a>
+            </motion.div>
+          </div>
+
+          {/* Right — contained carousel card */}
           <motion.div
-            animate={{ y: [0, -12, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            style={{ filter: "drop-shadow(0 12px 40px rgba(255,215,0,0.55))" }}
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+            className="flex justify-center lg:justify-end"
           >
-            <Image
-              src="/howard_gardner_logo_sin_fondo.png"
-              alt="Howard Gardner Bilingual School Logo"
-              width={150}
-              height={150}
-              className="object-contain"
-              priority
-            />
+            <div className="relative w-full" style={{ maxWidth: "380px" }}>
+              {/* Card frame */}
+              <div
+                className="relative rounded-3xl overflow-hidden"
+                style={{
+                  aspectRatio: "4 / 5",
+                  background: "#0a0a3a",
+                  border: "1px solid rgba(255,215,0,0.3)",
+                  boxShadow: "0 25px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04)",
+                }}
+              >
+                <AnimatePresence initial={false}>
+                  <motion.div
+                    key={current}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.8, ease: "easeInOut" }}
+                    style={{ position: "absolute", inset: 0 }}
+                  >
+                    <Image
+                      src={slides[current]}
+                      alt="Howard Gardner Bilingual School"
+                      fill
+                      sizes="(max-width: 1024px) 90vw, 380px"
+                      className="object-cover"
+                      priority={current === 0}
+                      quality={90}
+                    />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Dots */}
+              <div className="flex justify-center gap-2 mt-5">
+                {slides.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrent(i)}
+                    aria-label={`Imagen ${i + 1}`}
+                    className="rounded-full transition-all duration-300"
+                    style={{
+                      width: i === current ? 24 : 8,
+                      height: 8,
+                      background: i === current ? "#FFD700" : "rgba(255,255,255,0.3)",
+                      border: "none",
+                      cursor: "pointer",
+                      padding: 0,
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
           </motion.div>
-        </motion.div>
 
-        {/* Title */}
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="font-black leading-none mb-2"
-          style={{ fontSize: "clamp(2.8rem, 8vw, 5.5rem)", color: "#fff" }}
-        >
-          Howard{" "}
-          <span style={{ color: "#FFD700" }}>Gardner</span>
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-          className="font-light tracking-widest uppercase mb-2"
-          style={{ fontSize: "clamp(0.85rem, 2vw, 1.15rem)", color: "rgba(255,255,255,0.7)" }}
-        >
-          Bilingual School
-        </motion.p>
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.35 }}
-          className="font-medium italic mb-6"
-          style={{ fontSize: "clamp(0.9rem, 2vw, 1.1rem)", color: "#FFD700" }}
-        >
-          &quot;Your Vision Is Our Inspiration&quot;
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.7, delay: 0.4 }}
-          className="flex items-center justify-center gap-2 mb-10"
-          style={{ color: "rgba(255,255,255,0.55)", fontSize: "0.875rem" }}
-        >
-          <MapPin size={14} style={{ color: "#FFD700" }} />
-          Calle 12 #34 B-2, Sabanalarga, Atlántico, Colombia
-        </motion.div>
-
-        {/* CTAs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.5 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center"
-        >
-          <motion.a
-            href="#admisiones"
-            whileHover={{ scale: 1.04, y: -2 }}
-            whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center justify-center gap-2 font-bold rounded-xl no-underline"
-            style={{
-              background: "#FFD700",
-              color: "#13136b",
-              padding: "0.95rem 2rem",
-              boxShadow: "0 4px 24px rgba(255,215,0,0.5)",
-              fontSize: "1rem",
-            }}
-          >
-            <GraduationCap size={18} />
-            Inscripciones 2026
-          </motion.a>
-
-          <motion.a
-            href="#logros"
-            whileHover={{ scale: 1.04, y: -2 }}
-            whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center justify-center gap-2 font-semibold rounded-xl no-underline"
-            style={{
-              background: "rgba(255,255,255,0.1)",
-              backdropFilter: "blur(8px)",
-              color: "#fff",
-              padding: "0.95rem 2rem",
-              border: "2px solid rgba(255,255,255,0.3)",
-              fontSize: "1rem",
-            }}
-          >
-            <Trophy size={18} />
-            Ver nuestros logros
-          </motion.a>
-        </motion.div>
+        </div>
       </div>
 
       {/* Scroll indicator */}
       <motion.div
         animate={{ y: [0, 8, 0] }}
         transition={{ duration: 2, repeat: Infinity }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        style={{ zIndex: 20, color: "rgba(255,255,255,0.35)", fontSize: "1.4rem" }}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden lg:block"
+        style={{ zIndex: 20, color: "rgba(255,255,255,0.3)", fontSize: "1.4rem" }}
       >
         ↓
       </motion.div>
