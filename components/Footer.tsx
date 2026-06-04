@@ -109,6 +109,39 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Google Maps */}
+        <div className="mb-8">
+          <p className="font-bold uppercase tracking-widest text-xs mb-4 m-0" style={{ color: "#FFD700" }}>
+            Cómo llegar
+          </p>
+          <p className="text-xs mb-3 m-0" style={{ color: "rgba(255,255,255,0.5)" }}>
+            Calle 12 #34 B-2, Sabanalarga, Atlántico, Colombia
+          </p>
+          <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,215,0,0.18)", height: 240 }}>
+            <iframe
+              src="https://maps.google.com/maps?q=Calle+12+%2334+B-2,+Sabanalarga,+Atl%C3%A1ntico,+Colombia&t=&z=16&ie=UTF8&iwloc=&output=embed"
+              width="100%"
+              height="100%"
+              style={{ border: 0, display: "block", filter: "invert(0.85) hue-rotate(180deg)" }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Ubicación Howard Gardner Bilingual School"
+            />
+          </div>
+          <a
+            href="https://maps.google.com/maps?q=Calle+12+%2334+B-2,+Sabanalarga,+Atl%C3%A1ntico,+Colombia"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 no-underline text-xs mt-2 transition-colors"
+            style={{ color: "rgba(255,255,255,0.4)" }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#FFD700"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.4)"; }}
+          >
+            Abrir en Google Maps →
+          </a>
+        </div>
+
         {/* Bottom */}
         <div
           className="pt-5 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs"
