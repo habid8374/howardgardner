@@ -114,8 +114,32 @@ export default function Footer() {
           className="pt-5 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs"
           style={{ borderTop: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.45)" }}
         >
-          <p className="m-0">© 2025 Howard Gardner De Sabanalarga S.A.S. · NIT 900.419.545-7 · Todos los derechos reservados.</p>
+          <p className="m-0">© 2026 Howard Gardner De Sabanalarga S.A.S. · NIT 900.419.545-7 · Todos los derechos reservados.</p>
           <p className="m-0">Categoría <a href="#logros" className="no-underline" style={{ color: "#FFD700" }}>A+ ICFES 2025</a> · #1 Sabanalarga</p>
+        </div>
+
+        {/* Powered by Axentia Tech */}
+        <div className="flex justify-center mt-6">
+          <a
+            href="https://axentiatech.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 no-underline rounded-full px-4 py-2 transition-all"
+            style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "rgba(255,255,255,0.1)"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "rgba(255,255,255,0.05)"; }}
+          >
+            <img
+              src="/axentia_icon_solo_A.ico"
+              alt="Axentia Tech"
+              width={20}
+              height={20}
+              style={{ objectFit: "contain", display: "block" }}
+            />
+            <span style={{ color: "rgba(255,255,255,0.55)", fontSize: "0.72rem", fontWeight: 500, letterSpacing: "0.03em" }}>
+              Powered by <strong style={{ color: "#FFD700", fontWeight: 700 }}>Axentia Tech</strong>
+            </span>
+          </a>
         </div>
       </div>
     </footer>
