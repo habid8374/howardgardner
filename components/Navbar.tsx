@@ -164,8 +164,11 @@ export default function Navbar() {
     <nav
       className="fixed top-0 w-full z-50 transition-all duration-300"
       style={{
-        background: scrolled ? "rgba(13,13,90,0.98)" : "rgba(13,13,90,0.88)",
-        backdropFilter: "blur(14px)",
+        // Transparente sobre el hero; navy sólido al hacer scroll.
+        background: scrolled
+          ? "rgba(13,13,90,0.98)"
+          : "linear-gradient(180deg, rgba(8,8,40,0.45) 0%, rgba(8,8,40,0) 100%)",
+        backdropFilter: scrolled ? "blur(14px)" : "none",
         boxShadow: scrolled ? "0 2px 24px rgba(0,0,0,0.4)" : "none",
       }}
     >
