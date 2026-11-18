@@ -9,7 +9,7 @@ import type { Dict } from "@/lib/dictionaries";
 export default function AdmissionsBand({ lang, t }: { lang: Lang; t: Dict }) {
   const a = t.admissionsBand;
   return (
-    <section className="section bg-ink text-white">
+    <section className="doodle-bg section bg-ink text-white">
       <div className="wrap grid grid-cols-1 items-end gap-10 lg:grid-cols-[1.3fr_1fr]">
         <div>
           <p className="eyebrow text-gold">{a.eyebrow}</p>

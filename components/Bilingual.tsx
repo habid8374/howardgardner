@@ -7,7 +7,7 @@ import type { Dict } from "@/lib/dictionaries";
 export default function Bilingual({ t }: { t: Dict }) {
   const b = t.bilingual;
   return (
-    <section id="bilinguismo" className="section bg-ink text-white">
+    <section id="bilinguismo" className="doodle-bg section bg-ink text-white">
       <div className="wrap grid grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_1fr] lg:gap-20">
         <div className="order-2 lg:order-1">
           <div className="photo-frame relative mx-auto aspect-[4/5] w-full max-w-[460px] overflow-hidden rounded-[28px]">

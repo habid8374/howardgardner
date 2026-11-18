@@ -23,7 +23,7 @@ export default function About({ t }: { t: Dict }) {
           </dl>
         </div>
 
-        <figure className="relative flex aspect-[4/5] w-full flex-col items-center justify-center gap-8 overflow-hidden rounded-[28px] bg-ink p-10 text-center">
+        <figure className="relative flex aspect-[4/5] w-full flex-col items-center justify-center gap-8 doodle-bg doodle-full overflow-hidden rounded-[28px] bg-ink p-10 text-center">
           <div
             aria-hidden
             className="pointer-events-none absolute inset-x-0 top-0 h-2/3 opacity-20"

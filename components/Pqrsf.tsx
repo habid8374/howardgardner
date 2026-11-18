@@ -220,7 +220,7 @@ export default function Pqrsf({ lang, t }: Props) {
         </div>
       </section>
 
-      <section id="consultar" className="section bg-ink text-white">
+      <section id="consultar" className="doodle-bg section bg-ink text-white">
         <div className="wrap grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.35fr] lg:gap-20">
           <div>
             <p className="eyebrow text-gold">{p.lookupEyebrow}</p>

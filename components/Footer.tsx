@@ -9,7 +9,7 @@ import type { Dict } from "@/lib/dictionaries";
 export default function Footer({ lang, t }: { lang: Lang; t: Dict }) {
   const f = t.footer;
   return (
-    <footer className="bg-ink pb-10 pt-20 text-white">
+    <footer className="doodle-bg bg-ink pb-10 pt-20 text-white">
       <div className="wrap">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>

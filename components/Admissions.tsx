@@ -58,7 +58,7 @@ export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "adm
   const err = (id: string, msg?: string) => msg && <p id={id} className="mt-1.5 text-sm font-medium text-red-700">{msg}</p>;
 
   return (
-    <section id="proceso" className="section bg-ink text-white">
+    <section id="proceso" className="doodle-bg section bg-ink text-white">
       <div className="wrap grid grid-cols-1 gap-14 lg:grid-cols-[1fr_1fr] lg:gap-20">
         <div>
           <p className="eyebrow text-gold">{a.eyebrow}</p>
