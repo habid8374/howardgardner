@@ -34,6 +34,8 @@ export const en: Dict = {
     language: "Language",
     langNames: { es: "Español", en: "English" },
     backHome: "Back to home",
+    pqrsf: "Feedback",
+    pqrsfLong: "Requests, complaints & suggestions",
   },
 
   wa: {
@@ -390,6 +392,9 @@ export const en: Dict = {
     lookupCreated: "Submitted on",
     lookupDue: "Reply due by",
     lookupPriority: "Priority",
+    lookupAnswered: "Answered on",
+    lookupPdf: "Download response (PDF)",
+    pdfLoading: "Generating PDF…",
     priorities: { alta: "High", media: "Medium", baja: "Low" },
     lookupAnswer: "School's reply",
     statuses: { radicada: "Submitted", en_tramite: "In progress", respondida: "Answered", cerrada: "Closed" },

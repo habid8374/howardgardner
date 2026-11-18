@@ -33,6 +33,8 @@ export const es = {
     language: "Idioma",
     langNames: { es: "Español", en: "English" },
     backHome: "Volver al inicio",
+    pqrsf: "PQRSF",
+    pqrsfLong: "PQRSF: peticiones, quejas y sugerencias",
   },
 
   wa: {
@@ -389,6 +391,9 @@ export const es = {
     lookupCreated: "Radicada el",
     lookupDue: "Fecha límite de respuesta",
     lookupPriority: "Prioridad",
+    lookupAnswered: "Respondida el",
+    lookupPdf: "Descargar respuesta en PDF",
+    pdfLoading: "Generando PDF…",
     priorities: { alta: "Alta", media: "Media", baja: "Baja" },
     lookupAnswer: "Respuesta del colegio",
     statuses: { radicada: "Radicada", en_tramite: "En trámite", respondida: "Respondida", cerrada: "Cerrada" },

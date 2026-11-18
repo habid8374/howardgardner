@@ -45,6 +45,7 @@ export type Pqrsf = {
   priority: PqrsfPriority;
   status: PqrsfStatus;
   answer: string;
+  answeredAt?: string;   // fecha en que el colegio guardó la respuesta
   notes: Note[];
   sample?: boolean;
 };
@@ -184,6 +185,7 @@ function samplePqrsf(): Pqrsf[] {
     grade: ["2°", "5°", "Transición", "11°", "8°", "3°"][i],
     attachment: i === 2 ? "extracto.pdf" : "",
     answer: status === "respondida" || status === "cerrada" ? "Gracias por escribirnos. Damos respuesta a su solicitud. (ejemplo)" : "",
+    answeredAt: status === "respondida" || status === "cerrada" ? businessDaysAgo(Math.max(ago - 2, 0), 15) : undefined,
     notes: [],
     sample: true,
   }));

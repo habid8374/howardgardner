@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, Search, Send } from "lucide-react";
+import { CheckCircle2, FileDown, Search, Send } from "lucide-react";
+import { downloadPqrsfPdf } from "@/lib/pqrsf-pdf";
 import DemoNote from "./DemoNote";
 import { href, type Lang } from "@/lib/i18n";
 import type { Dict } from "@/lib/dictionaries";
@@ -31,6 +32,7 @@ export default function Pqrsf({ lang, t }: Props) {
 
   const [query, setQuery] = useState("");
   const [found, setFound] = useState<Row | null | undefined>(undefined);
+  const [pdfBusy, setPdfBusy] = useState(false);
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -241,7 +243,9 @@ export default function Pqrsf({ lang, t }: Props) {
                     [p.lookupStatus, p.statuses[found.status]],
                     [p.lookupPriority, p.priorities[found.priority]],
                     [p.lookupCreated, formatDate(found.createdAt, lang)],
-                    [p.lookupDue, formatDate(pqrsfDue(found).toISOString(), lang)],
+                    found.answer
+                      ? [p.lookupAnswered, formatDate(found.answeredAt ?? found.createdAt, lang)]
+                      : [p.lookupDue, formatDate(pqrsfDue(found).toISOString(), lang)],
                   ].map(([k, val], i) => (
                     <div key={k} className={`bg-ink p-5 ${i === 0 ? "sm:col-span-2" : ""}`}>
                       <dt className="text-xs font-bold uppercase tracking-[0.14em] text-white/55">{k}</dt>
@@ -252,6 +256,19 @@ export default function Pqrsf({ lang, t }: Props) {
                     <div className="bg-ink p-5 sm:col-span-2">
                       <dt className="text-xs font-bold uppercase tracking-[0.14em] text-white/55">{p.lookupAnswer}</dt>
                       <dd className="mt-1 text-white/85">{found.answer}</dd>
+                      <dd className="mt-5">
+                        <button
+                          type="button"
+                          disabled={pdfBusy}
+                          onClick={async () => {
+                            setPdfBusy(true);
+                            try { await downloadPqrsfPdf(found, lang); } finally { setPdfBusy(false); }
+                          }}
+                          className="btn btn-primary !min-h-11 !text-sm disabled:opacity-70"
+                        >
+                          <FileDown size={18} aria-hidden /> {pdfBusy ? p.pdfLoading : p.lookupPdf}
+                        </button>
+                      </dd>
                     </div>
                   )}
                 </dl>

@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { AlertTriangle, Download, Flag, Paperclip, Search } from "lucide-react";
+import { AlertTriangle, Download, FileDown, Flag, Paperclip, Search } from "lucide-react";
+import { downloadPqrsfPdf } from "@/lib/pqrsf-pdf";
 import {
   PQRSF_STATUSES, PQRSF_TYPES, PRIORITIES, PRIORITY_DAYS, byUrgency, downloadCsv, formatDate, pqrsfAlert, pqrsfDue, pqrsfStore,
   type Pqrsf, type PqrsfPriority, type PqrsfStatus, type PqrsfType,
@@ -21,6 +22,7 @@ export default function PqrsfPanel({ rows, a: d, lang }: { rows: Pqrsf[]; a: Adm
   const [status, setStatus] = useState<StatusFilter>("");
   const [openId, setOpenId] = useState<string | null>(null);
   const [answerDraft, setAnswerDraft] = useState<{ id: string; text: string } | null>(null);
+  const [pdfBusy, setPdfBusy] = useState(false);
 
   const withAlert = useMemo(() => rows.map((r) => ({ r, alert: pqrsfAlert(r, now) })), [rows, now]);
   const count = (level: string) => withAlert.filter((x) => x.alert.level === level).length;
@@ -266,7 +268,12 @@ export default function PqrsfPanel({ rows, a: d, lang }: { rows: Pqrsf[]; a: Adm
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                pqrsfStore.update(current.id, { answer: answer.trim(), status: answer.trim() ? "respondida" : current.status });
+                const text = answer.trim();
+                pqrsfStore.update(current.id, {
+                  answer: text,
+                  status: text ? "respondida" : current.status,
+                  answeredAt: text ? new Date().toISOString() : undefined,
+                });
                 setAnswerDraft(null);
               }}
             >
@@ -280,7 +287,22 @@ export default function PqrsfPanel({ rows, a: d, lang }: { rows: Pqrsf[]; a: Adm
                   className={`${input} mt-2 py-3`}
                 />
               </label>
-              <button type="submit" className="btn btn-primary mt-3 !min-h-11 !text-sm">{a.saveAnswer}</button>
+              <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                <button type="submit" className="btn btn-primary !min-h-11 !text-sm">{a.saveAnswer}</button>
+                {current.answer && (
+                  <button
+                    type="button"
+                    disabled={pdfBusy}
+                    onClick={async () => {
+                      setPdfBusy(true);
+                      try { await downloadPqrsfPdf(current, lang); } finally { setPdfBusy(false); }
+                    }}
+                    className="btn btn-ghost on-light !min-h-11 !text-sm text-ink disabled:opacity-70"
+                  >
+                    <FileDown size={16} aria-hidden /> {pdfBusy ? a.pdfLoading : a.pdf}
+                  </button>
+                )}
+              </div>
             </form>
           </div>
         )}

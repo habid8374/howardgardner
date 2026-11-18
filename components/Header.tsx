@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, Globe, Menu, Phone, X } from "lucide-react";
+import { ChevronDown, Globe, Menu, MessageSquareText, Phone, X } from "lucide-react";
 import { WhatsAppIcon } from "./BrandIcons";
 import { href, pageFromPath, type Lang } from "@/lib/i18n";
 import type { Dict, NavGroup } from "@/lib/dictionaries";
@@ -77,7 +77,7 @@ function DesktopGroup({
         <Link
           href={href(lang, group.page)}
           aria-current={active ? "page" : undefined}
-          className={`link inline-flex min-h-11 items-center whitespace-nowrap px-2.5 text-[0.93rem] 2xl:px-3 font-medium transition-colors hover:text-white ${active ? "text-white" : "text-white/80"}`}
+          className={`link inline-flex min-h-11 items-center whitespace-nowrap px-2 text-[0.93rem] 2xl:px-3 font-medium transition-colors hover:text-white ${active ? "text-white" : "text-white/80"}`}
         >
           {group.label}
         </Link>
@@ -96,7 +96,7 @@ function DesktopGroup({
         aria-expanded={open}
         aria-controls={id}
         onClick={onToggle}
-        className={`inline-flex min-h-11 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 text-[0.93rem] 2xl:px-3 font-medium transition-colors hover:text-white ${
+        className={`inline-flex min-h-11 items-center gap-1.5 whitespace-nowrap rounded-full px-2 text-[0.93rem] 2xl:px-3 font-medium transition-colors hover:text-white ${
           open || active ? "text-white" : "text-white/80"
         }`}
       >
@@ -304,6 +304,15 @@ export default function Header({ lang, t }: Props) {
         </nav>
 
         <div className="ml-auto flex flex-none items-center gap-2.5 xl:ml-0">
+          <Link
+            href={href(lang, "pqrsf")}
+            aria-current={currentPage === "pqrsf" ? "page" : undefined}
+            className={`hidden h-11 items-center gap-1.5 rounded-full border px-3.5 text-xs font-bold uppercase tracking-wider transition-colors md:inline-flex ${
+              currentPage === "pqrsf" ? "border-gold bg-gold text-ink" : "border-gold/60 text-gold hover:bg-gold hover:text-ink"
+            }`}
+          >
+            <MessageSquareText size={15} aria-hidden /> {t.common.pqrsf}
+          </Link>
           <div className="hidden md:block">
             <LangSwitch lang={lang} t={t} variant="bar" />
           </div>
@@ -344,6 +353,9 @@ export default function Header({ lang, t }: Props) {
           </nav>
 
           <div className="mt-auto flex flex-col gap-3 pt-4">
+            <Link href={href(lang, "pqrsf")} onClick={closeAll} className="btn w-full !whitespace-normal border-[1.5px] border-gold py-2 text-center leading-snug text-gold">
+              <MessageSquareText size={18} aria-hidden /> {t.common.pqrsfLong}
+            </Link>
             <a href={waAdmissions} target="_blank" rel="noopener noreferrer" className="btn btn-primary w-full">
               <WhatsAppIcon size={18} /> {t.common.enroll}
             </a>
