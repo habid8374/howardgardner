@@ -38,10 +38,24 @@ Funciona en Vercel sin base de datos: los envíos se guardan **solo en el navega
 
 Para pasar a producción hace falta:
 - [ ] Dominio propio (para correos automáticos de confirmación).
-- [ ] Base de datos y archivos con acceso protegido (p. ej. Supabase), usuarios por persona y roles.
-- [ ] Nombres y correos del personal que usará el panel.
+- [ ] Nombres y correos del personal que usará el panel, y su rol (administrador / consulta).
 - [ ] Documentos requeridos por grado, edades de ingreso y responsable de responder PQRSF.
 - [ ] Validar con el abogado los plazos y criterios de prioridad de PQRSF. Hoy: Alta 5, Media 10, Baja 15 días hábiles; quejas y reclamos entran en Alta, peticiones en Media, sugerencias y felicitaciones en Baja; si el acudiente marca "urgente", entra en Alta.
+- [ ] Actualizar la Política de Tratamiento de Datos con las nuevas finalidades (admisiones y PQRSF) y la transferencia internacional de datos a los proveedores de la nube.
+
+## Plataforma para producción (decidido)
+**Se descarta Supabase gratis:** pausa el proyecto tras una semana sin actividad y el formulario dejaría de funcionar en vacaciones o semanas sin PQRSF. Supabase Pro (25 USD/mes) no pausa, pero no es necesario.
+
+**Se usa, todo administrado desde Vercel:**
+- **Base de datos: Neon (Postgres)** desde el Marketplace de Vercel. No pausa el proyecto: la base “duerme” tras 5 min sin uso y despierta sola en la siguiente visita. Plan gratis: 1 GB por proyecto (sobra para el volumen de un colegio). Postgres estándar, se puede mudar sin reescribir.
+- **Archivos: Vercel Blob privado** para adjuntos de PQRSF y documentos de admisión (enlaces temporales, nunca públicos).
+- **Correos: Resend** (gratis hasta 3.000 correos/mes): confirmación al acudiente y aviso al colegio.
+- **Acceso al panel:** usuario y contraseña por persona, roles y registro de actividad.
+- **Copia de seguridad semanal** automática a un archivo privado.
+- **Vercel Pro (20 USD/mes por usuario):** obligatorio para un sitio de cliente (Hobby es solo para uso personal no comercial). Incluir en el mantenimiento mensual.
+- Las cuentas (Vercel, Neon, Resend, dominio) deben quedar **a nombre del colegio**, con Axentia como administrador.
+
+Cambio en el código: solo `lib/demo-store.ts` pasa de guardar en el navegador a llamar al servidor; formularios, panel, alertas y PDF se mantienen.
 
 ## Legal
 - [ ] Validar la **Política de Tratamiento de Datos** con el área jurídica del colegio y añadir la fecha de vigencia. `app/politica-de-datos/page.tsx`
