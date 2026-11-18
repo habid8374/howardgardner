@@ -29,10 +29,15 @@ export function clean(value: string, max: number) {
   return value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "").trim().slice(0, max);
 }
 
+/* Sedes del colegio. Los nombres y datos de cada sede están en lib/site.ts y en los diccionarios. */
+export type CampusId = "principal" | "sede2";
+export const CAMPUS_IDS: CampusId[] = ["principal", "sede2"];
+
 export type Admission = {
   id: string;            // HG-2027-0001
   createdAt: string;     // ISO
   lang: "es" | "en";
+  campus: CampusId;
   guardian: string;
   phone: string;
   grade: string;
@@ -47,6 +52,7 @@ export type Pqrsf = {
   id: string;            // PQRSF-2026-0001
   createdAt: string;
   lang: "es" | "en";
+  campus: CampusId;
   type: PqrsfType;
   name: string;
   email: string;
@@ -161,6 +167,7 @@ export function sampleAdmissions(): Admission[] {
     id: `HG-2027-${String(i + 1).padStart(4, "0")}`,
     createdAt: daysAgo(ago, 8 + i),
     lang: "es",
+    campus: (i === 1 || i === 4 ? "sede2" : "principal") as CampusId,
     guardian, phone, grade, message, status,
     notes: status === "nueva" ? [] : [{ at: daysAgo(Math.max(ago - 1, 0), 15), text: "Se llamó a la familia. (ejemplo)" }],
     sample: true,
@@ -192,6 +199,7 @@ export function samplePqrsf(): Pqrsf[] {
     id: `PQRSF-2026-${String(i + 1).padStart(4, "0")}`,
     createdAt: businessDaysAgo(ago, 9 + i),
     lang: "es",
+    campus: (i === 3 ? "sede2" : "principal") as CampusId,
     type, priority, subject, description, status, urgent,
     name: `Acudiente de ejemplo ${i + 1}`,
     email: `acudiente${i + 1}@ejemplo.com`,
@@ -232,11 +240,11 @@ async function api<T>(url: string, init: RequestInit = {}): Promise<T> {
 /* Avisa al panel que vuelva a cargar los datos */
 const notify = () => window.dispatchEvent(new Event("hg-demo-change"));
 
-export type AdmissionInput = Pick<Admission, "lang" | "guardian" | "phone" | "grade" | "message"> & { website?: string };
+export type AdmissionInput = Pick<Admission, "lang" | "campus" | "guardian" | "phone" | "grade" | "message"> & { website?: string };
 export type AdmissionPatch = { status?: AdmissionStatus; note?: string };
 export type PqrsfPatch = { status?: PqrsfStatus; priority?: PqrsfPriority; answer?: string; note?: string };
 /** Lo que ve el acudiente al consultar su radicado (sin datos de otras personas) */
-export type PqrsfPublic = Pick<Pqrsf, "id" | "createdAt" | "lang" | "type" | "name" | "subject" | "description" | "priority" | "status" | "answer" | "answeredAt" | "student" | "grade" | "email" | "phone" | "attachment" | "urgent" | "notes">;
+export type PqrsfPublic = Pick<Pqrsf, "id" | "createdAt" | "lang" | "campus" | "type" | "name" | "subject" | "description" | "priority" | "status" | "answer" | "answeredAt" | "student" | "grade" | "email" | "phone" | "attachment" | "urgent" | "notes">;
 
 export const admissionsStore = {
   add: (input: AdmissionInput) => api<Admission>("/api/admisiones", { method: "POST", body: JSON.stringify(input) }),
@@ -259,7 +267,8 @@ export const pqrsfStore = {
 };
 
 /* ── Sesión del panel: cookie segura emitida por el servidor ── */
-export type StaffUser = { username: string; name: string; role: "admin" | "consulta" };
+/** campus: null = ve todas las sedes; si tiene sede, solo ve y gestiona la suya. */
+export type StaffUser = { username: string; name: string; role: "admin" | "consulta"; campus: CampusId | null };
 export const session = {
   me: () => api<{ user: StaffUser | null; demo: boolean }>("/api/admin/sesion"),
   login: (username: string, password: string) =>

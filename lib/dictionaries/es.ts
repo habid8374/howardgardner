@@ -86,7 +86,7 @@ export const es = {
       label: "Contacto",
       page: "contact",
       items: [
-        { label: "Visítanos", page: "contact", hash: "visitanos" },
+        { label: "Nuestras sedes", page: "contact", hash: "visitanos" },
         { label: "PQRSF", page: "pqrsf", hash: "radicar" },
         { label: "Consultar mi radicado", page: "pqrsf", hash: "consultar" },
       ],
@@ -340,7 +340,7 @@ export const es = {
 
   visit: {
     eyebrow: "Visítanos",
-    title: "Te esperamos en la Calle 12, Sabanalarga.",
+    title: "Nuestras sedes.",
     address: "Dirección",
     phone: "Teléfono",
     whatsapp: "WhatsApp",
@@ -350,6 +350,22 @@ export const es = {
     mapTitle: "Mapa: ubicación del colegio Howard Gardner en Sabanalarga",
     instagram: "Instagram del colegio",
     facebook: "Facebook del colegio",
+  },
+
+  campuses: {
+    label: "Sede",
+    labelInterest: "Sede de interés",
+    placeholder: "Elige una sede",
+    error: "Elige la sede.",
+    soonTag: "Próximamente",
+    names: { principal: "Sede principal · Sabanalarga", sede2: "Nueva sede" },
+    short: { principal: "Sede principal", sede2: "Nueva sede" },
+    soonTitle: "Nueva sede: muy pronto.",
+    soonBody: "Estamos preparando la apertura de una nueva sede de Howard Gardner. Preinscríbete desde ya y te avisamos primero cuando abramos inscripciones.",
+    soonAddress: "Dirección por confirmar",
+    soonCta: "Preinscribirme para la nueva sede",
+    soonWa: "Hola, quiero información sobre la nueva sede de Howard Gardner Bilingual School.",
+    soonWaCta: "Pedir información",
   },
 
   pageHeaders: {

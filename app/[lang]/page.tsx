@@ -27,7 +27,7 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
       <Pedagogy t={{ pedagogy: t.pedagogy, viewer: t.viewer }} />
       <Gallery lang={lang} t={{ gallery: t.gallery, viewer: t.viewer }} limit={4} />
       <AdmissionsBand lang={lang} t={t} />
-      <Visit t={t} />
+      <Visit t={t} lang={lang} />
     </>
   );
 }

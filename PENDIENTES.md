@@ -10,6 +10,14 @@ En el código están marcados con `TODO(CLIENTE)`.
 - [ ] Confirmar el horario de atención (lunes a viernes, 7:00 a. m. – 5:00 p. m.).
 - [ ] Canal de YouTube (si existe). Se quitó el enlace vacío del sitio anterior.
 
+## Nueva sede (en preparación)
+La demo ya maneja dos sedes: los formularios piden la sede, el panel filtra por sede, el Excel la incluye y hay usuarios que solo ven su sede (demo: `nuevasede` / `colegio2027`). Hoy la nueva sede aparece como **"Próximamente"**. Datos solicitados al colegio (`lib/site.ts` → `CAMPUSES`, y `campuses` en los diccionarios):
+- [ ] Nombre oficial de la sede y municipio o barrio.
+- [ ] Dirección, teléfono o WhatsApp propio (si lo tiene) y horario.
+- [ ] Grados que ofrecerá y fecha de apertura.
+- [ ] Responsable de preinscripciones y PQRSF de la sede (para su usuario del panel y `SCHOOL_NOTIFY_EMAIL_SEDE2`).
+- [ ] Fotos de la sede y perfil de Google (Maps) propio.
+
 ## Contenido académico
 - [ ] Grados ofrecidos y edades de ingreso por nivel. `components/Levels.tsx`
 - [x] Oxford Quality (Oxford University Press): confirmado por pieza oficial, ya está en el sitio.

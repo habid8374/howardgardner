@@ -37,10 +37,10 @@ export async function verifyPassword(pw: string, stored: string) {
 const DUMMY = "scrypt$AAAAAAAAAAAAAAAAAAAAAA==$" + Buffer.alloc(64).toString("base64");
 
 export async function checkLogin(username: string, password: string): Promise<StaffUser | null> {
-  const rows = (await sql`SELECT username, name, role, pass_hash FROM staff WHERE username = ${username}`) as (StaffUser & { pass_hash: string })[];
+  const rows = (await sql`SELECT username, name, role, campus, pass_hash FROM staff WHERE username = ${username}`) as (StaffUser & { pass_hash: string })[];
   const row = rows[0];
   const ok = await verifyPassword(password, row?.pass_hash ?? DUMMY);
-  return ok && row ? { username: row.username, name: row.name, role: row.role } : null;
+  return ok && row ? { username: row.username, name: row.name, role: row.role, campus: row.campus ?? null } : null;
 }
 
 const sign = (payload: string) => createHmac("sha256", secret()).update(payload).digest("base64url");
@@ -70,6 +70,6 @@ export async function currentUser(): Promise<StaffUser | null> {
   let data: { u?: string; exp?: number };
   try { data = JSON.parse(Buffer.from(payload, "base64url").toString()); } catch { return null; }
   if (!data.u || !data.exp || data.exp < Date.now() / 1000) return null;
-  const rows = (await sql`SELECT username, name, role FROM staff WHERE username = ${data.u}`) as StaffUser[];
-  return rows[0] ?? null;
+  const rows = (await sql`SELECT username, name, role, campus FROM staff WHERE username = ${data.u}`) as StaffUser[];
+  return rows[0] ? { ...rows[0], campus: rows[0].campus ?? null } : null;
 }

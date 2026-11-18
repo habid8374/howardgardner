@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     if (!rows[0]) return json({ error: "notfound" }, 404);
     const p = toPqrsf(rows[0] as Parameters<typeof toPqrsf>[0]);
     const pub: PqrsfPublic = {
-      id: p.id, createdAt: p.createdAt, lang: p.lang, type: p.type, name: p.name, subject: p.subject, description: p.description,
+      id: p.id, createdAt: p.createdAt, lang: p.lang, campus: p.campus, type: p.type, name: p.name, subject: p.subject, description: p.description,
       priority: p.priority, status: p.status, answer: p.answer, answeredAt: p.answeredAt, student: p.student, grade: p.grade,
       email: p.email, phone: p.phone, attachment: p.attachment, urgent: p.urgent, notes: [], // las notas internas no salen
     };

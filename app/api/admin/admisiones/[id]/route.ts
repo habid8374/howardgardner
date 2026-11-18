@@ -1,5 +1,5 @@
 import { admissionPatch } from "@/lib/server/validate";
-import { audit, getAdmissionRow, sql, toAdmission } from "@/lib/server/db";
+import { audit, canAccess, getAdmissionRow, sql, toAdmission } from "@/lib/server/db";
 import { clientIp, fail, json, requireStaff } from "@/lib/server/http";
 import type { HistoryEntry, Note } from "@/lib/records";
 
@@ -12,7 +12,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     const parsed = admissionPatch.safeParse(await req.json().catch(() => null));
     if (!parsed.success) return json({ error: "invalid" }, 400);
     const row = await getAdmissionRow(id);
-    if (!row) return json({ error: "notfound" }, 404);
+    if (!row || !canAccess(user, row.campus)) return json({ error: "notfound" }, 404);
 
     const at = new Date().toISOString();
     const { status, note } = parsed.data;

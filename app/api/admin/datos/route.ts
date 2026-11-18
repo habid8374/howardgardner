@@ -7,7 +7,7 @@ export async function GET(req: Request) {
   const user = await requireStaff(req);
   if (user instanceof Response) return user;
   try {
-    const [admissions, pqrsf] = await Promise.all([listAdmissions(), listPqrsf()]);
+    const [admissions, pqrsf] = await Promise.all([listAdmissions(user), listPqrsf(user)]);
     return json({ admissions, pqrsf });
   } catch (err) {
     return fail(err, "datos");

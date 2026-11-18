@@ -17,7 +17,7 @@ const toPhone = (p: string) => {
   return digits.startsWith("57") ? digits : `57${digits}`;
 };
 
-export default function AdmissionsPanel({ rows, a: d, lang, userName }: { rows: Admission[]; a: AdminDict; lang: Lang; userName: string }) {
+export default function AdmissionsPanel({ rows, a: d, lang, userName, campusLabel }: { rows: Admission[]; a: AdminDict; lang: Lang; userName: string; campusLabel: string | null }) {
   const a = d.admissions;
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<"" | AdmissionStatus>("");
@@ -40,21 +40,21 @@ export default function AdmissionsPanel({ rows, a: d, lang, userName }: { rows: 
 
   function exportCsv() {
     const now = new Date();
-    const widths = [17, 21, 28, 16, 12, 17, 11, 42, 42];
+    const widths = [17, 21, 18, 28, 16, 12, 17, 11, 42, 42];
     return downloadXlsx({
       filename: `${a.csvName}-${now.toISOString().slice(0, 10)}.xlsx`,
       sheet: a.sheet,
-      title: a.reportTitle,
+      title: campusLabel ? `${a.reportTitle} · ${campusLabel}` : a.reportTitle,
       meta: `${d.xlsx.meta(formatDate(now.toISOString(), lang, true), userName, filtered.length)}${filtered.length !== rows.length ? ` (${d.xlsx.filtered})` : ""}`,
       summary: d.xlsx.summaryAdmissions(filtered.length, filtered.filter((r) => r.status === "nueva").length, filtered.filter((r) => r.status === "matriculado").length),
-      columns: a.csv.map((header, i) => ({ header, width: widths[i], wrap: i >= 7, date: i === 1 ? "datetime" : undefined, center: i === 4 || i === 6 })),
+      columns: a.csv.map((header, i) => ({ header, width: widths[i], wrap: i >= 8, date: i === 1 ? "datetime" : undefined, center: i === 5 || i === 7 })),
       rows: filtered.map((r) => [
-        r.id, new Date(r.createdAt), r.guardian, r.phone, r.grade, a.statuses[r.status],
+        r.id, new Date(r.createdAt), d.campusNames[r.campus], r.guardian, r.phone, r.grade, a.statuses[r.status],
         d.langNames[r.lang], r.message, r.notes.map((n) => `${formatDate(n.at, lang)}: ${n.text}${n.by ? ` (${n.by})` : ""}`).join("\n"),
       ]),
       tone: (ri, ci) => {
         if (ci === 0) return "strong";
-        if (ci !== 5) return undefined;
+        if (ci !== 6) return undefined;
         const s = filtered[ri].status;
         return s === "nueva" ? "soft" : s === "admitido" || s === "matriculado" ? "ok" : s === "no_admitido" ? "danger" : undefined;
       },
@@ -117,7 +117,7 @@ export default function AdmissionsPanel({ rows, a: d, lang, userName }: { rows: 
           <tbody>
             {filtered.map((r) => (
               <tr key={r.id} className="border-t border-line transition-colors hover:bg-paper">
-                <td className="whitespace-nowrap px-4 py-3 font-mono text-xs">{r.id}</td>
+                <td className="whitespace-nowrap px-4 py-3 font-mono text-xs">{r.id}<span className="mt-0.5 block font-sans text-[11px] text-muted">{d.campusNames[r.campus]}</span></td>
                 <td className="whitespace-nowrap px-4 py-3 text-muted">{formatDate(r.createdAt, lang)}</td>
                 <td className="px-4 py-3 font-semibold">{r.guardian}{r.sample && <SampleTag label={d.sample} />}</td>
                 <td className="whitespace-nowrap px-4 py-3">{r.phone}</td>
@@ -142,7 +142,7 @@ export default function AdmissionsPanel({ rows, a: d, lang, userName }: { rows: 
                 <Badge status={r.status} label={a.statuses[r.status]} />
               </div>
               <p className="mt-1 text-sm text-muted">{r.grade} · {r.phone}</p>
-              <p className="mt-1 font-mono text-xs text-muted">{r.id} · {formatDate(r.createdAt, lang)}</p>
+              <p className="mt-1 font-mono text-xs text-muted">{r.id} · {formatDate(r.createdAt, lang)} · {d.campusNames[r.campus]}</p>
             </button>
           </li>
         ))}
@@ -154,6 +154,7 @@ export default function AdmissionsPanel({ rows, a: d, lang, userName }: { rows: 
           <div className="flex flex-col gap-8">
             <InfoGrid
               items={[
+                [d.campus, d.campusNames[current.campus]],
                 [a.detail.guardian, current.guardian],
                 [a.detail.phone, current.phone],
                 [a.detail.grade, current.grade],

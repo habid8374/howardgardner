@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink, FlaskConical, Globe, LogOut, RotateCcw } from "lucide-react";
 import {
-  ApiError, adminLang, fetchAll, pqrsfAlert, resetDemo, session, subscribeDemo, type Admission, type Pqrsf, type StaffUser,
+  ApiError, CAMPUS_IDS, adminLang, fetchAll, pqrsfAlert, resetDemo, session, subscribeDemo, type Admission, type CampusId, type Pqrsf, type StaffUser,
 } from "@/lib/records";
 import { adminDict, type AdminDict } from "@/lib/dictionaries/admin";
 import AdmissionsPanel from "./AdmissionsPanel";
@@ -115,6 +115,7 @@ export default function AdminApp() {
   const [auth, setAuth] = useState<{ user: StaffUser | null; demo: boolean } | null>(null);
   const [data, setData] = useState<Data | null>(null);
   const [tab, setTab] = useState<"admisiones" | "pqrsf">("admisiones");
+  const [campusPick, setCampusPick] = useState<CampusId | "">("");
   const a = adminDict[lang];
   const user = auth?.user ?? null;
 
@@ -157,9 +158,16 @@ export default function AdminApp() {
   if (!user) return <Login a={a} lang={lang} demo={auth.demo} onLogin={(u) => setAuth({ ...auth, user: u })} />;
   if (!data) return <main className="flex min-h-svh items-center justify-center bg-paper text-muted">{a.loading}</main>;
 
-  const newAdmissions = data.admissions.filter((r) => r.status === "nueva").length;
+  // Sede: un usuario de sede solo ve la suya (el servidor ya filtra); quien ve todas puede elegir
+  const campus: CampusId | "" = user.campus ?? campusPick;
+  const view = campus
+    ? { admissions: data.admissions.filter((r) => r.campus === campus), pqrsf: data.pqrsf.filter((r) => r.campus === campus) }
+    : data;
+  const campusLabel = campus ? a.campusNames[campus] : null;
+
+  const newAdmissions = view.admissions.filter((r) => r.status === "nueva").length;
   const now = new Date();
-  const alerts = data.pqrsf.map((p) => pqrsfAlert(p, now).level);
+  const alerts = view.pqrsf.map((p) => pqrsfAlert(p, now).level);
   const pqrsfUrgent = alerts.filter((l) => l === "vencida" || l === "hoy").length;
   const pqrsfOpen = alerts.filter((l) => l !== "cerrada").length;
 
@@ -207,6 +215,23 @@ export default function AdminApp() {
               )}
             </button>
           ))}
+          <div className="ml-auto flex flex-none items-center gap-2 py-2 pl-4">
+            {user.campus ? (
+              <span className="rounded-full border border-gold/50 px-3 py-1.5 text-xs font-bold text-gold">{a.campusOnly}: {a.campusNames[user.campus]}</span>
+            ) : (
+              <label className="flex items-center gap-2 text-xs font-semibold text-white/70">
+                <span className="hidden sm:inline">{a.campus}</span>
+                <select
+                  value={campusPick}
+                  onChange={(e) => setCampusPick(e.target.value as CampusId | "")}
+                  className="min-h-9 rounded-full border border-white/25 bg-ink px-3 text-sm font-semibold text-white outline-none focus:border-gold"
+                >
+                  <option value="">{a.campusAll}</option>
+                  {CAMPUS_IDS.map((id) => <option key={id} value={id}>{a.campusNames[id]}</option>)}
+                </select>
+              </label>
+            )}
+          </div>
         </nav>
       </header>
 
@@ -219,8 +244,8 @@ export default function AdminApp() {
         )}
 
         {tab === "admisiones"
-          ? <AdmissionsPanel rows={data.admissions} a={a} lang={lang} userName={user.name} />
-          : <PqrsfPanel rows={data.pqrsf} a={a} lang={lang} userName={user.name} />}
+          ? <AdmissionsPanel key={`a-${campus}`} rows={view.admissions} a={a} lang={lang} userName={user.name} campusLabel={campusLabel} />
+          : <PqrsfPanel key={`p-${campus}`} rows={view.pqrsf} a={a} lang={lang} userName={user.name} campusLabel={campusLabel} />}
 
         <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-line pt-6 text-sm text-muted sm:flex-row sm:items-center">
           <p>{auth.demo ? a.demoFooter : ""} {user.name}</p>

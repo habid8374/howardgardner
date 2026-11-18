@@ -1,5 +1,5 @@
 import { get } from "@vercel/blob";
-import { audit, getPqrsfRow } from "@/lib/server/db";
+import { audit, canAccess, getPqrsfRow } from "@/lib/server/db";
 import { clientIp, fail, json, requireStaff } from "@/lib/server/http";
 
 /* Descargar el adjunto de una PQRSF. El archivo está en almacenamiento privado:
@@ -10,7 +10,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   try {
     const { id } = await params;
     const row = await getPqrsfRow(id);
-    if (!row?.attachment_path) return json({ error: "notfound" }, 404);
+    if (!row?.attachment_path || !canAccess(user, row.campus)) return json({ error: "notfound" }, 404);
     const file = await get(row.attachment_path, { access: "private" });
     if (!file || file.statusCode !== 200 || !file.stream) return json({ error: "notfound" }, 404);
     await audit(user.username, "pqrsf_adjunto", id, clientIp(req));

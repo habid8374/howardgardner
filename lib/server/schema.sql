@@ -66,3 +66,10 @@ CREATE TABLE IF NOT EXISTS audit_log (
   target   text NOT NULL DEFAULT '',
   ip       text NOT NULL DEFAULT ''
 );
+
+-- Varias sedes (nov 2026): cada registro y cada usuario del panel pueden pertenecer a una sede
+ALTER TABLE admissions ADD COLUMN IF NOT EXISTS campus text NOT NULL DEFAULT 'principal';
+ALTER TABLE pqrsf ADD COLUMN IF NOT EXISTS campus text NOT NULL DEFAULT 'principal';
+ALTER TABLE staff ADD COLUMN IF NOT EXISTS campus text;  -- NULL = todas las sedes
+CREATE INDEX IF NOT EXISTS admissions_campus_idx ON admissions (campus, created_at DESC);
+CREATE INDEX IF NOT EXISTS pqrsf_campus_idx ON pqrsf (campus, created_at DESC)

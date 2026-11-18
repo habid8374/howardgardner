@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     if (!form) return json({ error: "invalid" }, 400);
     const v = (k: string) => String(form.get(k) ?? "");
     const parsed = pqrsfInput.safeParse({
-      lang: v("lang"), type: v("tipo"), name: v("nombre"), email: v("correo"), phone: v("telefono"),
+      lang: v("lang"), campus: v("sede"), type: v("tipo"), name: v("nombre"), email: v("correo"), phone: v("telefono"),
       student: v("estudiante"), grade: v("grado"), subject: v("asunto"), description: v("descripcion"),
       urgent: v("urgente") === "on", consent: v("acepta") === "on", website: v("website"),
     });
@@ -55,9 +55,9 @@ export async function POST(req: Request) {
     const priority: PqrsfPriority = d.urgent ? "alta" : DEFAULT_PRIORITY[type];
     const year = new Date().getFullYear();
     const rows = await sql`
-      INSERT INTO pqrsf (id, lang, type, name, email, phone, student, grade, subject, description, attachment, attachment_path, urgent, priority)
+      INSERT INTO pqrsf (id, lang, campus, type, name, email, phone, student, grade, subject, description, attachment, attachment_path, urgent, priority)
       VALUES ('PQRSF-' || ${String(year)} || '-' || lpad(nextval('pqrsf_seq')::text, 4, '0'),
-        ${d.lang}, ${type}, ${d.name}, ${d.email}, ${d.phone}, ${d.student}, ${d.grade}, ${d.subject}, ${d.description},
+        ${d.lang}, ${d.campus}, ${type}, ${d.name}, ${d.email}, ${d.phone}, ${d.student}, ${d.grade}, ${d.subject}, ${d.description},
         ${attachment}, ${attachmentPath}, ${d.urgent}, ${priority})
       RETURNING *`;
     const row = toPqrsf(rows[0] as Parameters<typeof toPqrsf>[0]);

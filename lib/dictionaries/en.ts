@@ -87,7 +87,7 @@ export const en: Dict = {
       label: "Contact",
       page: "contact",
       items: [
-        { label: "Visit us", page: "contact", hash: "visitanos" },
+        { label: "Our campuses", page: "contact", hash: "visitanos" },
         { label: "Requests & complaints (PQRSF)", page: "pqrsf", hash: "radicar" },
         { label: "Check my request", page: "pqrsf", hash: "consultar" },
       ],
@@ -341,7 +341,7 @@ export const en: Dict = {
 
   visit: {
     eyebrow: "Visit us",
-    title: "Find us on Calle 12, Sabanalarga.",
+    title: "Our campuses.",
     address: "Address",
     phone: "Phone",
     whatsapp: "WhatsApp",
@@ -351,6 +351,22 @@ export const en: Dict = {
     mapTitle: "Map: location of Howard Gardner school in Sabanalarga",
     instagram: "School Instagram",
     facebook: "School Facebook",
+  },
+
+  campuses: {
+    label: "Campus",
+    labelInterest: "Campus of interest",
+    placeholder: "Choose a campus",
+    error: "Choose the campus.",
+    soonTag: "Coming soon",
+    names: { principal: "Main campus · Sabanalarga", sede2: "New campus" },
+    short: { principal: "Main campus", sede2: "New campus" },
+    soonTitle: "New campus: coming soon.",
+    soonBody: "We are getting ready to open a new Howard Gardner campus. Pre-register now and you will be the first to know when enrollment opens.",
+    soonAddress: "Address to be confirmed",
+    soonCta: "Pre-register for the new campus",
+    soonWa: "Hello, I would like information about the new Howard Gardner Bilingual School campus.",
+    soonWaCta: "Ask for information",
   },
 
   pageHeaders: {

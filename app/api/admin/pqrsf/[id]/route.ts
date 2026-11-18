@@ -1,5 +1,5 @@
 import { pqrsfPatch } from "@/lib/server/validate";
-import { audit, getPqrsfRow, sql, toPqrsf } from "@/lib/server/db";
+import { audit, canAccess, getPqrsfRow, sql, toPqrsf } from "@/lib/server/db";
 import { clientIp, fail, json, requireStaff } from "@/lib/server/http";
 import { mailAnswer } from "@/lib/server/mail";
 import type { HistoryEntry, Note } from "@/lib/records";
@@ -14,7 +14,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     const parsed = pqrsfPatch.safeParse(await req.json().catch(() => null));
     if (!parsed.success) return json({ error: "invalid" }, 400);
     const row = await getPqrsfRow(id);
-    if (!row) return json({ error: "notfound" }, 404);
+    if (!row || !canAccess(user, row.campus)) return json({ error: "notfound" }, 404);
 
     const at = new Date().toISOString();
     const d = parsed.data;

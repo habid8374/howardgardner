@@ -68,7 +68,7 @@ export default async function SubPage({ params }: PageProps<"/[lang]/[page]">) {
       return (
         <>
           <PageHeader {...t.pageHeaders.admissions} />
-          <Admissions lang={lang} t={{ admissions: t.admissions, demo: t.demo }} />
+          <Admissions lang={lang} t={{ admissions: t.admissions, demo: t.demo, campuses: t.campuses }} />
           <Faq t={t} />
         </>
       );
@@ -76,14 +76,14 @@ export default async function SubPage({ params }: PageProps<"/[lang]/[page]">) {
       return (
         <>
           <PageHeader {...t.pageHeaders.contact} />
-          <Visit t={t} />
+          <Visit t={t} lang={lang} />
         </>
       );
     case "pqrsf":
       return (
         <>
           <PageHeader {...t.pageHeaders.pqrsf} />
-          <Pqrsf lang={lang} t={{ pqrsf: t.pqrsf, demo: t.demo, grades: t.admissions.form.grades }} />
+          <Pqrsf lang={lang} t={{ pqrsf: t.pqrsf, demo: t.demo, grades: t.admissions.form.grades, campuses: t.campuses }} />
         </>
       );
     case "cookies":

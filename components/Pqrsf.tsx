@@ -7,12 +7,13 @@ import { downloadPqrsfPdf } from "@/lib/pqrsf-pdf";
 import DemoNote from "./DemoNote";
 import { href, type Lang } from "@/lib/i18n";
 import type { Dict } from "@/lib/dictionaries";
-import { ALLOWED_FILE_TYPES, ApiError, LIMITS, MAX_FILE_MB, PQRSF_DAYS, formatDate, pqrsfDue, pqrsfStore, type Pqrsf as Row, type PqrsfPublic, type PqrsfType } from "@/lib/records";
+import { CAMPUSES } from "@/lib/site";
+import { ALLOWED_FILE_TYPES, ApiError, CAMPUS_IDS, LIMITS, MAX_FILE_MB, PQRSF_DAYS, formatDate, pqrsfDue, pqrsfStore, type Pqrsf as Row, type PqrsfPublic, type PqrsfType } from "@/lib/records";
 
 /* PQRSF: se envía al servidor (/api/pqrsf), se guarda en la base de datos y aparece en el panel del colegio (/admin). */
 
-type Props = { lang: Lang; t: { pqrsf: Dict["pqrsf"]; demo: Dict["demo"]; grades: string[] } };
-type Errors = Partial<Record<"type" | "name" | "email" | "subject" | "description" | "consent" | "file", string>>;
+type Props = { lang: Lang; t: { pqrsf: Dict["pqrsf"]; demo: Dict["demo"]; grades: string[]; campuses: Dict["campuses"] } };
+type Errors = Partial<Record<"type" | "campus" | "name" | "email" | "subject" | "description" | "consent" | "file", string>>;
 
 const TYPES: PqrsfType[] = ["peticion", "queja", "reclamo", "sugerencia", "felicitacion"];
 const days = (s: string) => s.replace("{DAYS}", String(PQRSF_DAYS));
@@ -59,6 +60,7 @@ export default function Pqrsf({ lang, t }: Props) {
 
     const next: Errors = {};
     if (!type) next.type = p.errors.type;
+    if (!(CAMPUS_IDS as string[]).includes(v("sede"))) next.campus = t.campuses.error;
     if (input.name.length < 3) next.name = p.errors.name;
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.email)) next.email = p.errors.email;
     if (input.subject.length < 3) next.subject = p.errors.subject;
@@ -164,6 +166,16 @@ export default function Pqrsf({ lang, t }: Props) {
               </fieldset>
 
               <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <div className="sm:col-span-2">
+                  <label htmlFor="p-sede" className="text-sm font-semibold">{t.campuses.label}</label>
+                  <select id="p-sede" name="sede" defaultValue="" className={field} {...aria("campus")}>
+                    <option value="" disabled>{t.campuses.placeholder}</option>
+                    {CAMPUSES.map((s) => (
+                      <option key={s.id} value={s.id}>{t.campuses.names[s.id]}{s.status === "soon" ? ` (${t.campuses.soonTag.toLowerCase()})` : ""}</option>
+                    ))}
+                  </select>
+                  <Err id="e-campus" msg={errors.campus} />
+                </div>
                 <div className="sm:col-span-2">
                   <label htmlFor="p-nombre" className="text-sm font-semibold">{p.name}</label>
                   <input id="p-nombre" name="nombre" autoComplete="name" maxLength={LIMITS.name} className={field} {...aria("name")} />
@@ -291,14 +303,15 @@ export default function Pqrsf({ lang, t }: Props) {
                 <dl className="mt-8 grid grid-cols-1 gap-px overflow-hidden rounded-2xl bg-white/10 sm:grid-cols-2">
                   {[
                     [p.lookupLabel, found.id],
+                    [t.campuses.label, t.campuses.short[found.campus]],
                     [p.lookupStatus, p.statuses[found.status]],
                     [p.lookupPriority, p.priorities[found.priority]],
                     [p.lookupCreated, formatDate(found.createdAt, lang)],
                     found.answer
                       ? [p.lookupAnswered, formatDate(found.answeredAt ?? found.createdAt, lang)]
                       : [p.lookupDue, formatDate(pqrsfDue(found).toISOString(), lang)],
-                  ].map(([k, val], i) => (
-                    <div key={k} className={`bg-ink p-5 ${i === 0 ? "sm:col-span-2" : ""}`}>
+                  ].map(([k, val]) => (
+                    <div key={k} className="bg-ink p-5">
                       <dt className="text-xs font-bold uppercase tracking-[0.14em] text-white/55">{k}</dt>
                       <dd className="mt-1 text-lg font-semibold">{val}</dd>
                     </div>

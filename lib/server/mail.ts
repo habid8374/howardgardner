@@ -1,7 +1,7 @@
 import "server-only";
 import { Resend } from "resend";
 import { SITE_URL } from "@/lib/site";
-import type { Admission, Pqrsf } from "@/lib/records";
+import type { Admission, CampusId, Pqrsf } from "@/lib/records";
 
 /* Correos con Resend. Si falta la clave, no se envía nada y el resto sigue funcionando.
    Mientras el colegio no tenga dominio propio verificado, Resend solo entrega correos
@@ -10,6 +10,9 @@ const key = process.env.RESEND_API_KEY;
 const resend = key ? new Resend(key) : null;
 const FROM = process.env.MAIL_FROM || "Howard Gardner Bilingual School <onboarding@resend.dev>";
 const SCHOOL = process.env.SCHOOL_NOTIFY_EMAIL || "";
+/* Cada sede puede tener su propio responsable; si no está definido, el aviso va al correo general. */
+const notifyTo = (campus: CampusId) => (campus === "sede2" && process.env.SCHOOL_NOTIFY_EMAIL_SEDE2) || SCHOOL;
+const CAMPUS_ES: Record<CampusId, string> = { principal: "Sede principal", sede2: "Nueva sede" };
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
@@ -36,8 +39,8 @@ async function send(to: string, subject: string, html: string) {
 }
 
 export async function mailNewAdmission(a: Admission) {
-  await send(SCHOOL, `Nueva preinscripción ${a.id} · ${a.grade}`, layout("Nueva preinscripción 2027", `
-    <table role="presentation">${row("Radicado", a.id)}${row("Acudiente", a.guardian)}${row("Teléfono", a.phone)}${row("Grado", a.grade)}</table>
+  await send(notifyTo(a.campus), `Nueva preinscripción ${a.id} · ${a.grade} · ${CAMPUS_ES[a.campus]}`, layout("Nueva preinscripción 2027", `
+    <table role="presentation">${row("Radicado", a.id)}${row("Sede", CAMPUS_ES[a.campus])}${row("Acudiente", a.guardian)}${row("Teléfono", a.phone)}${row("Grado", a.grade)}</table>
     ${a.message ? `<p style="margin-top:16px;font-size:14px">${esc(a.message)}</p>` : ""}
     <p style="margin-top:20px"><a href="${SITE_URL}/admin" style="background:#e3b23c;color:#0c1631;padding:10px 18px;border-radius:999px;text-decoration:none;font-weight:bold">Abrir el panel</a></p>`));
 }
@@ -50,8 +53,8 @@ export async function mailNewPqrsf(p: Pqrsf, due: Date) {
   const fmt = (d: Date) => d.toLocaleDateString(en ? "en-US" : "es-CO", { day: "numeric", month: "long", year: "numeric" });
   const lookup = `${SITE_URL}/${en ? "en/requests" : "es/pqrsf"}#consultar`;
   await Promise.all([
-    send(SCHOOL, `${p.urgent ? "URGENTE · " : ""}Nueva PQRSF ${p.id} · ${TYPE_ES[p.type]}`, layout(`Nueva ${TYPE_ES[p.type].toLowerCase()} radicada`, `
-      <table role="presentation">${row("Radicado", p.id)}${row("Prioridad", p.priority)}${row("Vence", fmt(due))}${row("Acudiente", p.name)}${row("Correo", p.email)}${row("Asunto", p.subject)}</table>
+    send(notifyTo(p.campus), `${p.urgent ? "URGENTE · " : ""}Nueva PQRSF ${p.id} · ${TYPE_ES[p.type]} · ${CAMPUS_ES[p.campus]}`, layout(`Nueva ${TYPE_ES[p.type].toLowerCase()} radicada`, `
+      <table role="presentation">${row("Radicado", p.id)}${row("Sede", CAMPUS_ES[p.campus])}${row("Prioridad", p.priority)}${row("Vence", fmt(due))}${row("Acudiente", p.name)}${row("Correo", p.email)}${row("Asunto", p.subject)}</table>
       <p style="margin-top:20px"><a href="${SITE_URL}/admin" style="background:#e3b23c;color:#0c1631;padding:10px 18px;border-radius:999px;text-decoration:none;font-weight:bold">Abrir el panel</a></p>`)),
     send(p.email, en ? `We received your ${TYPE_EN[p.type].toLowerCase()} · ${p.id}` : `Recibimos tu ${TYPE_ES[p.type].toLowerCase()} · ${p.id}`, layout(
       en ? "We received your message" : "Recibimos tu solicitud", `

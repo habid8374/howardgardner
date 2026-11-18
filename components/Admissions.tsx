@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, MessageCircle, Phone, Send } from "lucide-react";
 import DemoNote from "./DemoNote";
-import { ApiError, LIMITS, admissionsStore, type Admission } from "@/lib/records";
+import { ApiError, CAMPUS_IDS, LIMITS, admissionsStore, type Admission, type CampusId } from "@/lib/records";
+import { CAMPUSES } from "@/lib/site";
 import { TEL_HREF, PHONE_DISPLAY, waLink } from "@/lib/site";
 import { href, type Lang } from "@/lib/i18n";
 import type { Dict } from "@/lib/dictionaries";
@@ -14,15 +15,23 @@ import type { Dict } from "@/lib/dictionaries";
    y aparece en el panel del colegio (/admin).
    TODO(CLIENTE): confirmar pasos reales, documentos requeridos y fechas 2027. */
 
-type Errors = Partial<Record<"name" | "phone" | "grade" | "consent", string>>;
+type Errors = Partial<Record<"name" | "phone" | "grade" | "campus" | "consent", string>>;
 
-export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "admissions" | "demo"> }) {
+export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "admissions" | "demo" | "campuses"> }) {
   const a = t.admissions;
   const f = a.form;
   const [errors, setErrors] = useState<Errors>({});
   const [sent, setSent] = useState<Admission | null>(null);
   const [busy, setBusy] = useState(false);
   const [netError, setNetError] = useState<string | null>(null);
+  const campusRef = useRef<HTMLSelectElement>(null);
+  const c = t.campuses;
+
+  // Enlace "Preinscribirme para la nueva sede" (?sede=sede2): deja la sede elegida en el formulario
+  useEffect(() => {
+    const s = new URLSearchParams(window.location.search).get("sede");
+    if (s && campusRef.current && (CAMPUS_IDS as string[]).includes(s)) campusRef.current.value = s;
+  }, []);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -30,6 +39,7 @@ export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "adm
     const name = String(data.get("nombre") || "").trim();
     const phone = String(data.get("telefono") || "").trim();
     const grade = String(data.get("grado") || "");
+    const campus = String(data.get("sede") || "") as CampusId;
     const message = String(data.get("mensaje") || "").trim();
     const consent = data.get("acepta") === "on";
 
@@ -37,6 +47,7 @@ export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "adm
     if (name.length < 3) next.name = f.errors.name;
     if (phone.replace(/\D/g, "").length < 7) next.phone = f.errors.phone;
     if (!grade) next.grade = f.errors.grade;
+    if (!CAMPUS_IDS.includes(campus)) next.campus = c.error;
     if (!consent) next.consent = f.errors.consent;
     setErrors(next);
     if (Object.keys(next).length) {
@@ -48,7 +59,7 @@ export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "adm
     setBusy(true);
     setNetError(null);
     try {
-      setSent(await admissionsStore.add({ lang, guardian: name, phone, grade, message, website: String(data.get("website") || "") }));
+      setSent(await admissionsStore.add({ lang, campus, guardian: name, phone, grade, message, website: String(data.get("website") || "") }));
     } catch (err) {
       setNetError(err instanceof ApiError && err.status === 429 ? t.demo.rateError : t.demo.sendError);
       return;
@@ -59,7 +70,7 @@ export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "adm
   }
 
   const waText = (r: Admission) =>
-    `${f.waIntro}\n${f.waNumber}: ${r.id}\n${f.waName}: ${r.guardian}\n${f.waPhone}: ${r.phone}\n${f.waGrade}: ${r.grade}` +
+    `${f.waIntro}\n${f.waNumber}: ${r.id}\n${c.label}: ${c.short[r.campus]}\n${f.waName}: ${r.guardian}\n${f.waPhone}: ${r.phone}\n${f.waGrade}: ${r.grade}` +
     (r.message ? `\n${f.waMessage}: ${r.message}` : "") +
     `\n${f.waConsent}`;
 
@@ -130,6 +141,17 @@ export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "adm
               <label htmlFor="nombre" className="text-sm font-semibold">{f.name}</label>
               <input id="nombre" name="nombre" autoComplete="name" maxLength={LIMITS.name} className={field} aria-invalid={!!errors.name} aria-describedby={errors.name ? "e-nombre" : undefined} />
               {err("e-nombre", errors.name)}
+            </div>
+
+            <div>
+              <label htmlFor="sede" className="text-sm font-semibold">{c.labelInterest}</label>
+              <select id="sede" name="sede" ref={campusRef} defaultValue="" className={field} aria-invalid={!!errors.campus} aria-describedby={errors.campus ? "e-sede" : undefined}>
+                <option value="" disabled>{c.placeholder}</option>
+                {CAMPUSES.map((s) => (
+                  <option key={s.id} value={s.id}>{c.names[s.id]}{s.status === "soon" ? ` (${c.soonTag.toLowerCase()})` : ""}</option>
+                ))}
+              </select>
+              {err("e-sede", errors.campus)}
             </div>
 
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">

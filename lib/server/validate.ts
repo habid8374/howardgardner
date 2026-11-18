@@ -1,7 +1,7 @@
 import "server-only";
 import { z } from "zod";
 import {
-  ADMISSION_STATUSES, ALLOWED_FILE_TYPES, LIMITS, MAX_FILE_MB, PQRSF_STATUSES, PQRSF_TYPES, PRIORITIES, clean,
+  CAMPUS_IDS, ADMISSION_STATUSES, ALLOWED_FILE_TYPES, LIMITS, MAX_FILE_MB, PQRSF_STATUSES, PQRSF_TYPES, PRIORITIES, clean,
 } from "@/lib/records";
 
 /* Validación en el servidor de TODO lo que llega (OWASP A05/A06). La del navegador es solo ayuda. */
@@ -9,9 +9,11 @@ const text = (max: number, min = 0) =>
   z.string().transform((v) => clean(v, max)).pipe(z.string().min(min).max(max));
 
 const lang = z.enum(["es", "en"]);
+const campus = z.enum(CAMPUS_IDS as [string, ...string[]]);
 
 export const admissionInput = z.object({
   lang,
+  campus,
   guardian: text(LIMITS.name, 3),
   phone: text(LIMITS.phone, 7).refine((v) => /^[0-9+()\s-]+$/.test(v)),
   grade: text(LIMITS.grade, 1),
@@ -21,6 +23,7 @@ export const admissionInput = z.object({
 
 export const pqrsfInput = z.object({
   lang,
+  campus,
   type: z.enum(PQRSF_TYPES as [string, ...string[]]),
   name: text(LIMITS.name, 3),
   email: text(LIMITS.email).pipe(z.email()),
