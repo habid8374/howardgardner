@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ExternalLink, FlaskConical, Globe, LogOut, RotateCcw } from "lucide-react";
+import { ExternalLink, Globe, LogOut, RotateCcw } from "lucide-react";
 import {
   ApiError, adminLang, campusName, fetchAll, pqrsfAlert, resetDemo, session, subscribeDemo, type Admission, type Campus, type CampusId, type Pqrsf, type StaffUser,
 } from "@/lib/records";
@@ -237,12 +237,6 @@ export default function AdminApp() {
       </header>
 
       <main className="mx-auto max-w-[1400px] px-4 py-8 sm:px-8">
-        {auth.demo && (
-          <p className="mb-6 flex items-start gap-3 rounded-xl border border-gold/50 bg-gold-soft/40 px-4 py-3 text-sm text-ink">
-            <FlaskConical size={18} className="mt-0.5 flex-none" aria-hidden />
-            <span>{a.demoBanner}</span>
-          </p>
-        )}
 
         {tab === "admisiones" && (
           <AdmissionsPanel key={`a-${campus}`} rows={view.admissions} a={a} lang={lang} userName={user.name} campusLabel={campusLabel}

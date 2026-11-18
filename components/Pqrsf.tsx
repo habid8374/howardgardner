@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, FileDown, Search, Send } from "lucide-react";
 import { downloadPqrsfPdf } from "@/lib/pqrsf-pdf";
-import DemoNote from "./DemoNote";
 import { href, type Lang } from "@/lib/i18n";
 import type { CampusFormText, Dict } from "@/lib/dictionaries";
 import { ALLOWED_FILE_TYPES, ApiError, type CampusOption, LIMITS, MAX_FILE_MB, PQRSF_DAYS, formatDate, pqrsfDue, pqrsfStore, type Pqrsf as Row, type PqrsfPublic, type PqrsfType } from "@/lib/records";
@@ -140,7 +139,6 @@ export default function Pqrsf({ lang, t, campuses }: Props) {
           ) : (
             <form onSubmit={onSubmit} noValidate aria-labelledby="pqrsf-titulo" className="rounded-[28px] bg-white p-6 text-ink shadow-[0_24px_60px_-30px_rgba(12,22,49,0.35)] ring-1 ring-line sm:p-10">
               <h3 id="pqrsf-titulo" className="h-display text-[1.9rem]">{p.formTitle}</h3>
-              <DemoNote text={t.demo.note} badge={t.demo.badge} />
 
               {/* Trampa para robots (OWASP A06): campo invisible que una persona no llena */}
               <div aria-hidden="true" style={{ position: "absolute", left: "-10000px", width: 1, height: 1, overflow: "hidden" }}>

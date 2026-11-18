@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, MessageCircle, Phone, Send } from "lucide-react";
-import DemoNote from "./DemoNote";
 import { ApiError, LIMITS, admissionsStore, type Admission, type CampusId, type CampusOption } from "@/lib/records";
 import { TEL_HREF, PHONE_DISPLAY, waLink } from "@/lib/site";
 import { href, type Lang } from "@/lib/i18n";
@@ -128,7 +127,6 @@ export default function Admissions({ lang, t, campuses }: { lang: Lang; t: Pick<
         >
           <h3 id="form-titulo" className="h-display text-[1.9rem]">{f.title}</h3>
           <p className="mt-2 text-muted">{f.lead}</p>
-          <DemoNote text={t.demo.note} badge={t.demo.badge} />
 
           <div className="mt-8 flex flex-col gap-5">
             {/* Trampa para robots (OWASP A06): campo invisible que una persona no llena */}
