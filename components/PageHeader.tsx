@@ -2,6 +2,7 @@
 export default function PageHeader({ eyebrow, title, lead }: { eyebrow: string; title: string; lead: string }) {
   return (
     <section className="relative overflow-hidden bg-ink pb-16 pt-[148px] text-white lg:pb-24 lg:pt-[176px]">
+      <div aria-hidden className="doodles" />
       <div
         aria-hidden
         className="pointer-events-none absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full opacity-[0.10]"

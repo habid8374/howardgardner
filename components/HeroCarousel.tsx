@@ -76,6 +76,7 @@ export default function HeroCarousel({
       }}
     >
       <h1 className="sr-only">{h1}</h1>
+      <div aria-hidden className="doodles" />
 
       <div
         aria-hidden
