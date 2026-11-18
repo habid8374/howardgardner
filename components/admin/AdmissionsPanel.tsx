@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { Download, MessageCircle, Phone, Search } from "lucide-react";
-import { ADMISSION_STATUSES, LIMITS, admissionsStore, clean, downloadCsv, formatDate, type Admission, type AdmissionStatus } from "@/lib/records";
+import { ADMISSION_STATUSES, LIMITS, admissionsStore, clean, formatDate, type Admission, type AdmissionStatus } from "@/lib/records";
+import { downloadXlsx } from "@/lib/xlsx-export";
 
 const save = (p: Promise<unknown>, msg: string) => p.catch(() => window.alert(msg));
 import type { AdminDict } from "@/lib/dictionaries/admin";
@@ -16,7 +17,7 @@ const toPhone = (p: string) => {
   return digits.startsWith("57") ? digits : `57${digits}`;
 };
 
-export default function AdmissionsPanel({ rows, a: d, lang }: { rows: Admission[]; a: AdminDict; lang: Lang }) {
+export default function AdmissionsPanel({ rows, a: d, lang, userName }: { rows: Admission[]; a: AdminDict; lang: Lang; userName: string }) {
   const a = d.admissions;
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<"" | AdmissionStatus>("");
@@ -38,14 +39,27 @@ export default function AdmissionsPanel({ rows, a: d, lang }: { rows: Admission[
   const current = rows.find((r) => r.id === openId) ?? null;
 
   function exportCsv() {
-    downloadCsv(
-      `${a.csvName}-${new Date().toISOString().slice(0, 10)}.csv`,
-      a.csv,
-      filtered.map((r) => [
-        r.id, formatDate(r.createdAt, lang, true), r.guardian, r.phone, r.grade, a.statuses[r.status],
-        d.langNames[r.lang], r.message, r.notes.map((n) => n.text).join(" | "),
-      ])
-    );
+    const now = new Date();
+    const widths = [17, 21, 28, 16, 12, 17, 11, 42, 42];
+    return downloadXlsx({
+      filename: `${a.csvName}-${now.toISOString().slice(0, 10)}.xlsx`,
+      sheet: a.sheet,
+      title: a.reportTitle,
+      meta: `${d.xlsx.meta(formatDate(now.toISOString(), lang, true), userName, filtered.length)}${filtered.length !== rows.length ? ` (${d.xlsx.filtered})` : ""}`,
+      summary: d.xlsx.summaryAdmissions(filtered.length, filtered.filter((r) => r.status === "nueva").length, filtered.filter((r) => r.status === "matriculado").length),
+      columns: a.csv.map((header, i) => ({ header, width: widths[i], wrap: i >= 7, date: i === 1 ? "datetime" : undefined, center: i === 4 || i === 6 })),
+      rows: filtered.map((r) => [
+        r.id, new Date(r.createdAt), r.guardian, r.phone, r.grade, a.statuses[r.status],
+        d.langNames[r.lang], r.message, r.notes.map((n) => `${formatDate(n.at, lang)}: ${n.text}${n.by ? ` (${n.by})` : ""}`).join("\n"),
+      ]),
+      tone: (ri, ci) => {
+        if (ci === 0) return "strong";
+        if (ci !== 5) return undefined;
+        const s = filtered[ri].status;
+        return s === "nueva" ? "soft" : s === "admitido" || s === "matriculado" ? "ok" : s === "no_admitido" ? "danger" : undefined;
+      },
+      footer: { ...d.xlsx },
+    });
   }
 
   const kpi = (s: AdmissionStatus | "") => () => setStatus(status === s ? "" : s);

@@ -286,24 +286,6 @@ export const adminLang = {
   subscribe: (cb: () => void) => { window.addEventListener("hg-lang-change", cb); return () => window.removeEventListener("hg-lang-change", cb); },
 };
 
-/* ── Exportación a Excel (CSV con separador ; y BOM, como lo abre Excel en Colombia) ── */
-export function downloadCsv(filename: string, headers: string[], rows: (string | number)[][]) {
-  const esc = (v: string | number) => {
-    let s = String(v ?? "").replace(/\r?\n/g, " ");
-    // Inyección de fórmulas (OWASP CSV Injection): un texto que empieza por = + - @ o tabulador
-    // podría ejecutarse como fórmula al abrirlo en Excel. Se antepone un apóstrofo.
-    if (typeof v === "string" && /^[=+\-@\t\r]/.test(s)) s = "'" + s;
-    return /[;"']/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-  };
-  const csv = "﻿" + [headers, ...rows].map((r) => r.map(esc).join(";")).join("\r\n");
-  const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
-  const a = Object.assign(document.createElement("a"), { href: url, download: filename });
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
 export function formatDate(iso: string, lang: "es" | "en" = "es", withTime = false) {
   return new Date(iso).toLocaleDateString(lang === "es" ? "es-CO" : "en-US", {
     day: "numeric", month: "short", year: "numeric",

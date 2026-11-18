@@ -3,8 +3,9 @@
 import { useMemo, useState } from "react";
 import { AlertTriangle, Download, FileDown, Flag, Paperclip, Search } from "lucide-react";
 import { downloadPqrsfPdf } from "@/lib/pqrsf-pdf";
+import { downloadXlsx } from "@/lib/xlsx-export";
 import {
-  LIMITS, PQRSF_STATUSES, PQRSF_TYPES, PRIORITIES, PRIORITY_DAYS, byUrgency, clean, downloadCsv, formatDate, pqrsfAlert, pqrsfDue, pqrsfStore,
+  LIMITS, PQRSF_STATUSES, PQRSF_TYPES, PRIORITIES, PRIORITY_DAYS, byUrgency, clean, formatDate, pqrsfAlert, pqrsfDue, pqrsfStore,
   type Pqrsf, type PqrsfPriority, type PqrsfStatus, type PqrsfType,
 } from "@/lib/records";
 import type { AdminDict } from "@/lib/dictionaries/admin";
@@ -15,7 +16,7 @@ const save = (p: Promise<unknown>, msg: string) => p.catch(() => window.alert(ms
 type Lang = "es" | "en";
 type StatusFilter = "" | PqrsfStatus | "abiertas" | "urgentes" | "vencidas";
 
-export default function PqrsfPanel({ rows, a: d, lang }: { rows: Pqrsf[]; a: AdminDict; lang: Lang }) {
+export default function PqrsfPanel({ rows, a: d, lang, userName }: { rows: Pqrsf[]; a: AdminDict; lang: Lang; userName: string }) {
   const a = d.pqrsf;
   const [now] = useState(() => new Date());
   const [q, setQ] = useState("");
@@ -51,15 +52,32 @@ export default function PqrsfPanel({ rows, a: d, lang }: { rows: Pqrsf[]; a: Adm
   const answer = answerDraft && current && answerDraft.id === current.id ? answerDraft.text : current?.answer ?? "";
 
   function exportCsv() {
-    downloadCsv(
-      `${a.csvName}-${new Date().toISOString().slice(0, 10)}.csv`,
-      a.csv,
-      filtered.map(({ r, alert }) => [
-        r.id, formatDate(r.createdAt, lang, true), a.types[r.type], a.priorities[r.priority], r.subject, r.description,
+    const now = new Date();
+    const widths = [18, 21, 13, 11, 30, 48, 26, 30, 15, 24, 10, 20, 15, 15, 22, 48];
+    const levels = filtered.map(({ alert }) => alert.level);
+    const count = (l: string) => levels.filter((x) => x === l).length;
+    return downloadXlsx({
+      filename: `${a.csvName}-${now.toISOString().slice(0, 10)}.xlsx`,
+      sheet: a.sheet,
+      title: a.reportTitle,
+      meta: `${d.xlsx.meta(formatDate(now.toISOString(), lang, true), userName, filtered.length)}${filtered.length !== rows.length ? ` (${d.xlsx.filtered})` : ""}`,
+      summary: d.xlsx.summaryPqrsf(levels.filter((l) => l !== "cerrada").length, count("vencida"), count("hoy"), count("pronto")),
+      columns: a.csv.map((header, i) => ({ header, width: widths[i], wrap: [4, 5, 15].includes(i), date: i === 1 ? "datetime" : i === 13 ? "date" : undefined, center: [2, 3, 10, 12].includes(i) })),
+      rows: filtered.map(({ r, alert }) => [
+        r.id, new Date(r.createdAt), a.types[r.type], a.priorities[r.priority], r.subject, r.description,
         r.name, r.email, r.phone, r.student, r.grade, r.attachment, a.statuses[r.status],
-        formatDate(pqrsfDue(r).toISOString(), lang), alert.level === "cerrada" ? "" : a.due(alert.level, alert.days), r.answer,
-      ])
-    );
+        pqrsfDue(r), alert.level === "cerrada" ? "" : a.due(alert.level, alert.days), r.answer,
+      ]),
+      tone: (ri, ci) => {
+        const { r, alert } = filtered[ri];
+        if (ci === 0) return "strong";
+        if (ci === 3) return r.priority === "alta" ? "danger" : r.priority === "media" ? "warning" : undefined;
+        if (ci === 12) return r.status === "respondida" || r.status === "cerrada" ? "ok" : undefined;
+        if (ci === 14) return alert.level === "vencida" || alert.level === "hoy" ? "danger" : alert.level === "pronto" ? "warning" : undefined;
+        return undefined;
+      },
+      footer: { ...d.xlsx },
+    });
   }
 
   const urgentTotal = overdue + today + soon;

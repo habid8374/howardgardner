@@ -219,8 +219,8 @@ export default function AdminApp() {
         )}
 
         {tab === "admisiones"
-          ? <AdmissionsPanel rows={data.admissions} a={a} lang={lang} />
-          : <PqrsfPanel rows={data.pqrsf} a={a} lang={lang} />}
+          ? <AdmissionsPanel rows={data.admissions} a={a} lang={lang} userName={user.name} />
+          : <PqrsfPanel rows={data.pqrsf} a={a} lang={lang} userName={user.name} />}
 
         <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-line pt-6 text-sm text-muted sm:flex-row sm:items-center">
           <p>{auth.demo ? a.demoFooter : ""} {user.name}</p>
