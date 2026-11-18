@@ -256,7 +256,7 @@ export default function AdminApp() {
         {tab === "usuarios" && <UsersPanel me={user} campuses={data.campuses} a={a} lang={lang} />}
 
         <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-line pt-6 text-sm text-muted sm:flex-row sm:items-center">
-          <p>{auth.demo ? a.demoFooter : ""} {user.name}</p>
+          <p>{a.signedInAs} <strong className="font-semibold text-ink">{user.name}</strong></p>
           {auth.demo && p.usuarios && <button
             type="button"
             onClick={() => window.confirm(a.resetConfirm) && resetDemo().catch(() => window.alert(a.saveError))}
