@@ -22,7 +22,7 @@ export default function Levels({ t }: { t: Dict }) {
               id={item.id}
               className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 border-b border-ink/15 py-8 md:grid-cols-[80px_1.1fr_1.6fr_auto] md:items-baseline md:gap-x-10"
             >
-              <span className="h-display text-2xl text-navy/50 md:text-3xl">0{i + 1}</span>
+              <span className="h-display text-2xl text-navy/75 md:text-3xl">0{i + 1}</span>
               <div>
                 <h3 className="h-display text-[clamp(1.6rem,2.6vw,2.2rem)] text-ink">{item.name}</h3>
                 <p className="mt-1 text-sm font-semibold text-navy">{item.grades}</p>

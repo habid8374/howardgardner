@@ -22,7 +22,7 @@ export default function Pedagogy({ t }: { t: Pick<Dict, "pedagogy" | "viewer"> }
           <ol className="mt-10 grid grid-cols-2 gap-x-8 border-t border-line sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
             {p.intelligences.map((name, i) => (
               <li key={name} className="border-b border-line py-4">
-                <span className="text-xs font-bold text-navy/60">0{i + 1}</span>
+                <span className="text-xs font-bold text-navy/75">0{i + 1}</span>
                 <p className="mt-1 font-[family-name:var(--font-display)] text-lg text-ink">{name}</p>
               </li>
             ))}

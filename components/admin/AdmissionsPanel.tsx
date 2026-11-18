@@ -152,7 +152,7 @@ export default function AdmissionsPanel({ rows, a: d, lang }: { rows: Admission[
               <a
                 href={`https://wa.me/${toPhone(current.phone)}?text=${encodeURIComponent(a.waGreeting(current.guardian, current.id))}`}
                 target="_blank" rel="noopener noreferrer"
-                className="btn !min-h-11 bg-[#1fa855] !text-sm text-white"
+                className="btn !min-h-11 bg-[#108043] !text-sm text-white"
               >
                 <MessageCircle size={16} aria-hidden /> WhatsApp
               </a>

@@ -14,7 +14,7 @@ export default function Results({ t }: { t: Dict }) {
             <h2 className="h-section mt-5 text-ink">{r.title}</h2>
             <p className="lead mt-6 max-w-md text-muted">{r.lead}</p>
 
-            <div className="mt-10 flex items-end gap-5" aria-label={r.bigAria}>
+            <div className="mt-10 flex items-end gap-5" role="img" aria-label={r.bigAria}>
               <span className="h-display text-navy" style={{ fontSize: "clamp(7.5rem, 18vw, 14rem)", lineHeight: 0.8 }} aria-hidden>
                 A+
               </span>
