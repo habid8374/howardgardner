@@ -1,23 +1,23 @@
 import { MapPin, Phone, Clock, Navigation } from "lucide-react";
 import { WhatsAppIcon, InstagramIcon, FacebookIcon } from "./BrandIcons";
-import {
-  ADDRESS_LINE, HOURS, PHONE_DISPLAY, TEL_HREF, MAPS_URL, MAPS_EMBED, SOCIAL, WA_VISITA,
-} from "@/lib/site";
+import { ADDRESS_LINE, PHONE_DISPLAY, TEL_HREF, MAPS_URL, MAPS_EMBED, SOCIAL, waLink } from "@/lib/site";
+import type { Dict } from "@/lib/dictionaries";
 
-export default function Visit() {
+export default function Visit({ t }: { t: Dict }) {
+  const v = t.visit;
   const rows = [
-    { Icon: MapPin, label: "Dirección", value: ADDRESS_LINE, href: MAPS_URL, external: true },
-    { Icon: Phone, label: "Teléfono", value: PHONE_DISPLAY, href: TEL_HREF },
-    { Icon: WhatsAppIcon, label: "WhatsApp", value: PHONE_DISPLAY, href: WA_VISITA, external: true },
-    { Icon: Clock, label: "Horario de atención", value: HOURS },
+    { Icon: MapPin, label: v.address, value: ADDRESS_LINE, href: MAPS_URL, external: true },
+    { Icon: Phone, label: v.phone, value: PHONE_DISPLAY, href: TEL_HREF },
+    { Icon: WhatsAppIcon, label: v.whatsapp, value: PHONE_DISPLAY, href: waLink(t.wa.visit), external: true },
+    { Icon: Clock, label: v.hoursLabel, value: v.hours },
   ];
 
   return (
     <section id="visitanos" className="section bg-paper-2">
       <div className="wrap grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1.3fr] lg:gap-16">
         <div>
-          <p className="eyebrow text-navy">Visítanos</p>
-          <h2 className="h-section mt-5 text-ink">Te esperamos en la Calle 12, Sabanalarga.</h2>
+          <p className="eyebrow text-navy">{v.eyebrow}</p>
+          <h2 className="h-section mt-5 text-ink">{v.title}</h2>
 
           <ul className="mt-10 border-t border-ink/15">
             {rows.map(({ Icon, label, value, href, external }) => {
@@ -35,11 +35,7 @@ export default function Visit() {
               return (
                 <li key={label} className="border-b border-ink/15">
                   {href ? (
-                    <a
-                      href={href}
-                      {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                      className="flex min-h-16 items-center gap-4 py-4 transition-opacity hover:opacity-80"
-                    >
+                    <a href={href} {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})} className="flex min-h-16 items-center gap-4 py-4 transition-opacity hover:opacity-80">
                       {inner}
                     </a>
                   ) : (
@@ -51,10 +47,10 @@ export default function Visit() {
           </ul>
 
           <div className="mt-8 flex gap-3">
-            <a href={SOCIAL.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram del colegio" className="lift flex h-12 w-12 items-center justify-center rounded-full border border-ink/20 text-ink">
+            <a href={SOCIAL.instagram} target="_blank" rel="noopener noreferrer" aria-label={v.instagram} className="lift flex h-12 w-12 items-center justify-center rounded-full border border-ink/20 text-ink">
               <InstagramIcon size={20} />
             </a>
-            <a href={SOCIAL.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook del colegio" className="lift flex h-12 w-12 items-center justify-center rounded-full border border-ink/20 text-ink">
+            <a href={SOCIAL.facebook} target="_blank" rel="noopener noreferrer" aria-label={v.facebook} className="lift flex h-12 w-12 items-center justify-center rounded-full border border-ink/20 text-ink">
               <FacebookIcon size={20} />
             </a>
           </div>
@@ -62,16 +58,10 @@ export default function Visit() {
 
         <div className="flex flex-col gap-4">
           <div className="relative min-h-[320px] flex-1 overflow-hidden rounded-[28px] border border-ink/10 bg-paper lg:min-h-[480px]">
-            <iframe
-              src={MAPS_EMBED}
-              title="Mapa: ubicación del colegio Howard Gardner en Sabanalarga"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="absolute inset-0 h-full w-full border-0"
-            />
+            <iframe src={MAPS_EMBED} title={v.mapTitle} loading="lazy" referrerPolicy="no-referrer-when-downgrade" className="absolute inset-0 h-full w-full border-0" />
           </div>
           <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" className="btn btn-primary w-full sm:w-fit">
-            <Navigation size={18} aria-hidden /> Cómo llegar
+            <Navigation size={18} aria-hidden /> {v.directions}
           </a>
         </div>
       </div>

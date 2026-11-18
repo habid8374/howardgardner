@@ -1,24 +1,227 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import {
-  Menu, X, Phone, Trophy, Layers, Languages, Brain, GraduationCap, MapPin,
-} from "lucide-react";
-import { TEL_HREF, PHONE_DISPLAY, WA_ADMISIONES } from "@/lib/site";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ChevronDown, Globe, Menu, Phone, X } from "lucide-react";
+import { WhatsAppIcon } from "./BrandIcons";
+import { href, pageFromPath, type Lang } from "@/lib/i18n";
+import type { Dict, NavGroup } from "@/lib/dictionaries";
+import { PHONE_DISPLAY, TEL_HREF, waLink } from "@/lib/site";
 
-const NAV = [
-  { href: "#resultados", label: "Resultados", Icon: Trophy },
-  { href: "#niveles", label: "Niveles", Icon: Layers },
-  { href: "#bilinguismo", label: "Bilingüismo", Icon: Languages },
-  { href: "#pedagogia", label: "Pedagogía", Icon: Brain },
-  { href: "#admisiones", label: "Admisiones", Icon: GraduationCap },
-  { href: "#visitanos", label: "Visítanos", Icon: MapPin },
-];
+type Props = { lang: Lang; t: Pick<Dict, "nav" | "common" | "wa"> };
 
-export default function Header() {
+function rememberLang(lang: Lang) {
+  try {
+    document.cookie = `lang=${lang}; path=/; max-age=31536000; samesite=lax`;
+  } catch {}
+}
+
+/* ── Selector de idioma ── */
+function LangSwitch({ lang, t, variant }: Props & { variant: "bar" | "menu" }) {
+  const page = pageFromPath(usePathname());
+  const langs: Lang[] = ["es", "en"];
+
+  if (variant === "bar") {
+    return (
+      <div role="group" aria-label={t.common.language} className="flex items-center rounded-full border border-white/20 p-0.5 text-xs font-bold">
+        {langs.map((l) => (
+          <Link
+            key={l}
+            href={href(l, page)}
+            hrefLang={l}
+            lang={l}
+            onClick={() => rememberLang(l)}
+            aria-current={l === lang ? "true" : undefined}
+            aria-label={t.common.langNames[l]}
+            className={`inline-flex h-9 min-w-10 items-center justify-center rounded-full px-2.5 uppercase tracking-wider transition-colors ${
+              l === lang ? "bg-white text-ink" : "text-white/75 hover:text-white"
+            }`}
+          >
+            {l}
+          </Link>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div role="group" aria-label={t.common.language} className="grid grid-cols-2 gap-2">
+      {langs.map((l) => (
+        <Link
+          key={l}
+          href={href(l, page)}
+          hrefLang={l}
+          lang={l}
+          onClick={() => rememberLang(l)}
+          aria-current={l === lang ? "true" : undefined}
+          className={`flex min-h-12 items-center justify-center gap-2 rounded-full border text-[0.95rem] font-semibold transition-colors ${
+            l === lang ? "border-gold bg-gold text-ink" : "border-white/20 text-white"
+          }`}
+        >
+          <Globe size={16} aria-hidden /> {t.common.langNames[l]}
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+/* ── Submenú de escritorio ── */
+function DesktopGroup({
+  group, lang, open, active, onOpen, onClose, onToggle,
+}: {
+  group: NavGroup; lang: Lang; open: boolean; active: boolean;
+  onOpen: () => void; onClose: () => void; onToggle: () => void;
+}) {
+  const id = `submenu-${group.page}`;
+
+  if (group.items.length === 0) {
+    return (
+      <li>
+        <Link
+          href={href(lang, group.page)}
+          aria-current={active ? "page" : undefined}
+          className={`link inline-flex min-h-11 items-center px-3 text-[0.93rem] font-medium transition-colors hover:text-white ${active ? "text-white" : "text-white/80"}`}
+        >
+          {group.label}
+        </Link>
+      </li>
+    );
+  }
+
+  return (
+    <li
+      className="relative"
+      onPointerEnter={(e) => e.pointerType === "mouse" && onOpen()}
+      onPointerLeave={(e) => e.pointerType === "mouse" && onClose()}
+    >
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-controls={id}
+        onClick={onToggle}
+        className={`inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-[0.93rem] font-medium transition-colors hover:text-white ${
+          open || active ? "text-white" : "text-white/80"
+        }`}
+      >
+        {group.label}
+        <ChevronDown
+          size={15}
+          aria-hidden
+          className="transition-transform duration-200"
+          style={{ transform: open ? "rotate(180deg)" : "none", color: "var(--gold)" }}
+        />
+      </button>
+
+      {/* pt-3 hace de puente para que el cursor no cierre el panel al bajar */}
+      <div
+        id={id}
+        className={`absolute left-1/2 top-full z-10 origin-top -translate-x-1/2 pt-3 transition-[opacity,transform,visibility] duration-[180ms] ${
+          open ? "visible translate-y-0 scale-100 opacity-100" : "pointer-events-none invisible -translate-y-1 scale-[0.98] opacity-0"
+        }`}
+        style={{ transitionTimingFunction: "var(--ease-out)" }}
+      >
+        <ul className="min-w-[264px] rounded-2xl bg-paper p-2 text-ink shadow-[0_24px_60px_-20px_rgba(0,0,0,0.55)] ring-1 ring-black/5">
+          {group.items.map((item) => (
+            <li key={item.label}>
+              <Link
+                href={href(lang, item.page, item.hash)}
+                onClick={onClose}
+                className="flex min-h-11 items-center rounded-xl px-4 text-[0.95rem] font-medium text-ink transition-colors hover:bg-paper-2 focus-visible:bg-paper-2"
+              >
+                {item.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </li>
+  );
+}
+
+/* ── Grupo del acordeón móvil ── */
+function MobileGroup({
+  group, lang, expanded, onToggle, onNavigate,
+}: {
+  group: NavGroup; lang: Lang; expanded: boolean; onToggle: () => void; onNavigate: () => void;
+}) {
+  const id = `acordeon-${group.page}`;
+  const row = "flex min-h-16 w-full items-center justify-between text-left font-[family-name:var(--font-display)] text-[1.45rem] text-white";
+
+  if (group.items.length === 0) {
+    return (
+      <li className="border-b border-white/10">
+        <Link href={href(lang, group.page)} onClick={onNavigate} className={row}>
+          {group.label}
+        </Link>
+      </li>
+    );
+  }
+
+  return (
+    <li className="border-b border-white/10">
+      <button type="button" aria-expanded={expanded} aria-controls={id} onClick={onToggle} className={row}>
+        <span className={expanded ? "text-gold" : undefined}>{group.label}</span>
+        <span className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15">
+          <ChevronDown
+            size={18}
+            aria-hidden
+            className="transition-transform duration-200"
+            style={{ transform: expanded ? "rotate(180deg)" : "none" }}
+          />
+        </span>
+      </button>
+      <div
+        id={id}
+        className="grid transition-[grid-template-rows] duration-[240ms]"
+        style={{ gridTemplateRows: expanded ? "1fr" : "0fr", transitionTimingFunction: "var(--ease-out)" }}
+      >
+        <ul className="overflow-hidden" inert={!expanded}>
+          <li className="pb-3" />
+          {group.items.map((item) => (
+            <li key={item.label}>
+              <Link
+                href={href(lang, item.page, item.hash)}
+                onClick={onNavigate}
+                className="ml-1 flex min-h-12 items-center border-l-2 border-gold/40 pl-5 text-[1.02rem] text-white/80 active:text-white"
+              >
+                {item.label}
+              </Link>
+            </li>
+          ))}
+          <li className="pb-4" />
+        </ul>
+      </div>
+    </li>
+  );
+}
+
+export default function Header({ lang, t }: Props) {
+  const pathname = usePathname();
+  const currentPage = pageFromPath(pathname);
+  const nav = t.nav as NavGroup[];
+
   const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [expanded, setExpanded] = useState<number | null>(null);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const navRef = useRef<HTMLUListElement>(null);
+
+  const openGroup = useCallback((i: number) => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setOpenIndex(i);
+  }, []);
+  const closeSoon = useCallback(() => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    closeTimer.current = setTimeout(() => setOpenIndex(null), 140);
+  }, []);
+  const closeAll = useCallback(() => {
+    setOpenIndex(null);
+    setMobileOpen(false);
+    setExpanded(null);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -27,20 +230,47 @@ export default function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Cierra menús al cambiar de página (ajuste de estado durante el render, sin efecto)
+  const [prevPath, setPrevPath] = useState(pathname);
+  if (pathname !== prevPath) {
+    setPrevPath(pathname);
+    setOpenIndex(null);
+    setMobileOpen(false);
+    setExpanded(null);
+  }
+
+  // Escape y clic afuera cierran el submenú de escritorio
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
-    const onResize = () => window.innerWidth >= 1280 && setOpen(false);
+    if (openIndex === null) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpenIndex(null);
+    const onDown = (e: PointerEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) setOpenIndex(null);
+    };
+    window.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onDown);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onDown);
+    };
+  }, [openIndex]);
+
+  // Menú móvil: bloquea el fondo, Escape cierra, se cierra al pasar a escritorio
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    if (!mobileOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMobileOpen(false);
+    const onResize = () => window.innerWidth >= 1280 && setMobileOpen(false);
     window.addEventListener("keydown", onKey);
     window.addEventListener("resize", onResize);
     return () => {
+      document.body.style.overflow = "";
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("resize", onResize);
     };
-  }, [open]);
+  }, [mobileOpen]);
 
-  const solid = scrolled || open;
+  const solid = scrolled || mobileOpen || currentPage !== "home";
+  const waAdmissions = waLink(t.wa.admissions);
 
   return (
     <header
@@ -52,92 +282,81 @@ export default function Header() {
         transition: "background-color 250ms ease, box-shadow 250ms ease",
       }}
     >
-      <div className="wrap flex h-[76px] items-center gap-8">
-        {/* Marca */}
-        <a
-          href="#inicio"
-          className="flex min-h-11 flex-none items-center gap-3"
-          aria-label="Howard Gardner Bilingual School, inicio"
-        >
+      <div className="wrap flex h-[76px] items-center gap-6">
+        <Link href={href(lang, "home")} className="flex min-h-11 flex-none items-center gap-3" aria-label={`${t.common.home}: Howard Gardner Bilingual School`}>
           <Image src="/howard_gardner_logo_sin_fondo.png" alt="" width={44} height={42} className="h-11 w-auto" />
           <span className="flex flex-col whitespace-nowrap leading-none">
             <span className="text-[0.95rem] font-extrabold tracking-[0.08em]">HOWARD GARDNER</span>
             <span className="mt-1.5 text-[0.6rem] font-semibold uppercase tracking-[0.24em] text-gold">Bilingual School</span>
           </span>
-        </a>
+        </Link>
 
-        {/* Menú de escritorio, centrado en el espacio libre */}
-        <nav aria-label="Principal" className="hidden flex-1 justify-center xl:flex">
-          <ul className="flex items-center gap-1 2xl:gap-3">
-            {NAV.map((n) => (
-              <li key={n.href}>
-                <a
-                  href={n.href}
-                  className="link inline-flex min-h-11 items-center whitespace-nowrap px-3 text-[0.93rem] font-medium text-white/80 transition-colors hover:text-white"
-                >
-                  {n.label}
-                </a>
-              </li>
+        <nav aria-label={lang === "es" ? "Principal" : "Main"} className="hidden flex-1 justify-center xl:flex">
+          <ul ref={navRef} className="flex items-center gap-0.5">
+            {nav.map((group, i) => (
+              <DesktopGroup
+                key={group.page}
+                group={group}
+                lang={lang}
+                open={openIndex === i}
+                active={currentPage === group.page}
+                onOpen={() => openGroup(i)}
+                onClose={closeSoon}
+                onToggle={() => setOpenIndex(openIndex === i ? null : i)}
+              />
             ))}
           </ul>
         </nav>
 
-        {/* Acción + botón de menú, siempre juntos a la derecha */}
-        <div className="ml-auto flex flex-none items-center gap-2 xl:ml-0">
-          <a
-            href={WA_ADMISIONES}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-primary hidden !min-h-11 !px-5 !text-sm sm:inline-flex"
-          >
-            Inscripciones 2027
+        <div className="ml-auto flex flex-none items-center gap-3 xl:ml-0">
+          <div className="hidden md:block">
+            <LangSwitch lang={lang} t={t} variant="bar" />
+          </div>
+          <a href={waAdmissions} target="_blank" rel="noopener noreferrer" className="btn btn-primary hidden !min-h-11 !px-5 !text-sm sm:inline-flex">
+            {t.common.enroll}
           </a>
           <button
             type="button"
             className="-mr-2 inline-flex h-12 w-12 items-center justify-center rounded-full transition-colors hover:bg-white/10 xl:hidden"
-            aria-label={open ? "Cerrar menú" : "Abrir menú"}
-            aria-expanded={open}
+            aria-label={mobileOpen ? t.common.menuClose : t.common.menuOpen}
+            aria-expanded={mobileOpen}
             aria-controls="menu-movil"
-            onClick={() => setOpen((v) => !v)}
+            onClick={() => setMobileOpen((v) => !v)}
           >
-            {open ? <X size={26} /> : <Menu size={26} />}
+            {mobileOpen ? <X size={26} /> : <Menu size={26} />}
           </button>
         </div>
       </div>
 
-      {/* Menú móvil y tableta */}
-      <div
-        id="menu-movil"
-        hidden={!open}
-        className="xl:hidden"
-        style={{ height: "calc(100dvh - 76px)", background: "var(--ink)" }}
-      >
-        <nav aria-label="Menú móvil" className="wrap flex h-full flex-col gap-8 overflow-y-auto pb-8 pt-6">
-          <p className="eyebrow text-gold">Explora el colegio</p>
-          <ul className="grid grid-cols-2 gap-3 md:grid-cols-3">
-            {NAV.map(({ href, label, Icon }) => (
-              <li key={href}>
-                <a
-                  href={href}
-                  onClick={() => setOpen(false)}
-                  className="flex h-full min-h-[92px] flex-col justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-4 transition-colors active:bg-white/10"
-                >
-                  <Icon size={20} className="text-gold" aria-hidden />
-                  <span className="font-[family-name:var(--font-display)] text-[1.15rem] leading-tight text-white">{label}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
+      {/* Menú de celular y tableta: acordeón */}
+      <div id="menu-movil" hidden={!mobileOpen} className="xl:hidden" style={{ height: "calc(100dvh - 76px)", background: "var(--ink)" }}>
+        <div className="wrap flex h-full flex-col gap-6 overflow-y-auto pb-8 pt-4">
+          <LangSwitch lang={lang} t={t} variant="menu" />
 
-          <div className="mt-auto flex flex-col gap-3">
-            <a href={WA_ADMISIONES} target="_blank" rel="noopener noreferrer" className="btn btn-primary w-full">
-              Inscripciones 2027 por WhatsApp
+          <nav aria-label={lang === "es" ? "Menú" : "Menu"}>
+            <ul className="border-t border-white/10">
+              {nav.map((group, i) => (
+                <MobileGroup
+                  key={group.page}
+                  group={group}
+                  lang={lang}
+                  expanded={expanded === i}
+                  onToggle={() => setExpanded(expanded === i ? null : i)}
+                  onNavigate={closeAll}
+                />
+              ))}
+            </ul>
+          </nav>
+
+          <div className="mt-auto flex flex-col gap-3 pt-4">
+            <a href={waAdmissions} target="_blank" rel="noopener noreferrer" className="btn btn-primary w-full">
+              <WhatsAppIcon size={18} /> {t.common.enroll}
             </a>
             <a href={TEL_HREF} className="btn btn-ghost w-full">
-              <Phone size={18} aria-hidden /> Llamar al {PHONE_DISPLAY}
+              <Phone size={18} aria-hidden /> {t.common.call} · {PHONE_DISPLAY}
             </a>
           </div>
-        </nav>
+        </div>
       </div>
     </header>
   );

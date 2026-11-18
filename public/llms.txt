@@ -1,19 +1,36 @@
 # Howard Gardner Bilingual School
 
 > Colegio bilingüe (español e inglés) en Sabanalarga, Atlántico, Colombia, con 16 años de trayectoria. Ofrece preescolar, básica primaria, básica secundaria y media académica (de Prejardín a grado 11°). Único colegio de Sabanalarga en categoría A+ y primer puesto municipal según el Índice de Clasificación del ICFES 2026 (índice 0,7783). Forma parte de Oxford Quality, en alianza con Oxford University Press.
+>
+> Bilingual (Spanish and English) school in Sabanalarga, Atlántico, Colombia, with 16 years of history, from Pre-K to 11th grade. The only A+ school in Sabanalarga and ranked first in town on the 2026 ICFES school index. Member of Oxford Quality (Oxford University Press).
 
-- Razón social: Howard Gardner De Sabanalarga S.A.S. (NIT 900.419.545-7)
-- Dirección: Calle 12 #34 B-2, Sabanalarga, Atlántico, Colombia
-- Teléfono y WhatsApp: +57 301 202 8756
-- Horario de atención: lunes a viernes, 7:00 a. m. a 5:00 p. m.
+- Razón social / Legal name: Howard Gardner De Sabanalarga S.A.S. (NIT 900.419.545-7)
+- Dirección / Address: Calle 12 #34 B-2, Sabanalarga, Atlántico, Colombia
+- Teléfono y WhatsApp / Phone and WhatsApp: +57 301 202 8756
+- Horario / Office hours: lunes a viernes, 7:00 a. m. a 5:00 p. m. / Monday to Friday, 7:00 a.m. to 5:00 p.m.
 - Instagram: https://www.instagram.com/howard_gardner_sabanalarga
 - Facebook: https://www.facebook.com/gardneristaoficial
-- Pedagogía: basada en la teoría de las inteligencias múltiples de Howard Gardner.
+- Pedagogía / Approach: teoría de las inteligencias múltiples de Howard Gardner / Howard Gardner's theory of multiple intelligences.
 - Resultados 2026: puesto 71 entre 540 colegios evaluados del Atlántico; puesto 88 entre 553 instituciones del departamento según el Índice de Clasificación del ICFES 2026.
 - Resultados 2025: primer lugar municipal en Saber 11° con 297 puntos de puntaje global.
-- Inscripciones y matrículas 2027: abiertas para todos los grados.
+- Inscripciones y matrículas 2027 abiertas / Enrollment for 2027 is open.
 
-## Páginas
+## Páginas en español
 
-- [Inicio](https://howardgardner.vercel.app/): resultados, niveles, bilingüismo, admisiones, preguntas frecuentes y ubicación.
-- [Política de Tratamiento de Datos](https://howardgardner.vercel.app/politica-de-datos)
+- [Inicio](https://howardgardner.vercel.app/es)
+- [Nosotros](https://howardgardner.vercel.app/es/nosotros)
+- [Aprendizaje](https://howardgardner.vercel.app/es/aprendizaje)
+- [Reconocimientos](https://howardgardner.vercel.app/es/reconocimientos)
+- [Admisiones 2027](https://howardgardner.vercel.app/es/admisiones)
+- [Contacto](https://howardgardner.vercel.app/es/contacto)
+- [Política de Tratamiento de Datos](https://howardgardner.vercel.app/es/politica-de-datos)
+
+## Pages in English
+
+- [Home](https://howardgardner.vercel.app/en)
+- [About us](https://howardgardner.vercel.app/en/about)
+- [Learning](https://howardgardner.vercel.app/en/learning)
+- [Achievements](https://howardgardner.vercel.app/en/achievements)
+- [Admissions 2027](https://howardgardner.vercel.app/en/admissions)
+- [Contact](https://howardgardner.vercel.app/en/contact)
+- [Personal Data Policy](https://howardgardner.vercel.app/en/privacy-policy)

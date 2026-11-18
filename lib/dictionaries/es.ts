@@ -1,0 +1,327 @@
+/* Textos del sitio en español (versión principal).
+   Para cambiar un texto, edítalo aquí y en en.ts. */
+import { ADDRESS_LINE, PHONE_DISPLAY } from "@/lib/site";
+
+const HOURS = "Lunes a viernes, 7:00 a. m. – 5:00 p. m.";
+
+export const es = {
+  meta: {
+    siteName: "Howard Gardner Bilingual School",
+    description:
+      "Colegio bilingüe en Sabanalarga, Atlántico, de preescolar a grado 11°. Único colegio A+ de Sabanalarga y primero del municipio en el Índice de Clasificación del ICFES 2026. Colegio Oxford Quality. Inscripciones y matrículas 2027 abiertas.",
+    pages: {
+      home: { title: "Colegio bilingüe en Sabanalarga | Howard Gardner Bilingual School", description: "" },
+      about: { title: "Quiénes somos", description: "16 años formando niños y jóvenes en Sabanalarga, en español e inglés. Conoce al colegio y el mensaje de nuestro rector." },
+      learning: { title: "Aprendizaje: niveles, bilingüismo y pedagogía", description: "Preescolar, Básica Primaria, Básica Secundaria y Media Académica con formación bilingüe, Oxford Quality y la teoría de las inteligencias múltiples." },
+      achievements: { title: "Reconocimientos y resultados ICFES", description: "Único colegio A+ de Sabanalarga y primer puesto municipal en el Índice de Clasificación del ICFES 2026. Resultados y noticias del colegio." },
+      admissions: { title: "Admisiones 2027", description: "Inscripciones y matrículas abiertas para 2027, de Prejardín a grado 11°. Conoce el proceso y envía tu preinscripción." },
+      contact: { title: "Contacto y ubicación", description: `Visítanos en la ${ADDRESS_LINE}. Teléfono y WhatsApp ${PHONE_DISPLAY}.` },
+      privacy: { title: "Política de Tratamiento de Datos Personales", description: "Política de tratamiento de datos personales conforme a la Ley 1581 de 2012." },
+    },
+  },
+
+  common: {
+    skip: "Saltar al contenido",
+    enroll: "Inscripciones 2027",
+    visit: "Agendar una visita",
+    call: "Llamar",
+    whatsapp: "Escribir por WhatsApp",
+    menuOpen: "Abrir menú",
+    menuClose: "Cerrar menú",
+    home: "Inicio",
+    language: "Idioma",
+    langNames: { es: "Español", en: "English" },
+    backHome: "Volver al inicio",
+  },
+
+  wa: {
+    admissions: "Hola, quiero información sobre inscripciones 2027 en Howard Gardner Bilingual School.",
+    visit: "Hola, quiero agendar una visita al colegio Howard Gardner Bilingual School.",
+  },
+
+  nav: [
+    {
+      label: "Nosotros",
+      page: "about",
+      items: [
+        { label: "Quiénes somos", page: "about", hash: "historia" },
+        { label: "Palabras del rector", page: "about", hash: "rector" },
+      ],
+    },
+    {
+      label: "Aprendizaje",
+      page: "learning",
+      items: [
+        { label: "Niveles de formación", page: "learning", hash: "niveles" },
+        { label: "Preescolar", page: "learning", hash: "preescolar" },
+        { label: "Básica Primaria", page: "learning", hash: "primaria" },
+        { label: "Básica Secundaria", page: "learning", hash: "secundaria" },
+        { label: "Media Académica", page: "learning", hash: "media" },
+        { label: "Bilingüismo y Oxford Quality", page: "learning", hash: "bilinguismo" },
+        { label: "Inteligencias múltiples", page: "learning", hash: "pedagogia" },
+      ],
+    },
+    {
+      label: "Admisiones",
+      page: "admissions",
+      items: [
+        { label: "Proceso de admisión", page: "admissions", hash: "proceso" },
+        { label: "Preinscripción 2027", page: "admissions", hash: "preinscripcion" },
+        { label: "Preguntas frecuentes", page: "admissions", hash: "preguntas" },
+      ],
+    },
+    {
+      label: "Reconocimientos",
+      page: "achievements",
+      items: [
+        { label: "Resultados ICFES", page: "achievements", hash: "resultados" },
+        { label: "Noticias y logros", page: "achievements", hash: "noticias" },
+      ],
+    },
+    { label: "Contacto", page: "contact", items: [] },
+  ],
+
+  hero: {
+    eyebrow: "Sabanalarga · Preescolar a 11°",
+    title: ["El colegio bilingüe ", "número uno", " de Sabanalarga."],
+    lead: "Único colegio de Sabanalarga en categoría A+ según el Índice de Clasificación del ICFES 2026. Hace 16 años formamos niños y jóvenes en español e inglés, desde preescolar hasta grado 11°.",
+    stats: [
+      ["A+", "categoría ICFES 2026"],
+      ["#1", "en Sabanalarga"],
+      ["16", "años educando"],
+    ],
+    photoAlt: "Patio arborizado y zonas de juego del colegio Howard Gardner en Sabanalarga",
+  },
+
+  about: {
+    eyebrow: "Quiénes somos",
+    title: "16 años formando en Sabanalarga.",
+    paragraphs: [
+      "Howard Gardner Bilingual School es un colegio privado y bilingüe de Sabanalarga, Atlántico. Acompañamos a nuestros estudiantes desde Prejardín hasta grado 11°, con clases en español e inglés y un mismo equipo en todo el camino.",
+      "Llevamos el nombre del psicólogo Howard Gardner porque creemos, como él, que cada niño es inteligente a su manera. Ese principio, junto con la exigencia académica, nos ha llevado a ser el único colegio A+ de Sabanalarga según el ICFES y a formar parte de Oxford Quality.",
+    ],
+    motto: "Your Vision Is Our Inspiration",
+    facts: [
+      ["16", "años de historia"],
+      ["A+", "único en Sabanalarga"],
+      ["2", "idiomas, todos los días"],
+    ],
+  },
+
+  results: {
+    eyebrow: "Índice de Clasificación ICFES · 2026",
+    title: "El único colegio A+ de Sabanalarga.",
+    lead: "La categoría A+ es el nivel de desempeño más alto del país en las Pruebas Saber 11°. La otorga el ICFES a la institución, no a un estudiante en particular: es el resultado del trabajo de todo el colegio durante varios años.",
+    bigLabel: ["categoría", "ICFES 2026"],
+    bigAria: "Categoría A+",
+    facts: [
+      { n: "#1", t: "En Sabanalarga", d: "Primer puesto municipal por el Índice de Clasificación del ICFES 2026, con índice 0,7783." },
+      { n: "71°", t: "En el Atlántico", d: "Entre 540 colegios evaluados en el departamento en 2026." },
+      { n: "88°", t: "Índice ICFES departamental", d: "Entre 553 instituciones del Atlántico, según el Índice de Clasificación 2026." },
+      { n: "16", t: "Años educando", d: "Formando niños y jóvenes en Sabanalarga desde preescolar hasta grado 11°." },
+    ],
+    areasTitle: "Saber 11° 2025 · puesto municipal por área",
+    areasLead: "Primer lugar del municipio con 297 puntos de puntaje global, 13 más que en 2024.",
+    areasCaption: "Puesto en el municipio por área en Saber 11° 2025",
+    areaCol: "Área",
+    placeCol: "Puesto",
+    areas: [
+      { area: "Matemáticas", place: "1.er lugar", first: true },
+      { area: "Ciencias Sociales", place: "1.er lugar", first: true },
+      { area: "Lectura Crítica", place: "1.er lugar", first: true },
+      { area: "Ciencias Naturales", place: "2.º lugar", first: false },
+    ],
+  },
+
+  levels: {
+    eyebrow: "Propuesta educativa",
+    title: "Cuatro niveles, un mismo camino bilingüe.",
+    lead: "Un proceso continuo desde los tres años hasta el grado 11°, con el mismo equipo y la misma filosofía.",
+    items: [
+      { id: "preescolar", name: "Preescolar", grades: "Prejardín, Jardín y Transición", ages: "3 a 5 años", desc: "Primeros pasos en un ambiente bilingüe donde el juego y la exploración despiertan la curiosidad de cada niño." },
+      { id: "primaria", name: "Básica Primaria", grades: "1° a 5°", ages: "6 a 10 años", desc: "Bases sólidas en lectura, escritura, matemáticas e inglés, con pensamiento crítico y valores desde temprano." },
+      { id: "secundaria", name: "Básica Secundaria", grades: "6° a 9°", ages: "11 a 14 años", desc: "Profundización en todas las áreas con enfoque bilingüe y experimental, preparando el paso a la media." },
+      { id: "media", name: "Media Académica", grades: "10° y 11°", ages: "15 a 17 años", desc: "Preparación para las Pruebas Saber 11° y orientación para la universidad y la vida profesional." },
+    ],
+  },
+
+  bilingual: {
+    eyebrow: "Bilingüismo",
+    title: ["Español e inglés, ", "todos los días."],
+    lead: "Oficialmente formamos parte de Oxford Quality: nuestros estudiantes aprenden inglés con recursos confiables de calidad internacional, desde preescolar hasta grado 11°, para llegar a la universidad y al mundo con un segundo idioma propio.",
+    points: [
+      "Colegio Oxford Quality: trabajamos con Oxford University Press.",
+      "Única institución bilingüe de Sabanalarga.",
+      "Inglés desde preescolar, como parte del día a día.",
+      "Clases bilingües en las distintas áreas del conocimiento.",
+      "Destacado puntaje en inglés en las Pruebas Saber 11° 2025.",
+    ],
+    imgAlt: "Anuncio: oficialmente formamos parte de Oxford Quality, en alianza con Oxford University Press",
+  },
+
+  pedagogy: {
+    eyebrow: "Nuestra pedagogía",
+    title: "Ocho maneras de ser inteligente.",
+    lead: "Llevamos el nombre del psicólogo de Harvard Howard Gardner, que en 1983 propuso la teoría de las inteligencias múltiples. Por eso no medimos a todos con la misma regla: buscamos el talento de cada estudiante y lo trabajamos.",
+    intelligences: ["Lingüística", "Lógico-matemática", "Espacial", "Corporal", "Musical", "Interpersonal", "Intrapersonal", "Naturalista"],
+    button: "Conocer a Howard Gardner",
+    openLabel: "Abrir la serie ¿Quién es Howard Gardner? (9 láminas)",
+    imgAlt: "Retrato de Howard Gardner, creador de la teoría de las inteligencias múltiples",
+    slides: [
+      "Howard Gardner, creador de la teoría de las inteligencias múltiples",
+      "¿Quién es? Nació en 1943 en Pensilvania",
+      "¿En quién se inspiró? Piaget, Erikson y Bruner",
+      "Su principal aporte: la teoría de las inteligencias múltiples (1983)",
+      "¿Cuántos tipos de inteligencia existen? Ocho tipos",
+      "Inteligencias lingüística, lógico-matemática y espacial",
+      "Inteligencias corporal, musical e interpersonal",
+      "Inteligencias intrapersonal y naturalista",
+      "Feliz cumpleaños 82, Howard Gardner",
+    ],
+  },
+
+  rector: {
+    eyebrow: "Palabras del rector",
+    quote: "“Cada estudiante tiene un potencial único. Nuestro trabajo es despertarlo con una educación bilingüe de excelencia, valores sólidos y un acompañamiento cercano.”",
+    body: "Los resultados nos respaldan, pero lo que más nos enorgullece son los jóvenes que formamos: íntegros y preparados para construir el futuro de Sabanalarga y de Colombia.",
+    name: "Julián David Cuentas Navarro",
+    role: "Rector · Howard Gardner Bilingual School",
+    photoAlt: "Julián David Cuentas Navarro, rector del colegio",
+  },
+
+  gallery: {
+    eyebrow: "Noticias y logros",
+    title: "Buenas noticias para compartir en familia.",
+    instagram: "Síguenos en Instagram",
+    seeAll: "Ver todas las noticias",
+    enlarge: "Ampliar",
+    items: [
+      "Noviembre de buenas noticias: somos el único colegio en categoría A+ en Sabanalarga según el ICFES 2026",
+      "Ranking municipal por Índice de Clasificación del ICFES 2026: Howard Gardner en el primer puesto de Sabanalarga",
+      "En 2026 ocupamos el puesto 71 entre 540 colegios del Atlántico y el 88 entre 553 según el Índice ICFES",
+      "Inscripciones y matrículas abiertas 2027: 16 años educando con calidad y excelencia",
+      "Primer lugar del ranking municipal ICFES 2025 con 297 puntos y categoría A+",
+      "Primeros lugares 2025 en Matemáticas, Ciencias Sociales y Lectura Crítica",
+      "El mejor colegio de Sabanalarga según el Ranking Milton Ochoa, categoría A+ 2025",
+      "Líderes en bilingüismo en Sabanalarga",
+    ],
+  },
+
+  viewer: { label: "Visor de imágenes", close: "Cerrar", prev: "Imagen anterior", next: "Imagen siguiente" },
+
+  admissionsBand: {
+    eyebrow: "Admisiones 2027",
+    title: "Inscripciones y matrículas abiertas para 2027.",
+    lead: "De Prejardín a grado 11°. Conoce el proceso, envía tu preinscripción o escríbenos por WhatsApp.",
+    button: "Ver proceso de admisión",
+  },
+
+  admissions: {
+    eyebrow: "Inscripciones y matrículas 2027",
+    title: "Así es el proceso de admisión.",
+    lead: "De Prejardín a grado 11°. Te respondemos por WhatsApp en horario de atención.",
+    steps: [
+      { t: "Escríbenos", d: "Cuéntanos el grado al que aspira tu hijo o hija por WhatsApp o con el formulario de preinscripción." },
+      { t: "Visita el colegio", d: "Agendamos un recorrido para que conozcas las instalaciones y al equipo." },
+      { t: "Inscripción", d: "Te enviamos los requisitos y te acompañamos en el proceso de matrícula." },
+    ],
+    callPrompt: "¿Prefieres llamar?",
+    form: {
+      title: "Preinscripción 2027",
+      lead: "Al enviar se abre WhatsApp con tus datos listos.",
+      name: "Nombre del acudiente *",
+      phone: "Teléfono / WhatsApp *",
+      grade: "Grado de interés *",
+      gradePlaceholder: "Elige un grado",
+      message: "Mensaje (opcional)",
+      consent: ["Autorizo el tratamiento de mis datos personales conforme a la ", "Política de Tratamiento de Datos", " (Ley 1581 de 2012)."],
+      submit: "Enviar por WhatsApp",
+      errors: {
+        name: "Escribe tu nombre completo.",
+        phone: "Escribe un número de contacto válido.",
+        grade: "Elige el grado de interés.",
+        consent: "Debes autorizar el tratamiento de datos para continuar.",
+      },
+      grades: ["Prejardín", "Jardín", "Transición", "1°", "2°", "3°", "4°", "5°", "6°", "7°", "8°", "9°", "10°", "11°"],
+      waIntro: "Hola, quiero información de inscripciones y matrículas 2027.",
+      waName: "Nombre",
+      waPhone: "Teléfono",
+      waGrade: "Grado de interés",
+      waMessage: "Mensaje",
+      waConsent: "(Autorizo el tratamiento de mis datos según la política del colegio.)",
+    },
+  },
+
+  faq: {
+    eyebrow: "Preguntas frecuentes",
+    title: "Lo que más nos preguntan las familias.",
+    items: [
+      { q: "¿Dónde queda el colegio?", a: `En la ${ADDRESS_LINE}. Puedes ver el mapa y pedir indicaciones en la página de Contacto.` },
+      { q: "¿Qué grados ofrecen?", a: "Desde preescolar (Prejardín, Jardín y Transición) hasta grado 11°: Básica Primaria, Básica Secundaria y Media Académica." },
+      { q: "¿El colegio es bilingüe?", a: "Sí. Somos la única institución bilingüe de Sabanalarga y el inglés hace parte de la formación desde preescolar." },
+      { q: "¿Qué significa que el colegio sea A+?", a: "Estar en la categoría A+ según el ICFES significa que la institución (no un estudiante de forma individual) se encuentra en el nivel de desempeño más alto de todo el país en las Pruebas Saber 11°. Somos el único colegio de Sabanalarga en esta categoría según el Índice de Clasificación del ICFES 2026." },
+      { q: "¿Cómo les ha ido en las Pruebas Saber 11°?", a: "En el Índice de Clasificación del ICFES 2026 ocupamos el primer puesto de Sabanalarga y el puesto 88 entre 553 instituciones del Atlántico. En 2026 también ocupamos el puesto 71 entre 540 colegios evaluados del departamento. En 2025 fuimos primeros del municipio con 297 puntos de puntaje global." },
+      { q: "¿Qué es Oxford Quality?", a: "Oficialmente formamos parte de Oxford Quality, en alianza con Oxford University Press. Para nuestros estudiantes significa aprender inglés con recursos confiables de calidad internacional." },
+      { q: "¿Cómo inscribo a mi hijo o hija para 2027?", a: `Envía la preinscripción, escríbenos por WhatsApp o llámanos al ${PHONE_DISPLAY}. Te contamos los requisitos, los costos y agendamos una visita al colegio.` },
+      { q: "¿Cuál es el horario de atención?", a: `${HOURS}.` },
+    ],
+  },
+
+  visit: {
+    eyebrow: "Visítanos",
+    title: "Te esperamos en la Calle 12, Sabanalarga.",
+    address: "Dirección",
+    phone: "Teléfono",
+    whatsapp: "WhatsApp",
+    hoursLabel: "Horario de atención",
+    hours: HOURS,
+    directions: "Cómo llegar",
+    mapTitle: "Mapa: ubicación del colegio Howard Gardner en Sabanalarga",
+    instagram: "Instagram del colegio",
+    facebook: "Facebook del colegio",
+  },
+
+  pageHeaders: {
+    about: { eyebrow: "Nosotros", title: "Un colegio que cree en el talento de cada estudiante.", lead: "Conoce nuestra historia, lo que nos mueve y el mensaje de nuestro rector." },
+    learning: { eyebrow: "Aprendizaje", title: "De Prejardín a grado 11°, en dos idiomas.", lead: "Nuestros niveles de formación, el programa bilingüe con Oxford Quality y la pedagogía de las inteligencias múltiples." },
+    achievements: { eyebrow: "Reconocimientos", title: "Resultados que hablan por nuestros estudiantes.", lead: "Los resultados del ICFES y las buenas noticias que compartimos con nuestra comunidad." },
+    admissions: { eyebrow: "Admisiones 2027", title: "Inscripciones y matrículas abiertas.", lead: "Conoce el proceso, envía tu preinscripción y resuelve tus dudas." },
+    contact: { eyebrow: "Contacto", title: "Hablemos.", lead: "Escríbenos, llámanos o visítanos en Sabanalarga. Con gusto te atendemos." },
+  },
+
+  footer: {
+    schoolTitle: "El colegio",
+    contactTitle: "Contacto",
+    privacy: "Política de Tratamiento de Datos",
+    credit: "Sitio por",
+    links: [
+      { label: "Quiénes somos", page: "about" },
+      { label: "Aprendizaje", page: "learning" },
+      { label: "Reconocimientos", page: "achievements" },
+      { label: "Admisiones 2027", page: "admissions" },
+      { label: "Contacto", page: "contact" },
+    ],
+  },
+
+  privacy: {
+    eyebrow: "Ley 1581 de 2012 · Decreto 1377 de 2013",
+    title: "Política de Tratamiento de Datos Personales",
+    note: "",
+    sections: [
+      { h: "1. Responsable del tratamiento", p: ["{LEGAL}, NIT {NIT}, con domicilio en {ADDRESS}, Colombia. Teléfono: {PHONE}."] },
+      { h: "2. Datos que recolectamos", p: ["Nombre, número de teléfono y la información que las familias nos comparten voluntariamente en los formularios del sitio y en nuestros canales de atención, con el fin de responder solicitudes de información y de admisión."] },
+      { h: "3. Finalidades", list: ["Responder solicitudes de información sobre el colegio y el proceso de admisión.", "Agendar visitas y hacer seguimiento a las solicitudes de inscripción.", "Enviar información institucional relacionada con la solicitud del titular."] },
+      { h: "4. Datos de niñas, niños y adolescentes", p: ["El tratamiento de datos de menores de edad se hace respetando su interés superior y sus derechos fundamentales, y siempre con la autorización de su representante legal."] },
+      { h: "5. Derechos del titular", list: ["Conocer, actualizar y rectificar sus datos personales.", "Solicitar prueba de la autorización otorgada.", "Ser informado sobre el uso que se ha dado a sus datos.", "Revocar la autorización o solicitar la supresión de sus datos cuando proceda.", "Presentar quejas ante la Superintendencia de Industria y Comercio.", "Acceder de forma gratuita a sus datos personales."] },
+      { h: "6. Consultas y reclamos", p: ["Las consultas se atenderán en un plazo máximo de diez (10) días hábiles y los reclamos en un plazo máximo de quince (15) días hábiles, contados desde su recibo, a través del teléfono {PHONE} o en la sede del colegio."] },
+      { h: "7. Vigencia", p: ["Esta política rige desde su publicación. Los datos se conservarán durante el tiempo necesario para cumplir las finalidades descritas."] },
+    ],
+  },
+
+  notFound: {
+    title: "No encontramos esta página.",
+    body: "Puede que la dirección haya cambiado. Te invitamos a volver al inicio.",
+  },
+};
+
+export type Dict = typeof es;

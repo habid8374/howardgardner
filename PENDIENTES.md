@@ -25,6 +25,17 @@ En el código están marcados con `TODO(CLIENTE)`.
 - [ ] Autorización de uso de imagen de los estudiantes que aparecen en las piezas.
 - [ ] Foto del rector en mejor resolución y con fondo limpio.
 
+## Versión en inglés
+- [ ] **Revisión del inglés por un docente del colegio.** Todos los textos están en `lib/dictionaries/en.ts`. Son traducción de Axentia, natural y no literal.
+- [ ] Confirmar equivalencias de grados en inglés: Prejardín = Pre-K 3, Jardín = Pre-K 4, Transición = Kindergarten.
+- [ ] (Opcional) Versiones en inglés de las piezas de redes; hoy se muestran en español con descripción traducida.
+
+## Siguiente etapa (aprobada): admisiones y PQRSF con panel
+- [ ] Dominio propio (necesario para enviar correos automáticos).
+- [ ] Crear el proyecto de Supabase (base de datos, archivos y acceso al panel).
+- [ ] Nombres y correos del personal que usará el panel, y roles.
+- [ ] Documentos requeridos por grado, edades de ingreso y responsable de responder PQRSF.
+
 ## Legal
 - [ ] Validar la **Política de Tratamiento de Datos** con el área jurídica del colegio y añadir la fecha de vigencia. `app/politica-de-datos/page.tsx`
 

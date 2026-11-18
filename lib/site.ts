@@ -1,4 +1,4 @@
-/* Configuración central del sitio.
+/* Configuración central del sitio (datos que no cambian con el idioma).
    Cambiar SITE_URL aquí cuando se compre el dominio propio
    (se actualiza automáticamente en SEO, sitemap, robots y JSON-LD). */
 export const SITE_URL = "https://howardgardner.vercel.app";
@@ -18,22 +18,14 @@ export const ADDRESS = {
   country: "CO",
 };
 export const ADDRESS_LINE = `${ADDRESS.street}, ${ADDRESS.city}, ${ADDRESS.region}`;
+
+const MAPS_QUERY = `Howard Gardner Bilingual School, ${ADDRESS.street}, ${ADDRESS.city}, ${ADDRESS.region}, Colombia`;
 /* TODO(CLIENTE): reemplazar por el enlace del perfil de Google del colegio. */
-export const MAPS_URL =
-  "https://www.google.com/maps/search/?api=1&query=" +
-  encodeURIComponent(`Howard Gardner Bilingual School, ${ADDRESS.street}, ${ADDRESS.city}, ${ADDRESS.region}, Colombia`);
-export const MAPS_EMBED =
-  "https://maps.google.com/maps?q=" +
-  encodeURIComponent(`Howard Gardner Bilingual School, ${ADDRESS.street}, ${ADDRESS.city}, ${ADDRESS.region}, Colombia`) +
-  "&z=16&output=embed";
+export const MAPS_URL = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(MAPS_QUERY);
+export const MAPS_EMBED = "https://maps.google.com/maps?q=" + encodeURIComponent(MAPS_QUERY) + "&z=16&output=embed";
 
 /* Imagen principal del inicio (escritorio y celular). Cambiar aquí. */
-export const HERO_IMAGE = {
-  src: "/patio.jpg",
-  alt: "Patio arborizado y zonas de juego del colegio Howard Gardner en Sabanalarga",
-};
-
-export const HOURS = "Lunes a viernes, 7:00 a. m. – 5:00 p. m.";
+export const HERO_IMAGE_SRC = "/patio.jpg";
 
 export const SOCIAL = {
   instagram: "https://www.instagram.com/howard_gardner_sabanalarga",
@@ -44,10 +36,3 @@ export const SOCIAL = {
 export function waLink(message: string) {
   return `https://wa.me/${PHONE_E164.replace("+", "")}?text=${encodeURIComponent(message)}`;
 }
-
-export const WA_ADMISIONES = waLink(
-  "Hola, quiero información sobre inscripciones 2027 en Howard Gardner Bilingual School."
-);
-export const WA_VISITA = waLink(
-  "Hola, quiero agendar una visita al colegio Howard Gardner Bilingual School."
-);
