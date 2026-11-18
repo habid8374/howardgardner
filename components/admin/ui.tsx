@@ -98,16 +98,16 @@ export function Drawer({ open, onClose, title, closeLabel, children }: { open: b
       onClose={onClose}
       onClick={(e) => e.target === e.currentTarget && onClose()}
       aria-label={title}
-      className="admin-drawer m-0 ml-auto h-dvh max-h-dvh w-full max-w-[560px] bg-paper p-0 text-ink"
+      className="admin-drawer m-0 ml-auto h-dvh max-h-dvh w-full max-w-full bg-paper p-0 text-ink sm:max-w-[560px]"
     >
       <div className="flex h-full flex-col">
-        <div className="flex items-center justify-between gap-4 border-b border-line px-6 py-4">
-          <h2 className="h-display text-2xl">{title}</h2>
-          <button type="button" onClick={onClose} aria-label={closeLabel} className="flex h-11 w-11 items-center justify-center rounded-full hover:bg-paper-2">
+        <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-3 sm:px-6 sm:py-4">
+          <h2 className="h-display line-clamp-2 text-xl leading-tight sm:text-2xl">{title}</h2>
+          <button type="button" onClick={onClose} aria-label={closeLabel} className="flex h-11 w-11 flex-none items-center justify-center rounded-full hover:bg-paper-2">
             <X size={22} />
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto px-6 py-6">{children}</div>
+        <div className="flex-1 overflow-y-auto overscroll-contain px-4 pt-5 sm:px-6 sm:pt-6">{children}</div>
       </div>
     </dialog>
   );

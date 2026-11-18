@@ -132,7 +132,7 @@ export default function CampusesPanel({ campuses, admissions, pqrsf, a: d, lang 
               {field("sort", s.f.sort, { type: "number", max: 2 })}
             </div>
             {error && <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-800">{error}</p>}
-            <div className="flex gap-3">
+            <div className="sticky bottom-0 -mx-4 flex gap-3 border-t border-line bg-paper px-4 py-3 sm:-mx-6 sm:px-6">
               <button type="submit" disabled={busy} className="btn btn-primary !min-h-11 !text-sm disabled:opacity-70">{busy ? d.loading : s.save}</button>
               <button type="button" onClick={() => setEdit(null)} className="btn btn-ghost on-light !min-h-11 !text-sm text-ink">{s.cancel}</button>
             </div>

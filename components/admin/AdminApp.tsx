@@ -3,7 +3,9 @@
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ExternalLink, Globe, LogOut, RotateCcw } from "lucide-react";
+import { Building2, ClipboardList, ExternalLink, Globe, LogOut, MessagesSquare, RotateCcw, Users } from "lucide-react";
+
+const TAB_ICON = { admisiones: ClipboardList, pqrsf: MessagesSquare, sedes: Building2, usuarios: Users } as const;
 import {
   ApiError, adminLang, campusName, fetchAll, pqrsfAlert, resetDemo, session, subscribeDemo, type Admission, type Campus, type CampusId, type Pqrsf, type StaffUser,
 } from "@/lib/records";
@@ -199,33 +201,47 @@ export default function AdminApp() {
             </button>
           </div>
         </div>
-        <nav aria-label={a.sections} className="mx-auto flex max-w-[1400px] gap-1 overflow-x-auto px-4 sm:px-8">
-          {tabs.map((t) => (
-            <button
-              key={t.key}
-              type="button"
-              onClick={() => setTab(t.key)}
-              aria-current={tab === t.key ? "page" : undefined}
-              className={`inline-flex min-h-12 flex-none items-center gap-2 border-b-2 px-4 text-sm font-semibold transition-colors ${
-                tab === t.key ? "border-gold text-white" : "border-transparent text-white/60 hover:text-white"
-              }`}
-            >
-              {t.label}
-              {t.count > 0 && (
-                <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${t.urgent ? "bg-red-600 text-white" : "bg-gold text-ink"}`}>{t.count}</span>
-              )}
-            </button>
-          ))}
-          {isRecords && <div className="ml-auto flex flex-none items-center gap-2 py-2 pl-4">
+        <nav aria-label={a.sections} className="mx-auto flex max-w-[1400px] flex-col px-2 sm:flex-row sm:items-center sm:px-8">
+          {/* Celular: pestañas en columnas iguales, ícono arriba y nombre corto. Computador: en línea. */}
+          <div className="grid sm:flex sm:gap-1" style={{ gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))` }}>
+            {tabs.map((t) => {
+              const Icon = TAB_ICON[t.key];
+              return (
+                <button
+                  key={t.key}
+                  type="button"
+                  onClick={() => setTab(t.key)}
+                  aria-current={tab === t.key ? "page" : undefined}
+                  aria-label={t.label}
+                  className={`relative flex min-h-14 flex-col items-center justify-center gap-1 border-b-2 px-1 text-[11px] font-semibold transition-colors sm:min-h-12 sm:flex-row sm:gap-2 sm:px-4 sm:text-sm ${
+                    tab === t.key ? "border-gold text-white" : "border-transparent text-white/60 hover:text-white"
+                  }`}
+                >
+                  <span className="relative">
+                    <Icon size={18} aria-hidden />
+                    {t.count > 0 && (
+                      <span className={`absolute -right-3 -top-2 min-w-[18px] rounded-full px-1 text-center text-[10px] font-bold leading-[18px] sm:hidden ${t.urgent ? "bg-red-600 text-white" : "bg-gold text-ink"}`}>{t.count}</span>
+                    )}
+                  </span>
+                  <span className="sm:hidden">{a.tabsShort[t.key]}</span>
+                  <span className="hidden sm:inline">{t.label}</span>
+                  {t.count > 0 && (
+                    <span className={`hidden rounded-full px-2 py-0.5 text-xs font-bold sm:inline ${t.urgent ? "bg-red-600 text-white" : "bg-gold text-ink"}`}>{t.count}</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+          {isRecords && <div className="flex items-center gap-2 border-t border-white/10 px-2 py-2 sm:ml-auto sm:border-0 sm:py-2 sm:pl-4 sm:pr-0">
             {user.campus ? (
               <span className="rounded-full border border-gold/50 px-3 py-1.5 text-xs font-bold text-gold">{a.campusOnly}: {campusNames[user.campus] ?? user.campus}</span>
             ) : (
-              <label className="flex items-center gap-2 text-xs font-semibold text-white/70">
-                <span className="hidden sm:inline">{a.campus}</span>
+              <label className="flex w-full items-center gap-2 text-xs font-semibold text-white/70 sm:w-auto">
+                <span>{a.campus}</span>
                 <select
                   value={campusPick}
                   onChange={(e) => setCampusPick(e.target.value as CampusId | "")}
-                  className="min-h-9 rounded-full border border-white/25 bg-ink px-3 text-sm font-semibold text-white outline-none focus:border-gold"
+                  className="min-h-9 flex-1 rounded-full border border-white/25 bg-ink px-3 text-sm font-semibold text-white outline-none focus:border-gold sm:flex-none"
                 >
                   <option value="">{a.campusAll}</option>
                   {data.campuses.map((c) => <option key={c.id} value={c.id}>{campusNames[c.id]}</option>)}

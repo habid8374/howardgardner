@@ -3,7 +3,7 @@ import type { AdmissionStatus, DueLevel, PqrsfPriority, PqrsfStatus, PqrsfType }
 
 const es = {
   title: "Panel del colegio",
-  subtitle: "Howard Gardner · Demo",
+  subtitle: "Howard Gardner",
   loginLead: "Preinscripciones y PQRSF de Howard Gardner Bilingual School.",
   loginDemo: "Demostración. Usuario y clave de prueba:",
   username: "Usuario",
@@ -27,6 +27,7 @@ const es = {
   sections: "Secciones del panel",
   language: "Idioma del panel",
   tabs: { admissions: "Preinscripciones", pqrsf: "PQRSF" },
+  tabsShort: { admisiones: "Admisiones", pqrsf: "PQRSF", sedes: "Sedes", usuarios: "Usuarios" },
   demoBanner: "Demostración: los registros marcados como «ejemplo» son ficticios. Lo que se envíe desde los formularios del sitio, desde cualquier celular o computador, aparece aquí.",
   signedInAs: "Sesión iniciada como",
   reset: "Restaurar ejemplos",
@@ -178,7 +179,7 @@ export type AdminDict = typeof es;
 
 const en: AdminDict = {
   title: "School dashboard",
-  subtitle: "Howard Gardner · Demo",
+  subtitle: "Howard Gardner",
   loginLead: "Pre-registrations and requests (PQRSF) for Howard Gardner Bilingual School.",
   loginDemo: "Demo. Test username and password:",
   username: "Username",
@@ -202,6 +203,7 @@ const en: AdminDict = {
   sections: "Dashboard sections",
   language: "Dashboard language",
   tabs: { admissions: "Pre-registrations", pqrsf: "Requests (PQRSF)" },
+  tabsShort: { admisiones: "Admissions", pqrsf: "Requests", sedes: "Campuses", usuarios: "Users" },
   demoBanner: "Demo: records tagged “sample” are fictitious. Anything sent from the website forms, from any phone or computer, shows up here.",
   signedInAs: "Signed in as",
   reset: "Restore samples",

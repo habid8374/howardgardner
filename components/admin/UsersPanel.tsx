@@ -97,8 +97,40 @@ export default function UsersPanel({ me, campuses, a: d, lang }: { me: StaffUser
         <button type="button" onClick={openNew} className="btn btn-primary !min-h-11 !text-sm"><Plus size={16} aria-hidden /> {s.newUser}</button>
       </div>
 
-      <div className="mt-8 overflow-x-auto rounded-2xl bg-white ring-1 ring-line">
-        <table className="w-full min-w-[760px] text-left text-sm">
+      {/* Celular: una tarjeta por usuario */}
+      <ul className="mt-6 flex flex-col gap-3 md:hidden">
+        {users === null && <li className="text-muted">{d.loading}</li>}
+        {users?.map((u) => {
+          const locked = u.superuser && !me.superuser;
+          return (
+            <li key={u.username} className={`rounded-2xl bg-white p-4 ring-1 ring-line ${u.active ? "" : "opacity-60"}`}>
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-semibold leading-snug">
+                    {u.name}{u.username === me.username && <span className="ml-1.5 text-xs font-normal text-muted">({s.u.you})</span>}
+                  </p>
+                  <p className="font-mono text-xs text-muted">{u.username}</p>
+                </div>
+                {u.superuser && <span className="inline-flex flex-none items-center gap-1 rounded-full bg-navy px-2 py-0.5 text-[11px] font-bold text-white"><Lock size={11} aria-hidden /> {s.u.superuser}</span>}
+              </div>
+              <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
+                <div><dt className="text-[11px] font-bold uppercase tracking-[0.1em] text-muted">{s.u.campus}</dt><dd>{cName(u.campus)}</dd></div>
+                <div><dt className="text-[11px] font-bold uppercase tracking-[0.1em] text-muted">{s.u.perms}</dt><dd className="flex items-center gap-1">{u.perms.usuarios && <ShieldCheck size={13} className="text-navy" aria-hidden />}{summary(u.perms)}</dd></div>
+                <div className="col-span-2"><dt className="text-[11px] font-bold uppercase tracking-[0.1em] text-muted">{s.u.lastLogin}</dt><dd className="text-muted">{u.lastLogin ? formatDate(u.lastLogin, lang, true) : s.u.never}{!u.active && ` · ${s.u.inactive}`}</dd></div>
+              </dl>
+              {!locked && (
+                <button type="button" onClick={() => openEdit(u)} className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-ink/20 text-sm font-semibold text-navy">
+                  <Pencil size={14} aria-hidden /> {s.editUser}
+                </button>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+
+      {/* Computador: tabla */}
+      <div className="mt-8 hidden overflow-x-auto rounded-2xl bg-white ring-1 ring-line md:block">
+        <table className="w-full text-left text-sm">
           <thead className="bg-paper-2 text-xs uppercase tracking-[0.12em] text-muted">
             <tr>
               <th className="px-4 py-3 font-bold">{s.u.name}</th>
@@ -243,7 +275,7 @@ export default function UsersPanel({ me, campuses, a: d, lang }: { me: StaffUser
             </div>
 
             {error && <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-800">{error}</p>}
-            <div className="flex gap-3">
+            <div className="sticky bottom-0 -mx-4 flex gap-3 border-t border-line bg-paper px-4 py-3 sm:-mx-6 sm:px-6">
               <button type="submit" disabled={busy} className="btn btn-primary !min-h-11 !text-sm disabled:opacity-70">{busy ? d.loading : s.save}</button>
               <button type="button" onClick={() => setEdit(null)} className="btn btn-ghost on-light !min-h-11 !text-sm text-ink">{s.cancel}</button>
             </div>
