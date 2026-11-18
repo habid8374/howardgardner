@@ -32,7 +32,7 @@ En el código están marcados con `TODO(CLIENTE)`.
 
 ## Demo de admisiones, PQRSF y panel (hecha, solo para mostrar)
 Funciona en Vercel sin base de datos: los envíos se guardan **solo en el navegador** de quien prueba (`lib/demo-store.ts`).
-- Panel: `/admin` · clave de demostración `colegio2027` (no es seguridad real).
+- Panel: botón "Acceso colegio" / "Staff login" en el pie de página (`/admin`) · clave de demostración `colegio2027` (no es seguridad real). El panel está en español e inglés.
 - Para presentarla: enviar el formulario y abrir el panel en el mismo navegador.
 
 Para pasar a producción hace falta:
@@ -40,7 +40,7 @@ Para pasar a producción hace falta:
 - [ ] Base de datos y archivos con acceso protegido (p. ej. Supabase), usuarios por persona y roles.
 - [ ] Nombres y correos del personal que usará el panel.
 - [ ] Documentos requeridos por grado, edades de ingreso y responsable de responder PQRSF.
-- [ ] Validar con el abogado los plazos de respuesta de PQRSF (hoy: 15 días hábiles de referencia).
+- [ ] Validar con el abogado los plazos y criterios de prioridad de PQRSF. Hoy: Alta 5, Media 10, Baja 15 días hábiles; quejas y reclamos entran en Alta, peticiones en Media, sugerencias y felicitaciones en Baja; si el acudiente marca "urgente", entra en Alta.
 
 ## Legal
 - [ ] Validar la **Política de Tratamiento de Datos** con el área jurídica del colegio y añadir la fecha de vigencia. `app/politica-de-datos/page.tsx`

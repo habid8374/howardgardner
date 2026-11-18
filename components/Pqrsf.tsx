@@ -48,6 +48,7 @@ export default function Pqrsf({ lang, t }: Props) {
       subject: v("asunto"),
       description: v("descripcion"),
       attachment: file instanceof File && file.size > 0 ? file.name : "",
+      urgent: d.get("urgente") === "on",
     };
 
     const next: Errors = {};
@@ -165,6 +166,15 @@ export default function Pqrsf({ lang, t }: Props) {
                   <Err id="e-description" msg={errors.description} />
                 </div>
                 <div className="sm:col-span-2">
+                  <label className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50/60 px-4 py-3 text-sm leading-relaxed text-ink">
+                    <input type="checkbox" name="urgente" aria-describedby="h-urgente" className="mt-1 h-5 w-5 flex-none accent-red-600" />
+                    <span>
+                      <strong className="font-semibold">{p.urgent}</strong>
+                      <span id="h-urgente" className="mt-0.5 block text-muted">{p.urgentHelp}</span>
+                    </span>
+                  </label>
+                </div>
+                <div className="sm:col-span-2">
                   <label htmlFor="p-adjunto" className="text-sm font-semibold">{p.attachment}</label>
                   <input
                     id="p-adjunto"
@@ -229,10 +239,11 @@ export default function Pqrsf({ lang, t }: Props) {
                   {[
                     [p.lookupLabel, found.id],
                     [p.lookupStatus, p.statuses[found.status]],
+                    [p.lookupPriority, p.priorities[found.priority]],
                     [p.lookupCreated, formatDate(found.createdAt, lang)],
                     [p.lookupDue, formatDate(pqrsfDue(found).toISOString(), lang)],
-                  ].map(([k, val]) => (
-                    <div key={k} className="bg-ink p-5">
+                  ].map(([k, val], i) => (
+                    <div key={k} className={`bg-ink p-5 ${i === 0 ? "sm:col-span-2" : ""}`}>
                       <dt className="text-xs font-bold uppercase tracking-[0.14em] text-white/55">{k}</dt>
                       <dd className="mt-1 text-lg font-semibold">{val}</dd>
                     </div>

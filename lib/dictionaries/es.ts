@@ -318,7 +318,7 @@ export const es = {
       { label: "Contacto", page: "contact" },
       { label: "PQRSF", page: "pqrsf" },
     ],
-    admin: "Acceso del colegio (demo)",
+    admin: "Acceso colegio",
   },
 
   privacy: {
@@ -361,6 +361,8 @@ export const es = {
     gradePlaceholder: "Elige un grado",
     subject: "Asunto *",
     description: "Descripción *",
+    urgent: "Es urgente: afecta la seguridad, la salud o el bienestar del estudiante.",
+    urgentHelp: "Las solicitudes urgentes tienen prioridad alta y se responden en máximo 5 días hábiles.",
     attachment: "Adjunto (opcional)",
     attachmentHelp: "PDF o imagen. En la demo solo se guarda el nombre del archivo.",
     consent: ["Autorizo el tratamiento de mis datos personales conforme a la ", "Política de Tratamiento de Datos", " (Ley 1581 de 2012)."],
@@ -386,6 +388,8 @@ export const es = {
     lookupStatus: "Estado",
     lookupCreated: "Radicada el",
     lookupDue: "Fecha límite de respuesta",
+    lookupPriority: "Prioridad",
+    priorities: { alta: "Alta", media: "Media", baja: "Baja" },
     lookupAnswer: "Respuesta del colegio",
     statuses: { radicada: "Radicada", en_tramite: "En trámite", respondida: "Respondida", cerrada: "Cerrada" },
     infoTitle: "¿Cómo funciona?",

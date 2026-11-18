@@ -11,6 +11,7 @@ export type AdmissionStatus =
 
 export type PqrsfType = "peticion" | "queja" | "reclamo" | "sugerencia" | "felicitacion";
 export type PqrsfStatus = "radicada" | "en_tramite" | "respondida" | "cerrada";
+export type PqrsfPriority = "alta" | "media" | "baja";
 
 export type Note = { at: string; text: string };
 
@@ -40,41 +41,32 @@ export type Pqrsf = {
   subject: string;
   description: string;
   attachment: string;    // solo el nombre del archivo en la demo
+  urgent: boolean;       // el acudiente la marcó como urgente
+  priority: PqrsfPriority;
   status: PqrsfStatus;
   answer: string;
   notes: Note[];
   sample?: boolean;
 };
 
-export const ADMISSION_STATUS: Record<AdmissionStatus, string> = {
-  nueva: "Nueva",
-  contactada: "Contactada",
-  visita: "Visita agendada",
-  evaluacion: "En evaluación",
-  admitido: "Admitido",
-  no_admitido: "No admitido",
-  matriculado: "Matriculado",
-};
+/* Listas de valores. Los textos (español / inglés) están en lib/dictionaries/admin.ts. */
+export const ADMISSION_STATUSES: AdmissionStatus[] = ["nueva", "contactada", "visita", "evaluacion", "admitido", "no_admitido", "matriculado"];
+export const PQRSF_STATUSES: PqrsfStatus[] = ["radicada", "en_tramite", "respondida", "cerrada"];
+export const PQRSF_TYPES: PqrsfType[] = ["peticion", "queja", "reclamo", "sugerencia", "felicitacion"];
+export const PRIORITIES: PqrsfPriority[] = ["alta", "media", "baja"];
 
-export const PQRSF_STATUS: Record<PqrsfStatus, string> = {
-  radicada: "Radicada",
-  en_tramite: "En trámite",
-  respondida: "Respondida",
-  cerrada: "Cerrada",
-};
-
-export const PQRSF_TYPE: Record<PqrsfType, string> = {
-  peticion: "Petición",
-  queja: "Queja",
-  reclamo: "Reclamo",
-  sugerencia: "Sugerencia",
-  felicitacion: "Felicitación",
-};
-
-/* Plazo de referencia en días hábiles. TODO(CLIENTE): validar con el abogado del colegio. */
+/* Plazos en días hábiles según la prioridad. El máximo (15) es el plazo de referencia.
+   TODO(CLIENTE): validar plazos y criterios de prioridad con el abogado del colegio. */
 export const PQRSF_DAYS = 15;
+export const PRIORITY_DAYS: Record<PqrsfPriority, number> = { alta: 5, media: 10, baja: 15 };
+/* Prioridad inicial según el tipo (el colegio la puede cambiar en el panel). */
+export const DEFAULT_PRIORITY: Record<PqrsfType, PqrsfPriority> = {
+  queja: "alta", reclamo: "alta", peticion: "media", sugerencia: "baja", felicitacion: "baja",
+};
+/* Días hábiles restantes a partir de los cuales se alerta "vence pronto". */
+export const SOON_DAYS = 2;
 
-const KEYS = { admissions: "hg-demo-admisiones", pqrsf: "hg-demo-pqrsf", session: "hg-demo-sesion" };
+const KEYS = { admissions: "hg-demo-admisiones", pqrsf: "hg-demo-pqrsf-v2", session: "hg-demo-sesion", adminLang: "hg-admin-idioma" };
 
 /* ── Fechas ── */
 export function addBusinessDays(from: Date, days: number) {
@@ -103,8 +95,32 @@ export function businessDaysBetween(from: Date, to: Date) {
   return count * sign;
 }
 
-export function pqrsfDue(p: Pick<Pqrsf, "createdAt">) {
-  return addBusinessDays(new Date(p.createdAt), PQRSF_DAYS);
+export function pqrsfDue(p: Pick<Pqrsf, "createdAt" | "priority">) {
+  return addBusinessDays(new Date(p.createdAt), PRIORITY_DAYS[p.priority] ?? PQRSF_DAYS);
+}
+
+export type DueLevel = "vencida" | "hoy" | "pronto" | "a_tiempo" | "cerrada";
+/** Estado del plazo de una PQRSF: vencida, vence hoy, vence pronto, a tiempo o cerrada. */
+export function pqrsfAlert(p: Pick<Pqrsf, "createdAt" | "priority" | "status">, now = new Date()): { level: DueLevel; days: number } {
+  if (p.status === "respondida" || p.status === "cerrada") return { level: "cerrada", days: 0 };
+  const days = businessDaysBetween(now, pqrsfDue(p));
+  if (days < 0) return { level: "vencida", days };
+  if (days === 0) return { level: "hoy", days };
+  if (days <= SOON_DAYS) return { level: "pronto", days };
+  return { level: "a_tiempo", days };
+}
+
+const PRIORITY_ORDER: Record<PqrsfPriority, number> = { alta: 0, media: 1, baja: 2 };
+const LEVEL_ORDER: Record<DueLevel, number> = { vencida: 0, hoy: 1, pronto: 2, a_tiempo: 3, cerrada: 4 };
+/** Orden de atención: primero lo vencido y lo más urgente. */
+export function byUrgency(now = new Date()) {
+  return (a: Pqrsf, b: Pqrsf) => {
+    const la = pqrsfAlert(a, now), lb = pqrsfAlert(b, now);
+    return LEVEL_ORDER[la.level] - LEVEL_ORDER[lb.level]
+      || la.days - lb.days
+      || PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]
+      || b.createdAt.localeCompare(a.createdAt);
+  };
 }
 
 /* ── Datos de ejemplo (ficticios) para que el panel no se vea vacío ── */
@@ -135,25 +151,38 @@ function sampleAdmissions(): Admission[] {
   }));
 }
 
+function businessDaysAgo(n: number, hour = 10) {
+  const d = new Date();
+  let left = n;
+  while (left > 0) {
+    d.setDate(d.getDate() - 1);
+    if (d.getDay() !== 0 && d.getDay() !== 6) left--;
+  }
+  d.setHours(hour, 0, 0, 0);
+  return d.toISOString();
+}
+
 function samplePqrsf(): Pqrsf[] {
-  const rows: [PqrsfType, string, string, PqrsfStatus, number][] = [
-    ["peticion", "Solicitud de certificado de estudios", "Necesito un certificado de estudios para un trámite.", "radicada", 1],
-    ["sugerencia", "Horario de la cafetería", "Sugerimos ampliar el horario de la cafetería en el descanso.", "en_tramite", 6],
-    ["queja", "Demora en la salida", "La entrega de los niños a la salida se demoró varios días.", "en_tramite", 13],
-    ["felicitacion", "Felicitaciones por el A+", "Felicitaciones a todo el equipo por la categoría A+.", "respondida", 8],
-    ["reclamo", "Cobro duplicado", "En el extracto aparece un cobro repetido.", "cerrada", 20],
+  // [tipo, prioridad, asunto, descripción, estado, días hábiles atrás, urgente]
+  const rows: [PqrsfType, PqrsfPriority, string, string, PqrsfStatus, number, boolean][] = [
+    ["queja", "alta", "Demora en la salida", "La entrega de los niños a la salida se demoró varios días.", "en_tramite", 7, false],
+    ["peticion", "media", "Solicitud de certificado de estudios", "Necesito un certificado de estudios para un trámite.", "radicada", 10, false],
+    ["reclamo", "alta", "Cobro duplicado", "En el extracto aparece un cobro repetido.", "en_tramite", 4, true],
+    ["sugerencia", "baja", "Horario de la cafetería", "Sugerimos ampliar el horario de la cafetería en el descanso.", "radicada", 3, false],
+    ["felicitacion", "baja", "Felicitaciones por el A+", "Felicitaciones a todo el equipo por la categoría A+.", "respondida", 6, false],
+    ["peticion", "media", "Constancia para EPS", "Solicito una constancia de matrícula para la EPS.", "cerrada", 12, false],
   ];
-  return rows.map(([type, subject, description, status, ago], i) => ({
+  return rows.map(([type, priority, subject, description, status, ago, urgent], i) => ({
     id: `PQRSF-2026-${String(i + 1).padStart(4, "0")}`,
-    createdAt: daysAgo(ago, 10 + i),
+    createdAt: businessDaysAgo(ago, 9 + i),
     lang: "es",
-    type, subject, description, status,
+    type, priority, subject, description, status, urgent,
     name: `Acudiente de ejemplo ${i + 1}`,
     email: `acudiente${i + 1}@ejemplo.com`,
     phone: `300 000 01${i}`,
     student: `Estudiante de ejemplo ${i + 1}`,
-    grade: ["2°", "5°", "Transición", "11°", "8°"][i],
-    attachment: i === 4 ? "extracto.pdf" : "",
+    grade: ["2°", "5°", "Transición", "11°", "8°", "3°"][i],
+    attachment: i === 2 ? "extracto.pdf" : "",
     answer: status === "respondida" || status === "cerrada" ? "Gracias por escribirnos. Damos respuesta a su solicitud. (ejemplo)" : "",
     notes: [],
     sample: true,
@@ -201,10 +230,15 @@ export const admissionsStore = {
 
 /* ── PQRSF ── */
 export const pqrsfStore = {
-  list: () => read<Pqrsf>(KEYS.pqrsf, samplePqrsf),
-  add(input: Omit<Pqrsf, "id" | "createdAt" | "status" | "notes" | "answer">) {
+  // Registros guardados antes de existir la prioridad: se completa según el tipo.
+  list: () =>
+    read<Pqrsf>(KEYS.pqrsf, samplePqrsf).map((r) =>
+      r.priority ? r : { ...r, urgent: false, priority: DEFAULT_PRIORITY[r.type] }
+    ),
+  add(input: Omit<Pqrsf, "id" | "createdAt" | "status" | "notes" | "answer" | "priority">) {
     const list = this.list();
-    const row: Pqrsf = { ...input, id: nextId("PQRSF-2026", list), createdAt: new Date().toISOString(), status: "radicada", answer: "", notes: [] };
+    const priority: PqrsfPriority = input.urgent ? "alta" : DEFAULT_PRIORITY[input.type];
+    const row: Pqrsf = { ...input, priority, id: nextId("PQRSF-2026", list), createdAt: new Date().toISOString(), status: "radicada", answer: "", notes: [] };
     write(KEYS.pqrsf, [row, ...list]);
     return row;
   },
@@ -239,12 +273,18 @@ export function subscribeDemo(cb: () => void) {
 /** Devuelve el texto guardado (estable entre renders); siembra los ejemplos la primera vez. */
 export function snapshot(kind: "admissions" | "pqrsf"): string | null {
   try {
-    if (kind === "admissions") admissionsStore.list(); else pqrsfStore.list();
-    return localStorage.getItem(kind === "admissions" ? KEYS.admissions : KEYS.pqrsf);
+    // Texto con los registros ya completados; al ser texto, React lo compara por valor.
+    return JSON.stringify(kind === "admissions" ? admissionsStore.list() : pqrsfStore.list());
   } catch {
     return null;
   }
 }
+
+/* Idioma del panel (español por defecto). */
+export const adminLang = {
+  get: (): "es" | "en" => { try { return localStorage.getItem(KEYS.adminLang) === "en" ? "en" : "es"; } catch { return "es"; } },
+  set: (lang: "es" | "en") => { try { localStorage.setItem(KEYS.adminLang, lang); } catch {} notify(); },
+};
 
 export function resetDemo() {
   try {

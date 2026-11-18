@@ -73,12 +73,20 @@ export default async function LangLayout({ children, params }: LayoutProps<"/[la
     },
     areaServed: "Sabanalarga, Atlántico, Colombia",
     sameAs: [SOCIAL.instagram, SOCIAL.facebook],
-    award: [
-      "Categoría A+ Índice de Clasificación ICFES 2026 (único en Sabanalarga)",
-      "Primer puesto municipal Índice de Clasificación ICFES 2026",
-      "Primer lugar municipal Pruebas Saber 11° 2025 (297 puntos)",
-      "Oxford Quality (Oxford University Press)",
-    ],
+    award:
+      lang === "es"
+        ? [
+            "Categoría A+ Índice de Clasificación ICFES 2026 (único en Sabanalarga)",
+            "Primer puesto municipal Índice de Clasificación ICFES 2026",
+            "Primer lugar municipal Pruebas Saber 11° 2025 (297 puntos)",
+            "Oxford Quality (Oxford University Press)",
+          ]
+        : [
+            "A+ rating, 2026 ICFES school index (the only one in Sabanalarga)",
+            "First in town, 2026 ICFES school index",
+            "First in town, Saber 11° 2025 (overall score 297)",
+            "Oxford Quality (Oxford University Press)",
+          ],
   };
 
   return (

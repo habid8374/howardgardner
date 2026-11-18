@@ -1,21 +1,26 @@
 "use client";
 
-import { useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ExternalLink, FlaskConical, LogOut, RotateCcw } from "lucide-react";
-import { DEMO_PASSWORD, resetDemo, session, snapshot, subscribeDemo, type Admission, type Pqrsf } from "@/lib/demo-store";
+import { ExternalLink, FlaskConical, Globe, LogOut, RotateCcw } from "lucide-react";
+import {
+  DEMO_PASSWORD, adminLang, pqrsfAlert, resetDemo, session, snapshot, subscribeDemo, type Admission, type Pqrsf,
+} from "@/lib/demo-store";
+import { adminDict, type AdminDict } from "@/lib/dictionaries/admin";
 import AdmissionsPanel from "./AdmissionsPanel";
 import PqrsfPanel from "./PqrsfPanel";
 
-/* Panel del colegio — DEMO.
+/* Panel del colegio — DEMO, en español e inglés.
    La "clave" es solo para la demostración: no es seguridad real.
    En producción: acceso con usuario y contraseña por persona, roles y registro de actividad. */
+
+type Lang = "es" | "en";
 
 function useDemoData() {
   const raw = useSyncExternalStore(
     subscribeDemo,
-    // snapshot() siembra los ejemplos la primera vez y devuelve el texto guardado (estable)
+    // snapshot() siembra los ejemplos la primera vez y devuelve texto (estable entre renders)
     () => `${snapshot("admissions") ?? "[]"}\u0000${snapshot("pqrsf") ?? "[]"}`,
     () => null
   );
@@ -26,7 +31,24 @@ function useDemoData() {
   }, [raw]);
 }
 
-function Login() {
+function LangToggle({ lang, label, dark }: { lang: Lang; label: string; dark?: boolean }) {
+  const other: Lang = lang === "es" ? "en" : "es";
+  return (
+    <button
+      type="button"
+      onClick={() => adminLang.set(other)}
+      aria-label={`${label}: ${other === "en" ? "English" : "Español"}`}
+      title={other === "en" ? "English" : "Español"}
+      className={`inline-flex min-h-11 items-center gap-1.5 rounded-full border px-3.5 text-xs font-bold uppercase tracking-wider transition-colors ${
+        dark ? "border-white/20 text-white/85 hover:border-white/40 hover:text-white" : "border-ink/20 text-ink hover:bg-paper-2"
+      }`}
+    >
+      <Globe size={15} aria-hidden /> {other}
+    </button>
+  );
+}
+
+function Login({ a, lang }: { a: AdminDict; lang: Lang }) {
   const [value, setValue] = useState("");
   const [error, setError] = useState(false);
   return (
@@ -39,18 +61,19 @@ function Login() {
         }}
         className="w-full max-w-md rounded-[28px] bg-paper p-8 text-ink sm:p-10"
       >
-        <Image src="/howard_gardner_logo_sin_fondo.png" alt="" width={56} height={54} className="h-14 w-auto" />
-        <h1 className="h-display mt-6 text-[2rem]">Panel del colegio</h1>
-        <p className="mt-2 text-muted">Preinscripciones y PQRSF de Howard Gardner Bilingual School.</p>
+        <div className="flex items-start justify-between gap-4">
+          <Image src="/howard_gardner_logo_sin_fondo.png" alt="" width={56} height={54} className="h-14 w-auto" />
+          <LangToggle lang={lang} label={a.language} />
+        </div>
+        <h1 className="h-display mt-6 text-[2rem]">{a.title}</h1>
+        <p className="mt-2 text-muted">{a.loginLead}</p>
 
         <p className="mt-6 flex items-start gap-3 rounded-xl border border-gold/50 bg-gold-soft/40 px-4 py-3 text-sm text-ink">
           <FlaskConical size={18} className="mt-0.5 flex-none" aria-hidden />
-          <span>
-            Demostración. Clave de prueba: <strong className="font-mono">{DEMO_PASSWORD}</strong>
-          </span>
+          <span>{a.loginDemo} <strong className="font-mono">{DEMO_PASSWORD}</strong></span>
         </p>
 
-        <label htmlFor="clave" className="mt-6 block text-sm font-semibold">Clave</label>
+        <label htmlFor="clave" className="mt-6 block text-sm font-semibold">{a.password}</label>
         <input
           id="clave"
           type="password"
@@ -61,9 +84,9 @@ function Login() {
           aria-describedby={error ? "e-clave" : undefined}
           className="mt-2 block min-h-12 w-full rounded-xl border border-ink/20 bg-white px-4 text-base outline-none focus:border-navy focus:shadow-[0_0_0_3px_rgba(18,36,90,0.15)]"
         />
-        {error && <p id="e-clave" className="mt-1.5 text-sm font-medium text-red-700">Clave incorrecta.</p>}
-        <button type="submit" className="btn btn-primary mt-6 w-full">Entrar</button>
-        <Link href="/es" className="link mt-5 inline-flex min-h-11 items-center text-sm font-semibold text-navy">← Volver al sitio</Link>
+        {error && <p id="e-clave" className="mt-1.5 text-sm font-medium text-red-700">{a.wrongPassword}</p>}
+        <button type="submit" className="btn btn-primary mt-6 w-full">{a.enter}</button>
+        <Link href={`/${lang}`} className="link mt-5 inline-flex min-h-11 items-center text-sm font-semibold text-navy">{a.backToSite}</Link>
       </form>
     </main>
   );
@@ -71,49 +94,70 @@ function Login() {
 
 export default function AdminApp() {
   const open = useSyncExternalStore(subscribeDemo, session.isOpen, () => false);
+  const lang = useSyncExternalStore(subscribeDemo, adminLang.get, () => "es" as Lang);
   const data = useDemoData();
   const [tab, setTab] = useState<"admisiones" | "pqrsf">("admisiones");
+  const a = adminDict[lang];
 
-  if (!open) return <Login />;
+  // Si se llega desde el pie de página en inglés (/admin?lang=en), el panel abre en inglés
+  useEffect(() => {
+    const fromUrl = new URLSearchParams(window.location.search).get("lang");
+    if (fromUrl === "en" || fromUrl === "es") adminLang.set(fromUrl);
+  }, []);
+
+  // El idioma del documento sigue al del panel (lectores de pantalla, traductores)
+  useEffect(() => {
+    document.documentElement.lang = lang === "es" ? "es-CO" : "en";
+  }, [lang]);
+
+  if (!open) return <Login a={a} lang={lang} />;
   if (!data) return <main className="min-h-svh bg-paper" />;
 
-  const newAdmissions = data.admissions.filter((a) => a.status === "nueva").length;
-  const openPqrsf = data.pqrsf.filter((p) => p.status === "radicada" || p.status === "en_tramite").length;
+  const newAdmissions = data.admissions.filter((r) => r.status === "nueva").length;
+  const now = new Date();
+  const alerts = data.pqrsf.map((p) => pqrsfAlert(p, now).level);
+  const pqrsfUrgent = alerts.filter((l) => l === "vencida" || l === "hoy").length;
+  const pqrsfOpen = alerts.filter((l) => l !== "cerrada").length;
+
+  const tabs = [
+    { key: "admisiones" as const, label: a.tabs.admissions, count: newAdmissions, urgent: false },
+    { key: "pqrsf" as const, label: a.tabs.pqrsf, count: pqrsfUrgent || pqrsfOpen, urgent: pqrsfUrgent > 0 },
+  ];
 
   return (
     <div className="min-h-svh bg-paper">
       <header className="sticky top-0 z-30 bg-ink text-white">
-        <div className="mx-auto flex h-16 max-w-[1400px] items-center gap-4 px-4 sm:px-8">
+        <div className="mx-auto flex h-16 max-w-[1400px] items-center gap-3 px-4 sm:px-8">
           <Image src="/howard_gardner_logo_sin_fondo.png" alt="" width={36} height={35} className="h-9 w-auto" />
           <div className="min-w-0 leading-tight">
-            <p className="truncate font-bold">Panel del colegio</p>
-            <p className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-gold">Howard Gardner · Demo</p>
+            <p className="truncate font-bold">{a.title}</p>
+            <p className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-gold">{a.subtitle}</p>
           </div>
           <div className="ml-auto flex items-center gap-1">
-            <Link href="/es" target="_blank" rel="noopener" className="hidden min-h-11 items-center gap-2 rounded-full px-4 text-sm font-semibold text-white/80 hover:bg-white/10 sm:inline-flex">
-              <ExternalLink size={16} aria-hidden /> Ver sitio
+            <LangToggle lang={lang} label={a.language} dark />
+            <Link href={`/${lang}`} target="_blank" rel="noopener" className="hidden min-h-11 items-center gap-2 rounded-full px-4 text-sm font-semibold text-white/80 hover:bg-white/10 sm:inline-flex">
+              <ExternalLink size={16} aria-hidden /> {a.viewSite}
             </Link>
-            <button type="button" onClick={session.close} className="inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-sm font-semibold text-white/80 hover:bg-white/10">
-              <LogOut size={16} aria-hidden /> Salir
+            <button type="button" onClick={session.close} aria-label={a.logout} className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-sm font-semibold text-white/80 hover:bg-white/10 sm:px-4">
+              <LogOut size={16} aria-hidden /> <span className="hidden sm:inline">{a.logout}</span>
             </button>
           </div>
         </div>
-        <nav aria-label="Secciones del panel" className="mx-auto flex max-w-[1400px] gap-1 px-4 sm:px-8">
-          {([
-            ["admisiones", "Preinscripciones", newAdmissions],
-            ["pqrsf", "PQRSF", openPqrsf],
-          ] as const).map(([key, label, count]) => (
+        <nav aria-label={a.sections} className="mx-auto flex max-w-[1400px] gap-1 overflow-x-auto px-4 sm:px-8">
+          {tabs.map((t) => (
             <button
-              key={key}
+              key={t.key}
               type="button"
-              onClick={() => setTab(key)}
-              aria-current={tab === key ? "page" : undefined}
-              className={`inline-flex min-h-12 items-center gap-2 border-b-2 px-4 text-sm font-semibold transition-colors ${
-                tab === key ? "border-gold text-white" : "border-transparent text-white/60 hover:text-white"
+              onClick={() => setTab(t.key)}
+              aria-current={tab === t.key ? "page" : undefined}
+              className={`inline-flex min-h-12 flex-none items-center gap-2 border-b-2 px-4 text-sm font-semibold transition-colors ${
+                tab === t.key ? "border-gold text-white" : "border-transparent text-white/60 hover:text-white"
               }`}
             >
-              {label}
-              {count > 0 && <span className="rounded-full bg-gold px-2 py-0.5 text-xs font-bold text-ink">{count}</span>}
+              {t.label}
+              {t.count > 0 && (
+                <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${t.urgent ? "bg-red-600 text-white" : "bg-gold text-ink"}`}>{t.count}</span>
+              )}
             </button>
           ))}
         </nav>
@@ -122,26 +166,24 @@ export default function AdminApp() {
       <main className="mx-auto max-w-[1400px] px-4 py-8 sm:px-8">
         <p className="mb-6 flex items-start gap-3 rounded-xl border border-gold/50 bg-gold-soft/40 px-4 py-3 text-sm text-ink">
           <FlaskConical size={18} className="mt-0.5 flex-none" aria-hidden />
-          <span>
-            Demostración: los registros marcados como <em>ejemplo</em> son ficticios. Lo que se envíe desde los formularios del sitio en
-            este navegador aparece aquí al instante.
-          </span>
+          <span>{a.demoBanner}</span>
         </p>
 
-        {tab === "admisiones" ? <AdmissionsPanel rows={data.admissions} /> : <PqrsfPanel rows={data.pqrsf} />}
+        {tab === "admisiones"
+          ? <AdmissionsPanel rows={data.admissions} a={a} lang={lang} />
+          : <PqrsfPanel rows={data.pqrsf} a={a} lang={lang} />}
 
         <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-line pt-6 text-sm text-muted sm:flex-row sm:items-center">
-          <p>Los datos de esta demo viven solo en este navegador.</p>
+          <p>{a.demoFooter}</p>
           <button
             type="button"
-            onClick={() => window.confirm("¿Restablecer la demo? Se borran los envíos de prueba y vuelven los datos de ejemplo.") && resetDemo()}
+            onClick={() => window.confirm(a.resetConfirm) && resetDemo()}
             className="inline-flex min-h-11 items-center gap-2 rounded-full border border-ink/20 px-4 font-semibold text-ink hover:bg-paper-2"
           >
-            <RotateCcw size={16} aria-hidden /> Restablecer demo
+            <RotateCcw size={16} aria-hidden /> {a.reset}
           </button>
         </div>
       </main>
     </div>
   );
 }
-
