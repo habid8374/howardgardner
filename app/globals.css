@@ -1,41 +1,150 @@
 @import "tailwindcss";
 
+/* ─────────────────────────────────────────────
+   Sistema visual — Howard Gardner Bilingual School
+   Azul institucional profundo + oro del escudo, sobre papel cálido.
+   ───────────────────────────────────────────── */
 :root {
-  --navy:       #1e1e8f;
-  --navy-dark:  #13136b;
-  --navy-light: #2929b0;
-  --navy-deep:  #08083e;
-  --gold:       #FFD700;
-  --gold-dark:  #e6c200;
-  --gold-muted: #a07800;
-  --off-white:  #f5f7ff;
+  --ink:        #0c1631;   /* azul noche, texto y fondos oscuros */
+  --navy:       #12245a;   /* azul del escudo */
+  --navy-2:     #1a3278;
+  --gold:       #e3b23c;   /* oro del escudo, apagado */
+  --gold-soft:  #f3dfa6;
+  --paper:      #f7f4ec;   /* fondo cálido */
+  --paper-2:    #efeadd;
+  --line:       #ddd5c3;
+  --muted:      #5a6278;
+
+  --ease-out:    cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 @theme inline {
-  --color-navy:       var(--navy);
-  --color-navy-dark:  var(--navy-dark);
-  --color-navy-light: var(--navy-light);
-  --color-navy-deep:  var(--navy-deep);
-  --color-gold:       var(--gold);
-  --color-gold-dark:  var(--gold-dark);
-  --color-gold-muted: var(--gold-muted);
-  --color-off-white:  var(--off-white);
-  --font-poppins:     var(--font-poppins-var);
+  --color-ink:       var(--ink);
+  --color-navy:      var(--navy);
+  --color-navy-2:    var(--navy-2);
+  --color-gold:      var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-paper:     var(--paper);
+  --color-paper-2:   var(--paper-2);
+  --color-line:      var(--line);
+  --color-muted:     var(--muted);
+  --font-display:    var(--font-fraunces), Georgia, serif;
+  --font-sans:       var(--font-manrope), system-ui, sans-serif;
 }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
 body {
-  font-family: var(--font-poppins-var, system-ui, sans-serif);
-  background: #fff;
-  color: #1a1a2e;
+  font-family: var(--font-sans);
+  background: var(--paper);
+  color: var(--ink);
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--navy-deep); }
-::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+::selection { background: var(--gold); color: var(--ink); }
 
-/* Selection */
-::selection { background: var(--gold); color: var(--navy-dark); }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
+
+@layer components {
+/* ── Layout ── */
+.wrap { width: 100%; max-width: 1200px; margin-inline: auto; padding-inline: 16px; }
+@media (min-width: 640px) { .wrap { padding-inline: 32px; } }
+@media (min-width: 1024px) { .wrap { padding-inline: 48px; } }
+
+.section { padding-block: clamp(72px, 10vw, 128px); }
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+}
+.eyebrow::before { content: ""; width: 28px; height: 1.5px; background: currentColor; opacity: 0.6; }
+
+.h-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  font-variation-settings: "opsz" 144, "SOFT" 30;
+}
+.h-section {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2rem, 4.4vw, 3.5rem);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  font-variation-settings: "opsz" 144, "SOFT" 30;
+  text-wrap: balance;
+}
+.lead { font-size: clamp(1.05rem, 1.4vw, 1.2rem); line-height: 1.65; text-wrap: pretty; }
+
+/* ── Botones: un solo par en todo el sitio ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 52px; padding: 0 26px; border-radius: 999px;
+  font-weight: 700; font-size: 0.98rem; text-decoration: none; white-space: nowrap;
+  transition: transform 160ms var(--ease-out), background-color 200ms ease, color 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--gold); color: var(--ink); }
+.btn-ghost { border: 1.5px solid currentColor; color: inherit; }
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover { background: #ecc25a; transform: translateY(-1px); box-shadow: 0 10px 24px -12px rgba(227,178,60,0.8); }
+  .btn-ghost:hover { background: rgba(255,255,255,0.08); transform: translateY(-1px); }
+  .on-light.btn-ghost:hover, .on-light .btn-ghost:hover { background: rgba(12,22,49,0.05); }
+}
+
+/* Enlace con subrayado que se dibuja */
+.link {
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1.5px; background-repeat: no-repeat; background-position: 0 100%;
+  transition: background-size 250ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) { .link:hover { background-size: 100% 1.5px; } }
+
+/* Foto que respira dentro de su marco */
+.photo-frame { overflow: hidden; }
+.photo-frame img { transition: transform 600ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) { .photo-frame:hover img { transform: scale(1.03); } }
+
+/* Tarjeta enlazada que se eleva 2px */
+.lift { transition: transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .lift:hover { transform: translateY(-2px); box-shadow: 0 18px 40px -24px rgba(12,22,49,0.45); }
+}
+.lift:active { transform: scale(0.985); }
+
+}
+
+/* ── Entrada del hero: una sola vez, al cargar ── */
+@keyframes enter-rise { from { opacity: 0; transform: translateY(var(--rise, 14px)); } to { opacity: 1; transform: none; } }
+@keyframes enter-reveal { from { clip-path: inset(0 0 100% 0 round 28px); } to { clip-path: inset(0 0 0 0 round 28px); } }
+[data-enter] { animation: enter-rise 700ms var(--ease-out) both; animation-delay: var(--d, 0ms); }
+[data-enter="reveal"] { animation: enter-reveal 1100ms var(--ease-in-out) both; animation-delay: var(--d, 0ms); }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-enter], [data-enter="reveal"] { animation: enter-fade 300ms ease both; animation-delay: 0ms; }
+  @keyframes enter-fade { from { opacity: 0; } to { opacity: 1; } }
+  .photo-frame img, .lift, .btn, .link { transition: none; }
+}
+
+/* ── Acordeón de preguntas frecuentes ── */
+details.faq summary { list-style: none; cursor: pointer; }
+details.faq summary::-webkit-details-marker { display: none; }
+details.faq .faq-icon { transition: transform 200ms var(--ease-out); }
+details.faq[open] .faq-icon { transform: rotate(45deg); }
+
+/* ── Diálogo (galerías) ── */
+dialog.lightbox { background: transparent; border: 0; padding: 0; max-width: 100vw; max-height: 100dvh; width: 100vw; height: 100dvh; }
+dialog.lightbox::backdrop { background: rgba(8, 14, 32, 0.92); }
+dialog.lightbox[open] { animation: lb-in 220ms var(--ease-out); }
+@keyframes lb-in { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: none; } }
+
+/* Barra de acción fija en celular: reserva espacio para no tapar el pie */
+@media (max-width: 767px) { body { padding-bottom: 76px; } }

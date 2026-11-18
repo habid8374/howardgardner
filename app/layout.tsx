@@ -1,127 +1,123 @@
 import type { Metadata, Viewport } from "next";
-import { Poppins } from "next/font/google";
+import { Fraunces, Manrope } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { SITE_URL } from "@/lib/site";
+import {
+  SITE_URL, SITE_NAME, LEGAL_NAME, NIT, PHONE_E164, ADDRESS, SOCIAL, HOURS,
+} from "@/lib/site";
 import "./globals.css";
 
-const poppins = Poppins({
-  variable: "--font-poppins-var",
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  axes: ["opsz", "SOFT"],
   display: "swap",
 });
+
+const manrope = Manrope({
+  variable: "--font-manrope",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const DESCRIPTION =
+  "Colegio bilingüe en Sabanalarga, Atlántico, de preescolar a grado 11°. Primer lugar municipal en las Pruebas Saber 11° 2025 con 297 puntos y categoría A+. Inscripciones 2026 abiertas.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Howard Gardner Bilingual School | Sabanalarga, Atlántico",
+    default: "Colegio bilingüe en Sabanalarga | Howard Gardner Bilingual School",
     template: "%s | Howard Gardner Bilingual School",
   },
-  description:
-    "#1 en el ranking ICFES municipal 2025 con 297 puntos, categoría A+ Excelencia. Institución bilingüe líder en Sabanalarga, Atlántico. Inscripciones abiertas 2026.",
+  description: DESCRIPTION,
   keywords: [
     "colegio bilingüe sabanalarga",
     "howard gardner sabanalarga",
     "mejor colegio sabanalarga",
     "icfes 2025 atlántico",
     "colegio bilingüe atlántico",
-    "bilingual school colombia",
     "inscripciones 2026 sabanalarga",
-    "educación bilingüe",
+    "preescolar bilingüe sabanalarga",
   ],
-  authors: [{ name: "Howard Gardner Bilingual School" }],
-  creator: "Howard Gardner Bilingual School",
-  publisher: "Howard Gardner Bilingual School",
+  authors: [{ name: SITE_NAME }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
   category: "education",
-  applicationName: "Howard Gardner Bilingual School",
-  alternates: {
-    canonical: "/",
-  },
-  icons: {
-    icon: "/favicon_256.png",
-    apple: "/favicon_256.png",
-  },
+  applicationName: SITE_NAME,
+  alternates: { canonical: "/" },
+  icons: { icon: "/favicon_256.png", apple: "/favicon_256.png" },
   openGraph: {
-    title: "Howard Gardner Bilingual School | #1 ICFES Municipal 2025",
-    description:
-      "#1 en el ranking ICFES municipal 2025 · Categoría A+ Excelencia · Institución bilingüe en Sabanalarga, Atlántico. Inscripciones 2026 abiertas.",
+    title: "Howard Gardner Bilingual School · #1 ICFES en Sabanalarga 2025",
+    description: DESCRIPTION,
     url: SITE_URL,
-    siteName: "Howard Gardner Bilingual School",
+    siteName: SITE_NAME,
     locale: "es_CO",
     type: "website",
-    images: [
-      {
-        url: "/patio.jpg",
-        width: 1080,
-        height: 608,
-        alt: "Campus del Howard Gardner Bilingual School en Sabanalarga, Atlántico",
-      },
-    ],
+    images: [{ url: "/patio.jpg", width: 1080, height: 608, alt: "Patio y zonas verdes del colegio Howard Gardner en Sabanalarga" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Howard Gardner Bilingual School | #1 ICFES Municipal 2025",
-    description:
-      "Institución bilingüe líder en Sabanalarga, Atlántico. Categoría A+ Excelencia. Inscripciones 2026 abiertas.",
+    title: "Howard Gardner Bilingual School · #1 ICFES en Sabanalarga 2025",
+    description: DESCRIPTION,
     images: ["/patio.jpg"],
   },
   robots: {
     index: true,
     follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
-    },
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#13136b",
+  themeColor: "#0c1631",
   width: "device-width",
   initialScale: 1,
 };
 
-/* Datos estructurados (JSON-LD) — ayuda a Google a mostrar el colegio
-   como una organización educativa con ubicación, contacto y redes. */
+/* Datos estructurados — el colegio como organización educativa y negocio local. */
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "EducationalOrganization",
-  name: "Howard Gardner Bilingual School",
-  alternateName: "Howard Gardner De Sabanalarga S.A.S.",
+  "@type": ["School", "LocalBusiness"],
+  "@id": `${SITE_URL}/#colegio`,
+  name: SITE_NAME,
+  legalName: LEGAL_NAME,
   url: SITE_URL,
   logo: `${SITE_URL}/howard_gardner_logo_sin_fondo.png`,
   image: `${SITE_URL}/patio.jpg`,
-  description:
-    "Institución educativa bilingüe en Sabanalarga, Atlántico. #1 en el ranking ICFES municipal 2025, categoría A+ Excelencia.",
+  description: DESCRIPTION,
   slogan: "Your Vision Is Our Inspiration",
-  telephone: "+57 301 202 8756",
-  taxID: "900.419.545-7",
+  telephone: PHONE_E164,
+  taxID: NIT,
+  openingHours: "Mo-Fr 07:00-17:00",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Calle 12 #34 B-2",
-    addressLocality: "Sabanalarga",
-    addressRegion: "Atlántico",
-    addressCountry: "CO",
+    streetAddress: ADDRESS.street,
+    addressLocality: ADDRESS.city,
+    addressRegion: ADDRESS.region,
+    addressCountry: ADDRESS.country,
   },
   areaServed: "Sabanalarga, Atlántico, Colombia",
-  sameAs: [
-    "https://www.instagram.com/howard_gardner_sabanalarga",
+  sameAs: [SOCIAL.instagram, SOCIAL.facebook],
+  award: [
+    "Primer lugar municipal Pruebas Saber 11° 2025 (297 puntos)",
+    "Categoría A+ Ranking Milton Ochoa 2025",
   ],
+  hoursAvailable: HOURS,
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="es" className={poppins.variable}>
-      <body className="antialiased">
+    <html lang="es-CO" className={`${fraunces.variable} ${manrope.variable}`} data-scroll-behavior="smooth">
+      <body>
+        <a
+          href="#contenido"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-full focus:bg-gold focus:px-5 focus:py-3 focus:font-bold focus:text-ink"
+        >
+          Saltar al contenido
+        </a>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
         />
         {children}
         <Analytics />

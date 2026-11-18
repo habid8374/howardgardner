@@ -1,141 +1,52 @@
-"use client";
+import Image from "next/image";
+import { Check } from "lucide-react";
 
-import { motion } from "framer-motion";
-import { CheckCircle } from "lucide-react";
-
-const features = [
-  "Clases bilingües en todas las áreas del conocimiento",
-  "Docentes certificados en lengua inglesa",
-  "Inmersión lingüística desde preescolar",
-  "#1 en inglés — Pruebas Saber 11° municipio",
-  "Preparación para certificaciones internacionales",
-  "Intercambios culturales y experiencias globales",
+/* TODO(CLIENTE): confirmar intensidad horaria de inglés, certificaciones
+   de los docentes y exámenes internacionales que se preparan. */
+const points = [
+  "Única institución bilingüe de Sabanalarga.",
+  "Inglés desde preescolar, como parte del día a día.",
+  "Clases bilingües en las distintas áreas del conocimiento.",
+  "Destacado puntaje en inglés en las Pruebas Saber 11° 2025.",
 ];
 
 export default function Bilingual() {
   return (
-    <section
-      id="bilinguismo"
-      className="relative overflow-hidden"
-      style={{
-        background: "linear-gradient(135deg, #08083e 0%, #13136b 45%, #1e1e8f 80%, #2929b0 100%)",
-        padding: "5rem 1.5rem",
-      }}
-    >
-      {/* Background accent */}
-      <div
-        className="absolute pointer-events-none"
-        style={{
-          top: "50%", left: "-10%",
-          width: 600, height: 600,
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(255,215,0,0.06), transparent 70%)",
-          transform: "translateY(-50%)",
-        }}
-      />
+    <section id="bilinguismo" className="section bg-ink text-white">
+      <div className="wrap grid grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_1fr] lg:gap-20">
+        <div className="order-2 lg:order-1">
+          <div className="photo-frame relative mx-auto aspect-[4/5] w-full max-w-[460px] overflow-hidden rounded-[28px]">
+            <Image
+              src="/hero5.jpeg"
+              alt="Estudiante del colegio con uniforme; pieza «Líderes en bilingüismo en Sabanalarga»"
+              fill
+              sizes="(min-width: 1024px) 460px, 90vw"
+              className="object-cover"
+            />
+          </div>
+        </div>
 
-      <div className="relative max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-
-        {/* Left — content */}
-        <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.65 }}
-        >
-          <span
-            className="inline-block rounded-full text-xs font-bold uppercase tracking-widest px-4 py-1.5 mb-5"
-            style={{ background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.85)", border: "1px solid rgba(255,255,255,0.15)" }}
-          >
-            Bilingüismo
-          </span>
-
-          <h2 className="font-extrabold mb-4" style={{ fontSize: "clamp(1.8rem,4vw,2.75rem)", color: "#fff", lineHeight: 1.15 }}>
-            Líderes en{" "}
-            <span style={{ color: "#FFD700" }}>Bilingüismo</span>
-            {" "}en Sabanalarga
+        <div className="order-1 lg:order-2">
+          <p className="eyebrow text-gold">Bilingüismo</p>
+          <h2 className="h-section mt-5">
+            Español e inglés, <span className="text-gold">todos los días.</span>
           </h2>
-
-          <p style={{ color: "rgba(255,255,255,0.72)", fontSize: "1rem", lineHeight: 1.75, marginBottom: "1.5rem" }}>
-            La <strong style={{ color: "#fff" }}>única institución bilingüe</strong> en Sabanalarga y una de las
-            más destacadas del Atlántico. Con sobresaliente puntaje en inglés en las pruebas ICFES,
-            reafirmamos nuestra posición como referente en educación bilingüe.
+          <p className="lead mt-6 max-w-lg text-white/75">
+            El inglés no es una materia más: es parte de cómo se aprende en el colegio desde los
+            primeros años, para que nuestros estudiantes lleguen a la universidad y al mundo con
+            un segundo idioma propio.
           </p>
-
-          <ul className="list-none m-0 p-0 flex flex-col gap-3">
-            {features.map((f, i) => (
-              <motion.li
-                key={f}
-                initial={{ opacity: 0, x: -16 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 + i * 0.07, duration: 0.4 }}
-                className="flex items-center gap-3"
-                style={{ color: "rgba(255,255,255,0.82)", fontSize: "0.93rem" }}
-              >
-                <CheckCircle size={17} style={{ color: "#FFD700", flexShrink: 0 }} />
-                {f}
-              </motion.li>
+          <ul className="mt-9 flex flex-col">
+            {points.map((p) => (
+              <li key={p} className="flex items-start gap-4 border-t border-white/12 py-4 text-[1.02rem] text-white/90">
+                <span className="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-gold text-ink">
+                  <Check size={14} strokeWidth={3} aria-hidden />
+                </span>
+                {p}
+              </li>
             ))}
           </ul>
-        </motion.div>
-
-        {/* Right — visual cards */}
-        <motion.div
-          initial={{ opacity: 0, x: 30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.65, delay: 0.1 }}
-          className="flex flex-col items-center gap-4"
-        >
-          {/* ES card */}
-          <motion.div
-            whileHover={{ scale: 1.03 }}
-            className="w-full max-w-xs rounded-2xl p-5 text-center"
-            style={{
-              background: "rgba(255,255,255,0.08)",
-              border: "1px solid rgba(255,255,255,0.15)",
-              backdropFilter: "blur(10px)",
-            }}
-          >
-            <span style={{ fontSize: "2.8rem" }}>🇨🇴</span>
-            <p className="font-extrabold m-0 mt-2" style={{ color: "#fff", fontSize: "1.3rem" }}>Español</p>
-            <p className="m-0 mt-1" style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.78rem" }}>Lengua materna</p>
-          </motion.div>
-
-          {/* Plus */}
-          <span style={{ color: "#FFD700", fontSize: "1.8rem", fontWeight: 900 }}>+</span>
-
-          {/* EN card */}
-          <motion.div
-            whileHover={{ scale: 1.03 }}
-            className="w-full max-w-xs rounded-2xl p-5 text-center"
-            style={{
-              background: "rgba(255,255,255,0.08)",
-              border: "1px solid rgba(255,255,255,0.15)",
-              backdropFilter: "blur(10px)",
-            }}
-          >
-            <span style={{ fontSize: "2.8rem" }}>🇺🇸</span>
-            <p className="font-extrabold m-0 mt-2" style={{ color: "#fff", fontSize: "1.3rem" }}>English</p>
-            <p className="m-0 mt-1" style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.78rem" }}>Second language</p>
-          </motion.div>
-
-          {/* Result */}
-          <div
-            className="w-full max-w-xs rounded-2xl p-4 text-center"
-            style={{
-              background: "rgba(255,215,0,0.12)",
-              border: "1px solid rgba(255,215,0,0.3)",
-            }}
-          >
-            <p style={{ color: "#FFD700", fontSize: "1.8rem", fontWeight: 900, margin: 0 }}>= Futuro</p>
-            <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.78rem", margin: "0.2rem 0 0" }}>
-              Ciudadanos globales del siglo XXI
-            </p>
-          </div>
-        </motion.div>
-
+        </div>
       </div>
     </section>
   );

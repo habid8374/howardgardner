@@ -1,36 +1,32 @@
-import Navbar from "@/components/Navbar";
+import Header from "@/components/Header";
 import Hero from "@/components/Hero";
-import Rector from "@/components/Rector";
-import Story from "@/components/Story";
-import Stats from "@/components/Stats";
-import Achievements from "@/components/Achievements";
+import Results from "@/components/Results";
+import Levels from "@/components/Levels";
 import Bilingual from "@/components/Bilingual";
-import Academic from "@/components/Academic";
-import Propuesta from "@/components/Propuesta";
+import Pedagogy from "@/components/Pedagogy";
+import Rector from "@/components/Rector";
 import Gallery from "@/components/Gallery";
-import Features from "@/components/Features";
-import CTA from "@/components/CTA";
-import Contact from "@/components/Contact";
+import Admissions from "@/components/Admissions";
+import Faq from "@/components/Faq";
+import Visit from "@/components/Visit";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 
 export default function Home() {
   return (
     <>
-      <Navbar />
-      <main>
+      <Header />
+      <main id="contenido">
         <Hero />
-        <Rector />
-        <Story />
-        <Stats />
-        <Achievements />
+        <Results />
+        <Levels />
         <Bilingual />
-        <Academic />
-        <Propuesta />
+        <Pedagogy />
+        <Rector />
         <Gallery />
-        <Features />
-        <CTA />
-        <Contact />
+        <Admissions />
+        <Faq />
+        <Visit />
       </main>
       <Footer />
       <WhatsAppFloat />

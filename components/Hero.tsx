@@ -1,204 +1,102 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { MapPin, GraduationCap, Trophy } from "lucide-react";
 import Image from "next/image";
+import { MessageCircle, MapPin } from "lucide-react";
+import { WA_VISITA, ADDRESS, HERO_IMAGE } from "@/lib/site";
 
 export default function Hero() {
   return (
     <section
       id="inicio"
-      className="relative flex items-center justify-center text-center"
-      style={{
-        minHeight: "100vh",
-        paddingTop: "80px",
-        overflow: "hidden",
-        isolation: "isolate",
-        background: "#0a0a3a",
-      }}
+      className="relative overflow-hidden bg-ink text-white"
+      style={{ minHeight: "100svh" }}
     >
-      {/* ── Background photo (patio del colegio) ── */}
-      <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
-        <Image
-          src="/patio.jpg"
-          alt="Patio del Howard Gardner Bilingual School"
-          fill
-          sizes="100vw"
-          className="object-cover object-center"
-          priority
-          quality={92}
+      {/* Luz suave del oro del escudo, sin degradados de plantilla */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-40 -top-40 h-[560px] w-[560px] rounded-full opacity-[0.10]"
+        style={{ background: "radial-gradient(closest-side, var(--gold), transparent)" }}
+      />
+
+      {/* Celular y tableta: la foto va de fondo, con velo azul para leer el texto */}
+      <div aria-hidden className="absolute inset-0 lg:hidden">
+        <Image src={HERO_IMAGE.src} alt="" fill fetchPriority="high" sizes="100vw" className="object-cover object-[35%_50%]" />
+        <div
+          className="absolute inset-0"
+          style={{ background: "linear-gradient(180deg, rgba(12,22,49,0.45) 0%, rgba(12,22,49,0.62) 35%, rgba(12,22,49,0.88) 70%, rgba(12,22,49,0.97) 100%)" }}
         />
       </div>
 
-      {/* Neutral dark scrim — solo para legibilidad, sin tinte azul */}
-      <div
-        aria-hidden
-        style={{
-          position: "absolute",
-          inset: 0,
-          zIndex: 1,
-          background:
-            "linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 35%, rgba(0,0,0,0.4) 70%, rgba(0,0,0,0.65) 100%)",
-          pointerEvents: "none",
-        }}
-      />
+      <div className="wrap relative grid min-h-[100svh] grid-cols-1 items-center gap-10 pb-16 pt-[112px] lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:pb-16">
+        <div>
+          <p className="eyebrow text-gold" data-enter style={{ "--d": "0ms", "--rise": "8px" } as React.CSSProperties}>
+            {ADDRESS.city} · Preescolar a 11°
+          </p>
 
-      {/* ── Content ── */}
-      <div
-        className="relative max-w-4xl mx-auto px-6 py-16"
-        style={{ zIndex: 10 }}
-      >
-        {/* Top badge */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 rounded-full mb-7 px-4 py-2 text-xs font-semibold tracking-widest uppercase"
-          style={{
-            background: "rgba(255,215,0,0.15)",
-            border: "1px solid rgba(255,215,0,0.45)",
-            color: "#FFD700",
-            backdropFilter: "blur(6px)",
-          }}
-        >
-          <Trophy size={13} />
-          #1 Ranking ICFES Municipal 2025 · Categoría A+ Excelencia
-        </motion.div>
-
-        {/* Floating logo */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.7 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
-          className="flex justify-center mb-5"
-        >
-          <motion.div
-            animate={{ y: [0, -12, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            style={{ filter: "drop-shadow(0 12px 40px rgba(0,0,0,0.6))" }}
+          <h1
+            className="h-display mt-6 text-[clamp(2.6rem,6.4vw,5.4rem)] text-balance"
+            data-enter
+            style={{ "--d": "60ms", "--rise": "18px" } as React.CSSProperties}
           >
+            El colegio bilingüe <em className="not-italic text-gold">número uno</em> de Sabanalarga.
+          </h1>
+
+          <p
+            className="lead mt-6 max-w-[34rem] text-white/75"
+            data-enter
+            style={{ "--d": "140ms", "--rise": "12px" } as React.CSSProperties}
+          >
+            Primer lugar municipal en las Pruebas Saber 11° 2025, con 297 puntos y
+            categoría A+. Formamos niños y jóvenes en español e inglés desde preescolar.
+          </p>
+
+          <div
+            className="mt-9 flex flex-col gap-3 sm:flex-row"
+            data-enter
+            style={{ "--d": "200ms", "--rise": "8px" } as React.CSSProperties}
+          >
+            <a href={WA_VISITA} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
+              <MessageCircle size={18} aria-hidden /> Agendar una visita
+            </a>
+            <a href="#admisiones" className="btn btn-ghost">
+              Ver inscripciones 2026
+            </a>
+          </div>
+
+          <dl
+            className="mt-12 grid max-w-[34rem] grid-cols-3 gap-6 border-t border-white/15 pt-6"
+            data-enter
+            style={{ "--d": "260ms", "--rise": "6px" } as React.CSSProperties}
+          >
+            {[
+              ["297", "puntaje global ICFES"],
+              ["A+", "Milton Ochoa 2025"],
+              ["74°", "de 542 en el Atlántico"],
+            ].map(([n, l]) => (
+              <div key={l}>
+                <dt className="sr-only">{l}</dt>
+                <dd className="h-display text-[clamp(1.8rem,3vw,2.4rem)] text-gold">{n}</dd>
+                <dd className="mt-1 text-[0.8rem] leading-snug text-white/65">{l}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+
+        <div className="relative hidden lg:block">
+          <div data-enter="reveal" style={{ "--d": "80ms" } as React.CSSProperties} className="photo-frame relative aspect-[4/3] overflow-hidden rounded-[28px] lg:aspect-auto lg:h-[min(660px,calc(100svh-210px))]">
             <Image
-              src="/howard_gardner_logo_sin_fondo.png"
-              alt="Howard Gardner Bilingual School Logo"
-              width={140}
-              height={140}
-              className="object-contain"
-              priority
+              src={HERO_IMAGE.src}
+              alt={HERO_IMAGE.alt}
+              fill
+              fetchPriority="high"
+              sizes="46vw"
+              className="object-cover object-[30%_50%]"
             />
-          </motion.div>
-        </motion.div>
-
-        {/* Title */}
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="font-black leading-none mb-2"
-          style={{
-            fontSize: "clamp(2.8rem, 8vw, 5.5rem)",
-            color: "#fff",
-            textShadow: "0 4px 30px rgba(0,0,0,0.55)",
-          }}
-        >
-          Howard <span style={{ color: "#FFD700" }}>Gardner</span>
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-          className="font-light tracking-widest uppercase mb-2"
-          style={{
-            fontSize: "clamp(0.85rem, 2vw, 1.15rem)",
-            color: "rgba(255,255,255,0.85)",
-            textShadow: "0 2px 12px rgba(0,0,0,0.55)",
-          }}
-        >
-          Bilingual School
-        </motion.p>
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.35 }}
-          className="font-medium italic mb-6"
-          style={{
-            fontSize: "clamp(0.9rem, 2vw, 1.1rem)",
-            color: "#FFD700",
-            textShadow: "0 2px 12px rgba(0,0,0,0.55)",
-          }}
-        >
-          &quot;Your Vision Is Our Inspiration&quot;
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.7, delay: 0.4 }}
-          className="flex items-center justify-center gap-2 mb-10"
-          style={{
-            color: "rgba(255,255,255,0.85)",
-            fontSize: "0.875rem",
-            textShadow: "0 2px 10px rgba(0,0,0,0.65)",
-          }}
-        >
-          <MapPin size={14} style={{ color: "#FFD700" }} />
-          Calle 12 #34 B-2, Sabanalarga, Atlántico, Colombia
-        </motion.div>
-
-        {/* CTAs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.5 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center"
-        >
-          <motion.a
-            href="#admisiones"
-            whileHover={{ scale: 1.04, y: -2 }}
-            whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center justify-center gap-2 font-bold rounded-xl no-underline"
-            style={{
-              background: "#FFD700",
-              color: "#13136b",
-              padding: "0.95rem 2rem",
-              boxShadow: "0 4px 24px rgba(0,0,0,0.4)",
-              fontSize: "1rem",
-            }}
-          >
-            <GraduationCap size={18} />
-            Inscripciones 2026
-          </motion.a>
-
-          <motion.a
-            href="#logros"
-            whileHover={{ scale: 1.04, y: -2 }}
-            whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center justify-center gap-2 font-semibold rounded-xl no-underline"
-            style={{
-              background: "rgba(255,255,255,0.12)",
-              backdropFilter: "blur(8px)",
-              color: "#fff",
-              padding: "0.95rem 2rem",
-              border: "2px solid rgba(255,255,255,0.35)",
-              fontSize: "1rem",
-            }}
-          >
-            <Trophy size={18} />
-            Ver nuestros logros
-          </motion.a>
-        </motion.div>
+          </div>
+          <div data-enter style={{ "--d": "700ms", "--rise": "8px" } as React.CSSProperties} className="absolute -bottom-5 left-5 flex items-center gap-3 rounded-2xl bg-paper px-4 py-3 text-ink shadow-[0_20px_40px_-20px_rgba(0,0,0,0.6)] sm:left-8">
+            <MapPin size={18} className="text-navy" aria-hidden />
+            <span className="text-sm font-semibold">{ADDRESS.street}</span>
+          </div>
+        </div>
       </div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-        className="absolute bottom-6 left-1/2 -translate-x-1/2"
-        style={{ zIndex: 20, color: "rgba(255,255,255,0.55)", fontSize: "1.4rem" }}
-      >
-        ↓
-      </motion.div>
     </section>
   );
 }

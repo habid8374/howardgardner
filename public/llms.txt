@@ -1,0 +1,17 @@
+# Howard Gardner Bilingual School
+
+> Colegio bilingüe (español e inglés) en Sabanalarga, Atlántico, Colombia. Ofrece preescolar, básica primaria, básica secundaria y media académica (de Prejardín a grado 11°). Primer lugar municipal en las Pruebas Saber 11° 2025 con 297 puntos de puntaje global; categoría A+ en el Ranking Milton Ochoa 2025; puesto 74 de 542 instituciones del Atlántico.
+
+- Razón social: Howard Gardner De Sabanalarga S.A.S. (NIT 900.419.545-7)
+- Dirección: Calle 12 #34 B-2, Sabanalarga, Atlántico, Colombia
+- Teléfono y WhatsApp: +57 301 202 8756
+- Horario de atención: lunes a viernes, 7:00 a. m. a 5:00 p. m.
+- Instagram: https://www.instagram.com/howard_gardner_sabanalarga
+- Facebook: https://www.facebook.com/gardneristaoficial
+- Pedagogía: basada en la teoría de las inteligencias múltiples de Howard Gardner.
+- Inscripciones 2026: abiertas para todos los grados.
+
+## Páginas
+
+- [Inicio](https://howardgardner.vercel.app/): resultados, niveles, bilingüismo, admisiones, preguntas frecuentes y ubicación.
+- [Política de Tratamiento de Datos](https://howardgardner.vercel.app/politica-de-datos)

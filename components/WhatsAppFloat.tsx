@@ -1,85 +1,33 @@
-"use client";
-
-import { motion } from "framer-motion";
+import { Phone } from "lucide-react";
 import { WhatsAppIcon } from "./BrandIcons";
+import { WA_ADMISIONES, TEL_HREF } from "@/lib/site";
 
-const WA_LINK =
-  "https://wa.me/573012028756?text=" +
-  encodeURIComponent(
-    "Hola, me interesa información sobre Howard Gardner Bilingual School."
-  );
-
+/* Celular: barra de acción fija (WhatsApp + Llamar).
+   Escritorio: botón flotante de WhatsApp. */
 export default function WhatsAppFloat() {
   return (
-    <motion.a
-      href={WA_LINK}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label="Escríbenos por WhatsApp"
-      initial={{ opacity: 0, scale: 0, y: 20 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      transition={{ delay: 1, type: "spring", stiffness: 260, damping: 20 }}
-      whileHover={{ scale: 1.06 }}
-      whileTap={{ scale: 0.94 }}
-      className="wa-float fixed flex items-center gap-3 no-underline"
-      style={{
-        bottom: "1.5rem",
-        right: "1.5rem",
-        zIndex: 60,
-      }}
-    >
-      {/* Label expandible (desktop) */}
-      <span
-        className="wa-label hidden sm:flex items-center font-semibold rounded-full overflow-hidden whitespace-nowrap"
-        style={{
-          maxWidth: 0,
-          opacity: 0,
-          paddingLeft: 0,
-          paddingRight: 0,
-          height: 0,
-          background: "#fff",
-          color: "#075E54",
-          fontSize: "0.85rem",
-          boxShadow: "0 6px 20px rgba(0,0,0,0.18)",
-          transition: "all 0.35s ease",
-        }}
+    <>
+      <div
+        className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-[1fr_auto] gap-2 border-t border-ink/10 bg-paper/95 px-4 pt-3 backdrop-blur md:hidden"
+        style={{ paddingBottom: "max(12px, env(safe-area-inset-bottom))" }}
       >
-        Escríbenos por WhatsApp
-      </span>
+        <a href={WA_ADMISIONES} target="_blank" rel="noopener noreferrer" className="btn !min-h-12 bg-[#1fa855] text-white">
+          <WhatsAppIcon size={20} /> Escribir por WhatsApp
+        </a>
+        <a href={TEL_HREF} aria-label="Llamar al colegio" className="btn btn-ghost on-light !min-h-12 !px-4 text-ink">
+          <Phone size={20} aria-hidden /> Llamar
+        </a>
+      </div>
 
-      {/* Botón circular con logo */}
-      <span className="relative flex items-center justify-center">
-        {/* Pulso animado */}
-        <motion.span
-          aria-hidden
-          className="absolute rounded-full"
-          style={{ width: 60, height: 60, background: "#25D366" }}
-          animate={{ scale: [1, 1.5], opacity: [0.5, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
-        />
-        <span
-          className="relative flex items-center justify-center rounded-full"
-          style={{
-            width: 60,
-            height: 60,
-            background: "#25D366",
-            color: "#fff",
-            boxShadow: "0 8px 24px rgba(37,211,102,0.45)",
-          }}
-        >
-          <WhatsAppIcon size={32} />
-        </span>
-      </span>
-
-      <style>{`
-        .wa-float:hover .wa-label {
-          max-width: 240px !important;
-          opacity: 1 !important;
-          height: 44px !important;
-          padding-left: 18px !important;
-          padding-right: 18px !important;
-        }
-      `}</style>
-    </motion.a>
+      <a
+        href={WA_ADMISIONES}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Escríbenos por WhatsApp"
+        className="btn fixed bottom-6 right-6 z-40 hidden !h-14 !w-14 !min-h-14 !p-0 bg-[#1fa855] text-white shadow-[0_12px_30px_-10px_rgba(31,168,85,0.7)] md:inline-flex"
+      >
+        <WhatsAppIcon size={28} />
+      </a>
+    </>
   );
 }
