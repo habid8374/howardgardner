@@ -47,7 +47,7 @@ function Login({ a, lang, demo, onLogin }: { a: AdminDict; lang: Lang; demo: boo
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   return (
-    <main className="flex min-h-svh items-center justify-center bg-ink px-4 py-16">
+    <main className="doodle-bg doodle-full flex min-h-svh items-center justify-center bg-ink px-4 py-16">
       <form
         onSubmit={async (e) => {
           e.preventDefault();
@@ -157,7 +157,7 @@ export default function AdminApp() {
     document.documentElement.lang = lang === "es" ? "es-CO" : "en";
   }, [lang]);
 
-  if (!auth) return <main className="min-h-svh bg-ink" />;
+  if (!auth) return <main className="doodle-bg doodle-full min-h-svh bg-ink" />;
   if (!user) return <Login a={a} lang={lang} demo={auth.demo} onLogin={(u) => setAuth({ ...auth, user: u })} />;
   if (!data) return <main className="flex min-h-svh items-center justify-center bg-paper text-muted">{a.loading}</main>;
 
@@ -188,7 +188,7 @@ export default function AdminApp() {
 
   return (
     <div className="min-h-svh bg-paper">
-      <header className="sticky top-0 z-30 bg-ink text-white">
+      <header className="doodle-bg doodle-full sticky top-0 z-30 bg-ink text-white">
         <div className="mx-auto flex h-16 max-w-[1400px] items-center gap-3 px-4 sm:px-8">
           <Image src="/howard_gardner_logo_sin_fondo.png" alt="" width={36} height={35} className="h-9 w-auto" />
           <div className="min-w-0 leading-tight">

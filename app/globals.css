@@ -195,7 +195,8 @@ dialog.admin-drawer[open] { animation: drawer-in 280ms var(--ease-drawer); }
 
 /* Mismo fondo para cualquier bloque azul: se añade la clase .doodle-bg a la sección.
    El ::before queda sobre el azul y debajo del contenido (z-index -1 dentro de isolation). */
-.doodle-bg { position: relative; isolation: isolate; }
+/* En la capa de componentes: si el bloque ya tiene posición propia (p. ej. sticky), esa gana. */
+@layer components { .doodle-bg { position: relative; isolation: isolate; } }
 .doodle-bg::before {
   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
   background-image: url("/doodles.webp");
