@@ -416,8 +416,6 @@ export const en: Dict = {
   },
 
   demo: {
-    badge: "Demo",
-    note: "Demo version: what you send really reaches the school's dashboard, but on a test server. Please don't enter real student information.",
     sending: "Sending…",
     sendError: "We couldn't send your request. Check your connection and try again.",
     rateError: "We received many submissions from your connection. Please try again later.",

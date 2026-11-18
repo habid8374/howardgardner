@@ -415,8 +415,6 @@ export const es = {
   },
 
   demo: {
-    badge: "Demo",
-    note: "Versión de demostración: lo que envíes llega de verdad al panel del colegio, pero es un servidor de prueba. No escribas datos reales de estudiantes.",
     sending: "Enviando…",
     sendError: "No pudimos enviar tu solicitud. Revisa tu conexión e inténtalo de nuevo.",
     rateError: "Recibimos muchos envíos desde tu conexión. Inténtalo de nuevo en un rato.",
