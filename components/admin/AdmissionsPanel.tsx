@@ -2,7 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { Download, MessageCircle, Phone, Search } from "lucide-react";
-import { ADMISSION_STATUSES, LIMITS, admissionsStore, clean, downloadCsv, formatDate, type Admission, type AdmissionStatus } from "@/lib/demo-store";
+import { ADMISSION_STATUSES, LIMITS, admissionsStore, clean, downloadCsv, formatDate, type Admission, type AdmissionStatus } from "@/lib/records";
+
+const save = (p: Promise<unknown>, msg: string) => p.catch(() => window.alert(msg));
 import type { AdminDict } from "@/lib/dictionaries/admin";
 import { Badge, Drawer, HistoryList, InfoGrid, Kpi, SampleTag, input } from "./ui";
 
@@ -162,7 +164,7 @@ export default function AdmissionsPanel({ rows, a: d, lang }: { rows: Admission[
               <span className="text-sm font-semibold">{d.status}</span>
               <select
                 value={current.status}
-                onChange={(e) => admissionsStore.update(current.id, { status: e.target.value as AdmissionStatus })}
+                onChange={(e) => save(admissionsStore.update(current.id, { status: e.target.value as AdmissionStatus }), d.saveError)}
                 className={`${input} mt-2`}
               >
                 {ADMISSION_STATUSES.map((s) => <option key={s} value={s}>{a.statuses[s]}</option>)}
@@ -176,7 +178,7 @@ export default function AdmissionsPanel({ rows, a: d, lang }: { rows: Admission[
                 {current.notes.map((n, i) => (
                   <li key={i} className="rounded-xl bg-white p-3 text-sm ring-1 ring-line">
                     <p>{n.text}</p>
-                    <p className="mt-1 text-xs text-muted">{formatDate(n.at, lang, true)}</p>
+                    <p className="mt-1 text-xs text-muted">{formatDate(n.at, lang, true)}{n.by ? ` · ${d.noteBy} ${n.by}` : ""}</p>
                   </li>
                 ))}
               </ul>
@@ -185,7 +187,7 @@ export default function AdmissionsPanel({ rows, a: d, lang }: { rows: Admission[
                 onSubmit={(e) => {
                   e.preventDefault();
                   if (!note.trim()) return;
-                  admissionsStore.update(current.id, { notes: [...current.notes, { at: new Date().toISOString(), text: clean(note, LIMITS.note) }] });
+                  save(admissionsStore.update(current.id, { note: clean(note, LIMITS.note) }), d.saveError);
                   setNote("");
                 }}
               >

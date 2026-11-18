@@ -401,7 +401,10 @@ export const es = {
 
   demo: {
     badge: "Demo",
-    note: "Versión de demostración: los datos se guardan solo en este navegador y no se envían a ningún servidor. No escribas datos reales.",
+    note: "Versión de demostración: lo que envíes llega de verdad al panel del colegio, pero es un servidor de prueba. No escribas datos reales de estudiantes.",
+    sending: "Enviando…",
+    sendError: "No pudimos enviar tu solicitud. Revisa tu conexión e inténtalo de nuevo.",
+    rateError: "Recibimos muchos envíos desde tu conexión. Inténtalo de nuevo en un rato.",
   },
 
   pqrsf: {
@@ -448,7 +451,9 @@ export const es = {
     lookupLabel: "Número de radicado",
     lookupPlaceholder: "PQRSF-2026-0001",
     lookupButton: "Consultar",
-    lookupNotFound: "No encontramos ese radicado. Revisa el número.",
+    lookupNotFound: "No encontramos una solicitud con ese número y ese correo. Revisa los datos.",
+    lookupEmail: "Correo con el que radicaste",
+    lookupHelp: "Por seguridad, pedimos el número de radicado y el correo que escribiste en la solicitud.",
     lookupStatus: "Estado",
     lookupCreated: "Radicada el",
     lookupDue: "Fecha límite de respuesta",

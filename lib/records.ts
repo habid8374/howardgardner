@@ -1,9 +1,8 @@
 /* ─────────────────────────────────────────────────────────────
-   ALMACENAMIENTO DE DEMOSTRACIÓN
-   Todo se guarda en el navegador (localStorage) de quien prueba la demo.
-   No se envía nada a ningún servidor: así la demo no recoge datos
-   personales reales. En producción esto se reemplaza por una base de
-   datos con acceso protegido (ver PENDIENTES.md).
+   REGISTROS: preinscripciones y PQRSF
+   Tipos, plazos y utilidades compartidas entre el navegador y el servidor,
+   y las funciones del navegador que hablan con la API (/api/...).
+   Los datos viven en la base de datos (Neon); los adjuntos, en Vercel Blob privado.
    ───────────────────────────────────────────────────────────── */
 
 export type AdmissionStatus =
@@ -13,10 +12,9 @@ export type PqrsfType = "peticion" | "queja" | "reclamo" | "sugerencia" | "felic
 export type PqrsfStatus = "radicada" | "en_tramite" | "respondida" | "cerrada";
 export type PqrsfPriority = "alta" | "media" | "baja";
 
-export type Note = { at: string; text: string };
-/* Historial de cambios (OWASP A09: registro de eventos). En producción se guarda en el servidor
-   con el usuario que hizo cada cambio. */
-export type HistoryEntry = { at: string; field: "status" | "priority" | "answer"; value: string };
+export type Note = { at: string; text: string; by?: string };
+/* Historial de cambios (OWASP A09): se guarda en el servidor con el usuario que hizo cada cambio. */
+export type HistoryEntry = { at: string; field: "status" | "priority" | "answer"; value: string; by?: string };
 
 /* Límites de tamaño de cada campo (OWASP ASVS V2: validación de entradas). */
 export const LIMITS = {
@@ -57,7 +55,8 @@ export type Pqrsf = {
   grade: string;
   subject: string;
   description: string;
-  attachment: string;    // solo el nombre del archivo en la demo
+  attachment: string;    // nombre original del archivo adjunto
+  hasFile?: boolean;     // hay un archivo guardado que el panel puede descargar
   urgent: boolean;       // el acudiente la marcó como urgente
   priority: PqrsfPriority;
   status: PqrsfStatus;
@@ -84,8 +83,6 @@ export const DEFAULT_PRIORITY: Record<PqrsfType, PqrsfPriority> = {
 };
 /* Días hábiles restantes a partir de los cuales se alerta "vence pronto". */
 export const SOON_DAYS = 2;
-
-const KEYS = { admissions: "hg-demo-admisiones", pqrsf: "hg-demo-pqrsf-v2", session: "hg-demo-sesion", adminLang: "hg-admin-idioma" };
 
 /* ── Fechas ── */
 export function addBusinessDays(from: Date, days: number) {
@@ -150,7 +147,7 @@ function daysAgo(n: number, hour = 9) {
   return d.toISOString();
 }
 
-function sampleAdmissions(): Admission[] {
+export function sampleAdmissions(): Admission[] {
   const rows: [string, string, string, AdmissionStatus, number, string][] = [
     ["Familia Ejemplo Uno", "300 000 0001", "Transición", "nueva", 0, "Queremos conocer el colegio."],
     ["Familia Ejemplo Dos", "300 000 0002", "1°", "nueva", 1, ""],
@@ -181,7 +178,7 @@ function businessDaysAgo(n: number, hour = 10) {
   return d.toISOString();
 }
 
-function samplePqrsf(): Pqrsf[] {
+export function samplePqrsf(): Pqrsf[] {
   // [tipo, prioridad, asunto, descripción, estado, días hábiles atrás, urgente]
   const rows: [PqrsfType, PqrsfPriority, string, string, PqrsfStatus, number, boolean][] = [
     ["queja", "alta", "Demora en la salida", "La entrega de los niños a la salida se demoró varios días.", "en_tramite", 7, false],
@@ -209,169 +206,85 @@ function samplePqrsf(): Pqrsf[] {
   }));
 }
 
-/* ── Lectura y escritura segura ── */
-function read<T>(key: string, seed: () => T[]): T[] {
-  try {
-    const raw = localStorage.getItem(key);
-    if (raw) return JSON.parse(raw) as T[];
-    const data = seed();
-    localStorage.setItem(key, JSON.stringify(data));
-    return data;
-  } catch {
-    return seed();
+/* ── API (solo en el navegador) ── */
+export class ApiError extends Error {
+  status: number;
+  data: Record<string, unknown>;
+  constructor(status: number, data: Record<string, unknown> = {}) {
+    super(`HTTP ${status}`);
+    this.status = status;
+    this.data = data;
   }
 }
 
-function write<T>(key: string, data: T[]) {
-  try {
-    localStorage.setItem(key, JSON.stringify(data));
-    window.dispatchEvent(new Event("hg-demo-change"));
-  } catch {}
+async function api<T>(url: string, init: RequestInit = {}): Promise<T> {
+  const isForm = init.body instanceof FormData;
+  const res = await fetch(url, {
+    ...init,
+    credentials: "same-origin",
+    headers: { ...(isForm || !init.body ? {} : { "Content-Type": "application/json" }), ...(init.headers ?? {}) },
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new ApiError(res.status, data);
+  return data as T;
 }
 
-function nextId(prefix: string, list: { id: string }[]) {
-  const max = list.reduce((m, r) => Math.max(m, Number(r.id.split("-").pop()) || 0), 0);
-  return `${prefix}-${String(max + 1).padStart(4, "0")}`;
-}
-
-/* Aplica un cambio y deja constancia en el historial de los campos sensibles. */
-function withHistory<T extends { history?: HistoryEntry[] }>(row: T, patch: Partial<T>): T {
-  const at = new Date().toISOString();
-  const entries: HistoryEntry[] = [];
-  for (const field of ["status", "priority", "answer"] as const) {
-    if (field in patch) {
-      const before = (row as Record<string, unknown>)[field];
-      const after = (patch as Record<string, unknown>)[field];
-      if (after !== before) entries.push({ at, field, value: field === "answer" ? "" : String(after ?? "") });
-    }
-  }
-  return { ...row, ...patch, history: [...(row.history ?? []), ...entries] };
-}
-
-/* ── Preinscripciones ── */
-export const admissionsStore = {
-  list: () => read<Admission>(KEYS.admissions, sampleAdmissions),
-  add(input: Omit<Admission, "id" | "createdAt" | "status" | "notes">) {
-    const list = this.list();
-    const safe = {
-      ...input,
-      guardian: clean(input.guardian, LIMITS.name),
-      phone: clean(input.phone, LIMITS.phone),
-      grade: clean(input.grade, LIMITS.grade),
-      message: clean(input.message, LIMITS.message),
-    };
-    const row: Admission = { ...safe, id: nextId("HG-2027", list), createdAt: new Date().toISOString(), status: "nueva", notes: [] };
-    write(KEYS.admissions, [row, ...list]);
-    return row;
-  },
-  update(id: string, patch: Partial<Admission>) {
-    write(KEYS.admissions, this.list().map((r) => (r.id === id ? withHistory(r, patch) : r)));
-  },
-};
-
-/* ── PQRSF ── */
-export const pqrsfStore = {
-  // Registros guardados antes de existir la prioridad: se completa según el tipo.
-  list: () =>
-    read<Pqrsf>(KEYS.pqrsf, samplePqrsf).map((r) =>
-      r.priority ? r : { ...r, urgent: false, priority: DEFAULT_PRIORITY[r.type] }
-    ),
-  add(input: Omit<Pqrsf, "id" | "createdAt" | "status" | "notes" | "answer" | "priority">) {
-    const list = this.list();
-    const priority: PqrsfPriority = input.urgent ? "alta" : DEFAULT_PRIORITY[input.type];
-    const safe = {
-      ...input,
-      name: clean(input.name, LIMITS.name),
-      email: clean(input.email, LIMITS.email),
-      phone: clean(input.phone, LIMITS.phone),
-      student: clean(input.student, LIMITS.name),
-      grade: clean(input.grade, LIMITS.grade),
-      subject: clean(input.subject, LIMITS.subject),
-      description: clean(input.description, LIMITS.description),
-      attachment: clean(input.attachment, LIMITS.filename),
-    };
-    const row: Pqrsf = { ...safe, priority, id: nextId("PQRSF-2026", list), createdAt: new Date().toISOString(), status: "radicada", answer: "", notes: [] };
-    write(KEYS.pqrsf, [row, ...list]);
-    return row;
-  },
-  find(id: string) {
-    const clean = id.trim().toUpperCase();
-    return this.list().find((r) => r.id === clean);
-  },
-  update(id: string, patch: Partial<Pqrsf>) {
-    write(KEYS.pqrsf, this.list().map((r) => (r.id === id ? withHistory(r, patch) : r)));
-  },
-};
-
-/* ── Sesión del panel (solo demostración, no es seguridad real) ── */
-export const DEMO_PASSWORD = "colegio2027";
+/* Avisa al panel que vuelva a cargar los datos */
 const notify = () => window.dispatchEvent(new Event("hg-demo-change"));
 
-/* Límite de intentos del acceso de demostración (OWASP A07). En producción: contraseña
-   cifrada en el servidor, bloqueo progresivo por usuario e IP y verificación en dos pasos opcional. */
-const MAX_ATTEMPTS = 5;
-const LOCK_MS = 60_000;
-export const loginGuard = {
-  lockedFor(): number {
-    try {
-      const until = Number(sessionStorage.getItem("hg-demo-bloqueo") || 0);
-      return Math.max(0, until - Date.now());
-    } catch { return 0; }
+export type AdmissionInput = Pick<Admission, "lang" | "guardian" | "phone" | "grade" | "message"> & { website?: string };
+export type AdmissionPatch = { status?: AdmissionStatus; note?: string };
+export type PqrsfPatch = { status?: PqrsfStatus; priority?: PqrsfPriority; answer?: string; note?: string };
+/** Lo que ve el acudiente al consultar su radicado (sin datos de otras personas) */
+export type PqrsfPublic = Pick<Pqrsf, "id" | "createdAt" | "lang" | "type" | "name" | "subject" | "description" | "priority" | "status" | "answer" | "answeredAt" | "student" | "grade" | "email" | "phone" | "attachment" | "urgent" | "notes">;
+
+export const admissionsStore = {
+  add: (input: AdmissionInput) => api<Admission>("/api/admisiones", { method: "POST", body: JSON.stringify(input) }),
+  async update(id: string, patch: AdmissionPatch) {
+    await api(`/api/admin/admisiones/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(patch) });
+    notify();
   },
-  fail(): number {
-    try {
-      const n = Number(sessionStorage.getItem("hg-demo-intentos") || 0) + 1;
-      sessionStorage.setItem("hg-demo-intentos", String(n));
-      if (n >= MAX_ATTEMPTS) {
-        sessionStorage.setItem("hg-demo-bloqueo", String(Date.now() + LOCK_MS));
-        sessionStorage.setItem("hg-demo-intentos", "0");
-      }
-      return MAX_ATTEMPTS - (n % MAX_ATTEMPTS || MAX_ATTEMPTS);
-    } catch { return MAX_ATTEMPTS; }
-  },
-  reset() {
-    try { sessionStorage.removeItem("hg-demo-intentos"); sessionStorage.removeItem("hg-demo-bloqueo"); } catch {}
-  },
-};
-export const session = {
-  isOpen: () => { try { return sessionStorage.getItem(KEYS.session) === "1"; } catch { return false; } },
-  open: () => { try { sessionStorage.setItem(KEYS.session, "1"); } catch {} notify(); },
-  close: () => { try { sessionStorage.removeItem(KEYS.session); } catch {} notify(); },
 };
 
-/* ── Suscripción para useSyncExternalStore ── */
-export function subscribeDemo(cb: () => void) {
-  window.addEventListener("hg-demo-change", cb);
-  window.addEventListener("storage", cb);
-  return () => {
-    window.removeEventListener("hg-demo-change", cb);
-    window.removeEventListener("storage", cb);
-  };
+export const pqrsfStore = {
+  /** El formulario va completo (con el archivo) como multipart/form-data */
+  add: (form: FormData) => api<Pqrsf>("/api/pqrsf", { method: "POST", body: form }),
+  find: (id: string, email: string) =>
+    api<PqrsfPublic>("/api/pqrsf/consulta", { method: "POST", body: JSON.stringify({ id: id.trim().toUpperCase(), email: email.trim() }) }),
+  async update(id: string, patch: PqrsfPatch) {
+    await api(`/api/admin/pqrsf/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(patch) });
+    notify();
+  },
+  fileUrl: (id: string) => `/api/admin/pqrsf/${encodeURIComponent(id)}/adjunto`,
+};
+
+/* ── Sesión del panel: cookie segura emitida por el servidor ── */
+export type StaffUser = { username: string; name: string; role: "admin" | "consulta" };
+export const session = {
+  me: () => api<{ user: StaffUser | null; demo: boolean }>("/api/admin/sesion"),
+  login: (username: string, password: string) =>
+    api<{ user: StaffUser }>("/api/admin/sesion", { method: "POST", body: JSON.stringify({ username, password }) }),
+  logout: () => api("/api/admin/sesion", { method: "DELETE" }),
+};
+
+export const fetchAll = () => api<{ admissions: Admission[]; pqrsf: Pqrsf[] }>("/api/admin/datos");
+export async function resetDemo() {
+  await api("/api/admin/datos", { method: "DELETE" });
+  notify();
 }
 
-/** Devuelve el texto guardado (estable entre renders); siembra los ejemplos la primera vez. */
-export function snapshot(kind: "admissions" | "pqrsf"): string | null {
-  try {
-    // Texto con los registros ya completados; al ser texto, React lo compara por valor.
-    return JSON.stringify(kind === "admissions" ? admissionsStore.list() : pqrsfStore.list());
-  } catch {
-    return null;
-  }
+export function subscribeDemo(cb: () => void) {
+  window.addEventListener("hg-demo-change", cb);
+  return () => window.removeEventListener("hg-demo-change", cb);
 }
 
 /* Idioma del panel (español por defecto). */
+const ADMIN_LANG_KEY = "hg-admin-idioma";
 export const adminLang = {
-  get: (): "es" | "en" => { try { return localStorage.getItem(KEYS.adminLang) === "en" ? "en" : "es"; } catch { return "es"; } },
-  set: (lang: "es" | "en") => { try { localStorage.setItem(KEYS.adminLang, lang); } catch {} notify(); },
+  get: (): "es" | "en" => { try { return localStorage.getItem(ADMIN_LANG_KEY) === "en" ? "en" : "es"; } catch { return "es"; } },
+  set: (lang: "es" | "en") => { try { localStorage.setItem(ADMIN_LANG_KEY, lang); } catch {} window.dispatchEvent(new Event("hg-lang-change")); },
+  subscribe: (cb: () => void) => { window.addEventListener("hg-lang-change", cb); return () => window.removeEventListener("hg-lang-change", cb); },
 };
-
-export function resetDemo() {
-  try {
-    localStorage.removeItem(KEYS.admissions);
-    localStorage.removeItem(KEYS.pqrsf);
-    window.dispatchEvent(new Event("hg-demo-change"));
-  } catch {}
-}
 
 /* ── Exportación a Excel (CSV con separador ; y BOM, como lo abre Excel en Colombia) ── */
 export function downloadCsv(filename: string, headers: string[], rows: (string | number)[][]) {

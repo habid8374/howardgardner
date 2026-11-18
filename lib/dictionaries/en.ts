@@ -402,7 +402,10 @@ export const en: Dict = {
 
   demo: {
     badge: "Demo",
-    note: "Demo version: data is stored only in this browser and is not sent to any server. Please don't enter real information.",
+    note: "Demo version: what you send really reaches the school's dashboard, but on a test server. Please don't enter real student information.",
+    sending: "Sending…",
+    sendError: "We couldn't send your request. Check your connection and try again.",
+    rateError: "We received many submissions from your connection. Please try again later.",
   },
 
   pqrsf: {
@@ -449,7 +452,9 @@ export const en: Dict = {
     lookupLabel: "Reference number",
     lookupPlaceholder: "PQRSF-2026-0001",
     lookupButton: "Check",
-    lookupNotFound: "We couldn't find that reference number. Please check it.",
+    lookupNotFound: "We couldn't find a request with that number and email. Please check them.",
+    lookupEmail: "Email you used to submit it",
+    lookupHelp: "For your security, we ask for the reference number and the email you wrote in the request.",
     lookupStatus: "Status",
     lookupCreated: "Submitted on",
     lookupDue: "Reply due by",

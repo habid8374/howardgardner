@@ -1,7 +1,7 @@
 /* PDF de la respuesta a una PQRSF, en español o inglés.
    Se genera en el navegador (jsPDF se carga solo al hacer clic). */
 import { ADDRESS_LINE, LEGAL_NAME, NIT, PHONE_DISPLAY, SITE_NAME, SITE_URL } from "@/lib/site";
-import { formatDate, pqrsfDue, type Pqrsf } from "@/lib/demo-store";
+import { formatDate, pqrsfDue, type Pqrsf } from "@/lib/records";
 import { adminDict } from "@/lib/dictionaries/admin";
 
 type Lang = "es" | "en";

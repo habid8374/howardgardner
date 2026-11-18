@@ -6,9 +6,11 @@ import { downloadPqrsfPdf } from "@/lib/pqrsf-pdf";
 import {
   LIMITS, PQRSF_STATUSES, PQRSF_TYPES, PRIORITIES, PRIORITY_DAYS, byUrgency, clean, downloadCsv, formatDate, pqrsfAlert, pqrsfDue, pqrsfStore,
   type Pqrsf, type PqrsfPriority, type PqrsfStatus, type PqrsfType,
-} from "@/lib/demo-store";
+} from "@/lib/records";
 import type { AdminDict } from "@/lib/dictionaries/admin";
 import { Badge, DueBadge, Drawer, HistoryList, InfoGrid, Kpi, PriorityBadge, SampleTag, input } from "./ui";
+
+const save = (p: Promise<unknown>, msg: string) => p.catch(() => window.alert(msg));
 
 type Lang = "es" | "en";
 type StatusFilter = "" | PqrsfStatus | "abiertas" | "urgentes" | "vencidas";
@@ -237,7 +239,11 @@ export default function PqrsfPanel({ rows, a: d, lang }: { rows: Pqrsf[]; a: Adm
                 [a.detail.phone, current.phone],
                 [a.detail.student, current.student ? `${current.student}${current.grade ? ` · ${current.grade}` : ""}` : ""],
                 [a.detail.due, formatDate(pqrsfDue(current).toISOString(), lang)],
-                [a.detail.attachment, current.attachment ? <span className="inline-flex items-center gap-1"><Paperclip size={14} aria-hidden /> {current.attachment}</span> : ""],
+                [a.detail.attachment, current.attachment
+                  ? current.hasFile
+                    ? <a href={pqrsfStore.fileUrl(current.id)} className="inline-flex items-center gap-1 font-semibold text-navy underline underline-offset-2"><Paperclip size={14} aria-hidden /> {current.attachment} · {d.downloadFile}</a>
+                    : <span className="inline-flex items-center gap-1"><Paperclip size={14} aria-hidden /> {current.attachment}</span>
+                  : ""],
               ]}
             />
 
@@ -246,7 +252,7 @@ export default function PqrsfPanel({ rows, a: d, lang }: { rows: Pqrsf[]; a: Adm
                 <span className="text-sm font-semibold">{a.priority}</span>
                 <select
                   value={current.priority}
-                  onChange={(e) => pqrsfStore.update(current.id, { priority: e.target.value as PqrsfPriority })}
+                  onChange={(e) => save(pqrsfStore.update(current.id, { priority: e.target.value as PqrsfPriority }), d.saveError)}
                   className={`${input} mt-2`}
                 >
                   {PRIORITIES.map((p) => <option key={p} value={p}>{a.priorities[p]} · {PRIORITY_DAYS[p]} {lang === "es" ? "días" : "days"}</option>)}
@@ -257,7 +263,7 @@ export default function PqrsfPanel({ rows, a: d, lang }: { rows: Pqrsf[]; a: Adm
                 <span className="text-sm font-semibold">{d.status}</span>
                 <select
                   value={current.status}
-                  onChange={(e) => pqrsfStore.update(current.id, { status: e.target.value as PqrsfStatus })}
+                  onChange={(e) => save(pqrsfStore.update(current.id, { status: e.target.value as PqrsfStatus }), d.saveError)}
                   className={`${input} mt-2`}
                 >
                   {PQRSF_STATUSES.map((s) => <option key={s} value={s}>{a.statuses[s]}</option>)}
@@ -269,11 +275,7 @@ export default function PqrsfPanel({ rows, a: d, lang }: { rows: Pqrsf[]; a: Adm
               onSubmit={(e) => {
                 e.preventDefault();
                 const text = clean(answer, LIMITS.answer);
-                pqrsfStore.update(current.id, {
-                  answer: text,
-                  status: text ? "respondida" : current.status,
-                  answeredAt: text ? new Date().toISOString() : undefined,
-                });
+                save(pqrsfStore.update(current.id, { answer: text }), d.saveError);
                 setAnswerDraft(null);
               }}
             >

@@ -4,14 +4,14 @@ import { useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, MessageCircle, Phone, Send } from "lucide-react";
 import DemoNote from "./DemoNote";
-import { LIMITS, admissionsStore, type Admission } from "@/lib/demo-store";
+import { ApiError, LIMITS, admissionsStore, type Admission } from "@/lib/records";
 import { TEL_HREF, PHONE_DISPLAY, waLink } from "@/lib/site";
 import { href, type Lang } from "@/lib/i18n";
 import type { Dict } from "@/lib/dictionaries";
 
 /* Proceso de admisión + preinscripción.
-   Demo: la preinscripción se guarda en el navegador (lib/demo-store.ts) y aparece
-   en el panel del colegio (/admin). En producción se guardará en una base de datos.
+   La preinscripción se envía al servidor (/api/admisiones), se guarda en la base de datos
+   y aparece en el panel del colegio (/admin).
    TODO(CLIENTE): confirmar pasos reales, documentos requeridos y fechas 2027. */
 
 type Errors = Partial<Record<"name" | "phone" | "grade" | "consent", string>>;
@@ -21,8 +21,10 @@ export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "adm
   const f = a.form;
   const [errors, setErrors] = useState<Errors>({});
   const [sent, setSent] = useState<Admission | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [netError, setNetError] = useState<string | null>(null);
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     const name = String(data.get("nombre") || "").trim();
@@ -43,8 +45,16 @@ export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "adm
       return;
     }
 
-    if (String(data.get("website") || "")) return; // robot: se descarta sin avisar
-    setSent(admissionsStore.add({ lang, guardian: name, phone, grade, message }));
+    setBusy(true);
+    setNetError(null);
+    try {
+      setSent(await admissionsStore.add({ lang, guardian: name, phone, grade, message, website: String(data.get("website") || "") }));
+    } catch (err) {
+      setNetError(err instanceof ApiError && err.status === 429 ? t.demo.rateError : t.demo.sendError);
+      return;
+    } finally {
+      setBusy(false);
+    }
     requestAnimationFrame(() => document.getElementById("preinscripcion")?.scrollIntoView({ block: "start" }));
   }
 
@@ -155,8 +165,9 @@ export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "adm
               {err("e-acepta", errors.consent)}
             </div>
 
-            <button type="submit" className="btn btn-primary mt-2 w-full">
-              <Send size={18} aria-hidden /> {f.submit}
+            {netError && <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-800">{netError}</p>}
+            <button type="submit" disabled={busy} aria-busy={busy} className="btn btn-primary mt-2 w-full disabled:opacity-70">
+              <Send size={18} aria-hidden /> {busy ? t.demo.sending : f.submit}
             </button>
           </div>
         </form>

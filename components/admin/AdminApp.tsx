@@ -1,35 +1,25 @@
 "use client";
 
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink, FlaskConical, Globe, LogOut, RotateCcw } from "lucide-react";
 import {
-  DEMO_PASSWORD, adminLang, loginGuard, pqrsfAlert, resetDemo, session, snapshot, subscribeDemo, type Admission, type Pqrsf,
-} from "@/lib/demo-store";
+  ApiError, adminLang, fetchAll, pqrsfAlert, resetDemo, session, subscribeDemo, type Admission, type Pqrsf, type StaffUser,
+} from "@/lib/records";
 import { adminDict, type AdminDict } from "@/lib/dictionaries/admin";
 import AdmissionsPanel from "./AdmissionsPanel";
 import PqrsfPanel from "./PqrsfPanel";
 
-/* Panel del colegio — DEMO, en español e inglés.
-   La "clave" es solo para la demostración: no es seguridad real.
-   En producción: acceso con usuario y contraseña por persona, roles y registro de actividad. */
+/* Panel del colegio, en español e inglés.
+   Acceso con usuario y contraseña verificados en el servidor; la sesión es una cookie segura.
+   Los datos vienen de la base de datos (/api/admin/datos) y se recargan tras cada cambio
+   y cada minuto, para ver lo que llega desde el sitio sin recargar la página. */
 
 type Lang = "es" | "en";
-
-function useDemoData() {
-  const raw = useSyncExternalStore(
-    subscribeDemo,
-    // snapshot() siembra los ejemplos la primera vez y devuelve texto (estable entre renders)
-    () => `${snapshot("admissions") ?? "[]"}\u0000${snapshot("pqrsf") ?? "[]"}`,
-    () => null
-  );
-  return useMemo(() => {
-    if (raw === null) return null;
-    const [a, p] = raw.split("\u0000");
-    return { admissions: JSON.parse(a) as Admission[], pqrsf: JSON.parse(p) as Pqrsf[] };
-  }, [raw]);
-}
+type Data = { admissions: Admission[]; pqrsf: Pqrsf[] };
+const DEMO_USER = "demo";
+const DEMO_PASS = "colegio2027";
 
 function LangToggle({ lang, label, dark }: { lang: Lang; label: string; dark?: boolean }) {
   const other: Lang = lang === "es" ? "en" : "es";
@@ -48,24 +38,29 @@ function LangToggle({ lang, label, dark }: { lang: Lang; label: string; dark?: b
   );
 }
 
-function Login({ a, lang }: { a: AdminDict; lang: Lang }) {
+function Login({ a, lang, demo, onLogin }: { a: AdminDict; lang: Lang; demo: boolean; onLogin: (u: StaffUser) => void }) {
+  const [username, setUsername] = useState("");
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
   return (
     <main className="flex min-h-svh items-center justify-center bg-ink px-4 py-16">
       <form
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
-          const wait = loginGuard.lockedFor();
-          if (wait > 0) return setError(a.locked(Math.ceil(wait / 1000)));
-          if (value === DEMO_PASSWORD) {
-            loginGuard.reset();
-            session.open();
-            return;
+          setBusy(true);
+          try {
+            const { user } = await session.login(username, value);
+            onLogin(user);
+          } catch (err) {
+            setValue("");
+            const d = err instanceof ApiError ? err.data : {};
+            if (err instanceof ApiError && err.status === 429) setError(a.locked(Number(d.wait) || 60));
+            else if (err instanceof ApiError && err.status === 401) setError(a.badLogin(Number(d.left) || 0));
+            else setError(a.loginError);
+          } finally {
+            setBusy(false);
           }
-          const left = loginGuard.fail();
-          setValue("");
-          setError(left > 0 ? a.attemptsLeft(left) : a.locked(60));
         }}
         className="w-full max-w-md rounded-[28px] bg-paper p-8 text-ink sm:p-10"
       >
@@ -76,25 +71,39 @@ function Login({ a, lang }: { a: AdminDict; lang: Lang }) {
         <h1 className="h-display mt-6 text-[2rem]">{a.title}</h1>
         <p className="mt-2 text-muted">{a.loginLead}</p>
 
-        <p className="mt-6 flex items-start gap-3 rounded-xl border border-gold/50 bg-gold-soft/40 px-4 py-3 text-sm text-ink">
-          <FlaskConical size={18} className="mt-0.5 flex-none" aria-hidden />
-          <span>{a.loginDemo} <strong className="font-mono">{DEMO_PASSWORD}</strong></span>
-        </p>
+        {demo && (
+          <p className="mt-6 flex items-start gap-3 rounded-xl border border-gold/50 bg-gold-soft/40 px-4 py-3 text-sm text-ink">
+            <FlaskConical size={18} className="mt-0.5 flex-none" aria-hidden />
+            <span>{a.loginDemo} <strong className="font-mono">{DEMO_USER}</strong> · <strong className="font-mono">{DEMO_PASS}</strong></span>
+          </p>
+        )}
 
-        <label htmlFor="clave" className="mt-6 block text-sm font-semibold">{a.password}</label>
+        <label htmlFor="usuario" className="mt-6 block text-sm font-semibold">{a.username}</label>
+        <input
+          id="usuario"
+          autoComplete="username"
+          autoCapitalize="none"
+          value={username}
+          maxLength={60}
+          onChange={(e) => { setUsername(e.target.value); setError(null); }}
+          required
+          className="mt-2 block min-h-12 w-full rounded-xl border border-ink/20 bg-white px-4 text-base outline-none focus:border-navy focus:shadow-[0_0_0_3px_rgba(18,36,90,0.15)]"
+        />
+        <label htmlFor="clave" className="mt-4 block text-sm font-semibold">{a.password}</label>
         <input
           id="clave"
           type="password"
           autoComplete="current-password"
           value={value}
-          maxLength={64}
+          maxLength={128}
+          required
           onChange={(e) => { setValue(e.target.value); setError(null); }}
           aria-invalid={!!error}
           aria-describedby={error ? "e-clave" : undefined}
           className="mt-2 block min-h-12 w-full rounded-xl border border-ink/20 bg-white px-4 text-base outline-none focus:border-navy focus:shadow-[0_0_0_3px_rgba(18,36,90,0.15)]"
         />
         {error && <p id="e-clave" role="alert" className="mt-1.5 text-sm font-medium text-red-700">{error}</p>}
-        <button type="submit" className="btn btn-primary mt-6 w-full">{a.enter}</button>
+        <button type="submit" disabled={busy} aria-busy={busy} className="btn btn-primary mt-6 w-full disabled:opacity-70">{busy ? a.loading : a.enter}</button>
         <Link href={`/${lang}`} className="link mt-5 inline-flex min-h-11 items-center text-sm font-semibold text-navy">{a.backToSite}</Link>
       </form>
     </main>
@@ -102,11 +111,36 @@ function Login({ a, lang }: { a: AdminDict; lang: Lang }) {
 }
 
 export default function AdminApp() {
-  const open = useSyncExternalStore(subscribeDemo, session.isOpen, () => false);
-  const lang = useSyncExternalStore(subscribeDemo, adminLang.get, () => "es" as Lang);
-  const data = useDemoData();
+  const lang = useSyncExternalStore(adminLang.subscribe, adminLang.get, () => "es" as Lang);
+  const [auth, setAuth] = useState<{ user: StaffUser | null; demo: boolean } | null>(null);
+  const [data, setData] = useState<Data | null>(null);
   const [tab, setTab] = useState<"admisiones" | "pqrsf">("admisiones");
   const a = adminDict[lang];
+  const user = auth?.user ?? null;
+
+  const load = useCallback(async () => {
+    try {
+      setData(await fetchAll());
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401) setAuth((s) => (s ? { ...s, user: null } : s));
+    }
+  }, []);
+
+  // ¿Ya hay sesión?
+  useEffect(() => {
+    session.me().then(setAuth).catch(() => setAuth({ user: null, demo: false }));
+  }, []);
+
+  // Con sesión: cargar, recargar tras cada cambio y cada minuto
+  useEffect(() => {
+    if (!user) return;
+    // Sincroniza con un sistema externo (la API): es el uso correcto de un efecto
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    load();
+    const off = subscribeDemo(load);
+    const t = window.setInterval(load, 60_000);
+    return () => { off(); window.clearInterval(t); };
+  }, [user, load]);
 
   // Si se llega desde el pie de página en inglés (/admin?lang=en), el panel abre en inglés
   useEffect(() => {
@@ -119,8 +153,9 @@ export default function AdminApp() {
     document.documentElement.lang = lang === "es" ? "es-CO" : "en";
   }, [lang]);
 
-  if (!open) return <Login a={a} lang={lang} />;
-  if (!data) return <main className="min-h-svh bg-paper" />;
+  if (!auth) return <main className="min-h-svh bg-ink" />;
+  if (!user) return <Login a={a} lang={lang} demo={auth.demo} onLogin={(u) => setAuth({ ...auth, user: u })} />;
+  if (!data) return <main className="flex min-h-svh items-center justify-center bg-paper text-muted">{a.loading}</main>;
 
   const newAdmissions = data.admissions.filter((r) => r.status === "nueva").length;
   const now = new Date();
@@ -147,7 +182,10 @@ export default function AdminApp() {
             <Link href={`/${lang}`} target="_blank" rel="noopener" className="hidden min-h-11 items-center gap-2 rounded-full px-4 text-sm font-semibold text-white/80 hover:bg-white/10 sm:inline-flex">
               <ExternalLink size={16} aria-hidden /> {a.viewSite}
             </Link>
-            <button type="button" onClick={session.close} aria-label={a.logout} className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-sm font-semibold text-white/80 hover:bg-white/10 sm:px-4">
+            <button
+              type="button"
+              onClick={async () => { await session.logout().catch(() => {}); setData(null); setAuth({ ...auth, user: null }); }}
+              aria-label={a.logout} className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-sm font-semibold text-white/80 hover:bg-white/10 sm:px-4">
               <LogOut size={16} aria-hidden /> <span className="hidden sm:inline">{a.logout}</span>
             </button>
           </div>
@@ -173,24 +211,26 @@ export default function AdminApp() {
       </header>
 
       <main className="mx-auto max-w-[1400px] px-4 py-8 sm:px-8">
-        <p className="mb-6 flex items-start gap-3 rounded-xl border border-gold/50 bg-gold-soft/40 px-4 py-3 text-sm text-ink">
-          <FlaskConical size={18} className="mt-0.5 flex-none" aria-hidden />
-          <span>{a.demoBanner}</span>
-        </p>
+        {auth.demo && (
+          <p className="mb-6 flex items-start gap-3 rounded-xl border border-gold/50 bg-gold-soft/40 px-4 py-3 text-sm text-ink">
+            <FlaskConical size={18} className="mt-0.5 flex-none" aria-hidden />
+            <span>{a.demoBanner}</span>
+          </p>
+        )}
 
         {tab === "admisiones"
           ? <AdmissionsPanel rows={data.admissions} a={a} lang={lang} />
           : <PqrsfPanel rows={data.pqrsf} a={a} lang={lang} />}
 
         <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-line pt-6 text-sm text-muted sm:flex-row sm:items-center">
-          <p>{a.demoFooter}</p>
-          <button
+          <p>{auth.demo ? a.demoFooter : ""} {user.name}</p>
+          {auth.demo && user.role === "admin" && <button
             type="button"
-            onClick={() => window.confirm(a.resetConfirm) && resetDemo()}
+            onClick={() => window.confirm(a.resetConfirm) && resetDemo().catch(() => window.alert(a.saveError))}
             className="inline-flex min-h-11 items-center gap-2 rounded-full border border-ink/20 px-4 font-semibold text-ink hover:bg-paper-2"
           >
             <RotateCcw size={16} aria-hidden /> {a.reset}
-          </button>
+          </button>}
         </div>
       </main>
     </div>

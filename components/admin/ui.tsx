@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { AlertTriangle, Clock, X } from "lucide-react";
-import { formatDate, type DueLevel, type HistoryEntry, type PqrsfPriority } from "@/lib/demo-store";
+import { formatDate, type DueLevel, type HistoryEntry, type PqrsfPriority } from "@/lib/records";
 
 export const input =
   "block min-h-11 w-full rounded-xl border border-ink/15 bg-white px-3.5 text-[0.95rem] text-ink outline-none transition-[border-color,box-shadow] duration-200 focus:border-navy focus:shadow-[0_0_0_3px_rgba(18,36,90,0.12)]";

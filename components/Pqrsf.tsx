@@ -7,9 +7,9 @@ import { downloadPqrsfPdf } from "@/lib/pqrsf-pdf";
 import DemoNote from "./DemoNote";
 import { href, type Lang } from "@/lib/i18n";
 import type { Dict } from "@/lib/dictionaries";
-import { ALLOWED_FILE_TYPES, LIMITS, MAX_FILE_MB, PQRSF_DAYS, formatDate, pqrsfDue, pqrsfStore, type Pqrsf as Row, type PqrsfType } from "@/lib/demo-store";
+import { ALLOWED_FILE_TYPES, ApiError, LIMITS, MAX_FILE_MB, PQRSF_DAYS, formatDate, pqrsfDue, pqrsfStore, type Pqrsf as Row, type PqrsfPublic, type PqrsfType } from "@/lib/records";
 
-/* PQRSF — demo: se guarda en el navegador y aparece en el panel del colegio (/admin). */
+/* PQRSF: se envía al servidor (/api/pqrsf), se guarda en la base de datos y aparece en el panel del colegio (/admin). */
 
 type Props = { lang: Lang; t: { pqrsf: Dict["pqrsf"]; demo: Dict["demo"]; grades: string[] } };
 type Errors = Partial<Record<"type" | "name" | "email" | "subject" | "description" | "consent" | "file", string>>;
@@ -28,13 +28,17 @@ export default function Pqrsf({ lang, t }: Props) {
   const p = t.pqrsf;
   const [type, setType] = useState<PqrsfType | "">("");
   const [errors, setErrors] = useState<Errors>({});
-  const [sent, setSent] = useState<Row | null>(null);
+  const [sent, setSent] = useState<{ id: string } | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [netError, setNetError] = useState<string | null>(null);
 
   const [query, setQuery] = useState("");
-  const [found, setFound] = useState<Row | null | undefined>(undefined);
+  const [lookEmail, setLookEmail] = useState("");
+  const [looking, setLooking] = useState(false);
+  const [found, setFound] = useState<PqrsfPublic | null | undefined>(undefined);
   const [pdfBusy, setPdfBusy] = useState(false);
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const d = new FormData(e.currentTarget);
     const v = (k: string) => String(d.get(k) || "").trim();
@@ -68,15 +72,35 @@ export default function Pqrsf({ lang, t }: Props) {
       e.currentTarget.querySelector<HTMLElement>("[aria-invalid='true']")?.focus();
       return;
     }
-    if (String(d.get("website") || "")) return; // robot: se descarta sin avisar
-    setSent(pqrsfStore.add(input));
+    // Se envía el formulario completo (con el adjunto) al servidor
+    d.set("lang", lang);
+    if (!(file instanceof File) || file.size === 0) d.delete("adjunto");
+    setBusy(true);
+    setNetError(null);
+    try {
+      setSent(await pqrsfStore.add(d));
+    } catch (err) {
+      const status = err instanceof ApiError ? err.status : 0;
+      if (status === 413 || status === 415) setErrors({ file: p.errors.file });
+      else setNetError(status === 429 ? t.demo.rateError : t.demo.sendError);
+      return;
+    } finally {
+      setBusy(false);
+    }
     requestAnimationFrame(() => document.getElementById("pqrsf-ok")?.scrollIntoView({ block: "center" }));
     setType("");
   }
 
-  function onLookup(e: React.FormEvent) {
+  async function onLookup(e: React.FormEvent) {
     e.preventDefault();
-    setFound(pqrsfStore.find(query) ?? null);
+    setLooking(true);
+    try {
+      setFound(await pqrsfStore.find(query, lookEmail));
+    } catch {
+      setFound(null);
+    } finally {
+      setLooking(false);
+    }
   }
 
   const aria = (k: keyof Errors) => ({ "aria-invalid": !!errors[k], "aria-describedby": errors[k] ? `e-${k}` : undefined });
@@ -212,8 +236,9 @@ export default function Pqrsf({ lang, t }: Props) {
                 <Err id="e-consent" msg={errors.consent} />
               </div>
 
-              <button type="submit" className="btn btn-primary mt-8 w-full">
-                <Send size={18} aria-hidden /> {p.submit}
+              {netError && <p role="alert" className="mt-6 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-800">{netError}</p>}
+              <button type="submit" disabled={busy} aria-busy={busy} className="btn btn-primary mt-8 w-full disabled:opacity-70">
+                <Send size={18} aria-hidden /> {busy ? t.demo.sending : p.submit}
               </button>
             </form>
           )}
@@ -225,10 +250,11 @@ export default function Pqrsf({ lang, t }: Props) {
           <div>
             <p className="eyebrow text-gold">{p.lookupEyebrow}</p>
             <h2 className="h-section mt-5">{p.lookupTitle}</h2>
+            <p className="mt-5 max-w-md text-white/70">{p.lookupHelp}</p>
           </div>
           <div>
-            <form onSubmit={onLookup} className="flex flex-col gap-3 sm:flex-row sm:items-end">
-              <div className="flex-1">
+            <form onSubmit={onLookup} className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+              <div>
                 <label htmlFor="radicado" className="text-sm font-semibold text-white/80">{p.lookupLabel}</label>
                 <input
                   id="radicado"
@@ -237,10 +263,24 @@ export default function Pqrsf({ lang, t }: Props) {
                   placeholder={p.lookupPlaceholder}
                   autoCapitalize="characters"
                   maxLength={30}
+                  required
                   className="mt-2 block min-h-12 w-full rounded-xl border border-white/20 bg-white/5 px-4 text-base uppercase text-white outline-none placeholder:normal-case placeholder:text-white/40 focus:border-gold"
                 />
               </div>
-              <button type="submit" className="btn btn-primary">
+              <div>
+                <label htmlFor="radicado-correo" className="text-sm font-semibold text-white/80">{p.lookupEmail}</label>
+                <input
+                  id="radicado-correo"
+                  type="email"
+                  autoComplete="email"
+                  value={lookEmail}
+                  onChange={(e) => setLookEmail(e.target.value)}
+                  maxLength={LIMITS.email}
+                  required
+                  className="mt-2 block min-h-12 w-full rounded-xl border border-white/20 bg-white/5 px-4 text-base text-white outline-none placeholder:text-white/40 focus:border-gold"
+                />
+              </div>
+              <button type="submit" disabled={looking} aria-busy={looking} className="btn btn-primary disabled:opacity-70">
                 <Search size={18} aria-hidden /> {p.lookupButton}
               </button>
             </form>
@@ -273,7 +313,7 @@ export default function Pqrsf({ lang, t }: Props) {
                           disabled={pdfBusy}
                           onClick={async () => {
                             setPdfBusy(true);
-                            try { await downloadPqrsfPdf(found, lang); } finally { setPdfBusy(false); }
+                            try { await downloadPqrsfPdf(found as Row, lang); } finally { setPdfBusy(false); }
                           }}
                           className="btn btn-primary !min-h-11 !text-sm disabled:opacity-70"
                         >
