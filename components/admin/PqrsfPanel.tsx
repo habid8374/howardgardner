@@ -4,11 +4,11 @@ import { useMemo, useState } from "react";
 import { AlertTriangle, Download, FileDown, Flag, Paperclip, Search } from "lucide-react";
 import { downloadPqrsfPdf } from "@/lib/pqrsf-pdf";
 import {
-  PQRSF_STATUSES, PQRSF_TYPES, PRIORITIES, PRIORITY_DAYS, byUrgency, downloadCsv, formatDate, pqrsfAlert, pqrsfDue, pqrsfStore,
+  LIMITS, PQRSF_STATUSES, PQRSF_TYPES, PRIORITIES, PRIORITY_DAYS, byUrgency, clean, downloadCsv, formatDate, pqrsfAlert, pqrsfDue, pqrsfStore,
   type Pqrsf, type PqrsfPriority, type PqrsfStatus, type PqrsfType,
 } from "@/lib/demo-store";
 import type { AdminDict } from "@/lib/dictionaries/admin";
-import { Badge, DueBadge, Drawer, InfoGrid, Kpi, PriorityBadge, SampleTag, input } from "./ui";
+import { Badge, DueBadge, Drawer, HistoryList, InfoGrid, Kpi, PriorityBadge, SampleTag, input } from "./ui";
 
 type Lang = "es" | "en";
 type StatusFilter = "" | PqrsfStatus | "abiertas" | "urgentes" | "vencidas";
@@ -268,7 +268,7 @@ export default function PqrsfPanel({ rows, a: d, lang }: { rows: Pqrsf[]; a: Adm
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                const text = answer.trim();
+                const text = clean(answer, LIMITS.answer);
                 pqrsfStore.update(current.id, {
                   answer: text,
                   status: text ? "respondida" : current.status,
@@ -284,6 +284,7 @@ export default function PqrsfPanel({ rows, a: d, lang }: { rows: Pqrsf[]; a: Adm
                   value={answer}
                   onChange={(e) => setAnswerDraft({ id: current.id, text: e.target.value })}
                   rows={5}
+                  maxLength={LIMITS.answer}
                   className={`${input} mt-2 py-3`}
                 />
               </label>
@@ -304,6 +305,20 @@ export default function PqrsfPanel({ rows, a: d, lang }: { rows: Pqrsf[]; a: Adm
                 )}
               </div>
             </form>
+
+            <HistoryList
+              entries={current.history}
+              title={d.history}
+              empty={d.noHistory}
+              lang={lang}
+              describe={(e) =>
+                e.field === "answer"
+                  ? d.historyAnswer
+                  : e.field === "priority"
+                    ? `${a.priority} → ${a.priorities[e.value as PqrsfPriority] ?? e.value}`
+                    : `${d.status} → ${a.statuses[e.value as PqrsfStatus] ?? e.value}`
+              }
+            />
           </div>
         )}
       </Drawer>

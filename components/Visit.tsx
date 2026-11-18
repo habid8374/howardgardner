@@ -1,5 +1,6 @@
 import { MapPin, Phone, Clock, Navigation } from "lucide-react";
 import { WhatsAppIcon, InstagramIcon, FacebookIcon } from "./BrandIcons";
+import MapEmbed from "./MapEmbed";
 import { ADDRESS_LINE, PHONE_DISPLAY, TEL_HREF, MAPS_URL, MAPS_EMBED, SOCIAL, waLink } from "@/lib/site";
 import type { Dict } from "@/lib/dictionaries";
 
@@ -58,7 +59,7 @@ export default function Visit({ t }: { t: Dict }) {
 
         <div className="flex flex-col gap-4">
           <div className="relative min-h-[320px] flex-1 overflow-hidden rounded-[28px] border border-ink/10 bg-paper lg:min-h-[480px]">
-            <iframe src={MAPS_EMBED} title={v.mapTitle} loading="lazy" referrerPolicy="no-referrer-when-downgrade" className="absolute inset-0 h-full w-full border-0" />
+            <MapEmbed src={MAPS_EMBED} title={v.mapTitle} blocked={t.cookies.mapBlocked} loadLabel={t.cookies.loadMap} />
           </div>
           <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" className="btn btn-primary w-full sm:w-fit">
             <Navigation size={18} aria-hidden /> {v.directions}

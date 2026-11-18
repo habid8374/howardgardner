@@ -18,6 +18,7 @@ export const PAGES = {
   contact: { es: "contacto", en: "contact" },
   pqrsf: { es: "pqrsf", en: "requests" },
   privacy: { es: "politica-de-datos", en: "privacy-policy" },
+  cookies: { es: "politica-de-cookies", en: "cookie-policy" },
 } as const;
 
 export type PageKey = keyof typeof PAGES;

@@ -14,6 +14,22 @@ export type PqrsfStatus = "radicada" | "en_tramite" | "respondida" | "cerrada";
 export type PqrsfPriority = "alta" | "media" | "baja";
 
 export type Note = { at: string; text: string };
+/* Historial de cambios (OWASP A09: registro de eventos). En producción se guarda en el servidor
+   con el usuario que hizo cada cambio. */
+export type HistoryEntry = { at: string; field: "status" | "priority" | "answer"; value: string };
+
+/* Límites de tamaño de cada campo (OWASP ASVS V2: validación de entradas). */
+export const LIMITS = {
+  name: 100, phone: 20, email: 254, grade: 40, subject: 150, message: 1000,
+  description: 3000, answer: 3000, note: 500, filename: 120,
+} as const;
+export const MAX_FILE_MB = 5;
+export const ALLOWED_FILE_TYPES = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
+
+/** Quita caracteres de control y recorta al límite. */
+export function clean(value: string, max: number) {
+  return value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "").trim().slice(0, max);
+}
 
 export type Admission = {
   id: string;            // HG-2027-0001
@@ -25,6 +41,7 @@ export type Admission = {
   message: string;
   status: AdmissionStatus;
   notes: Note[];
+  history?: HistoryEntry[];
   sample?: boolean;
 };
 
@@ -47,6 +64,7 @@ export type Pqrsf = {
   answer: string;
   answeredAt?: string;   // fecha en que el colegio guardó la respuesta
   notes: Note[];
+  history?: HistoryEntry[];
   sample?: boolean;
 };
 
@@ -216,17 +234,38 @@ function nextId(prefix: string, list: { id: string }[]) {
   return `${prefix}-${String(max + 1).padStart(4, "0")}`;
 }
 
+/* Aplica un cambio y deja constancia en el historial de los campos sensibles. */
+function withHistory<T extends { history?: HistoryEntry[] }>(row: T, patch: Partial<T>): T {
+  const at = new Date().toISOString();
+  const entries: HistoryEntry[] = [];
+  for (const field of ["status", "priority", "answer"] as const) {
+    if (field in patch) {
+      const before = (row as Record<string, unknown>)[field];
+      const after = (patch as Record<string, unknown>)[field];
+      if (after !== before) entries.push({ at, field, value: field === "answer" ? "" : String(after ?? "") });
+    }
+  }
+  return { ...row, ...patch, history: [...(row.history ?? []), ...entries] };
+}
+
 /* ── Preinscripciones ── */
 export const admissionsStore = {
   list: () => read<Admission>(KEYS.admissions, sampleAdmissions),
   add(input: Omit<Admission, "id" | "createdAt" | "status" | "notes">) {
     const list = this.list();
-    const row: Admission = { ...input, id: nextId("HG-2027", list), createdAt: new Date().toISOString(), status: "nueva", notes: [] };
+    const safe = {
+      ...input,
+      guardian: clean(input.guardian, LIMITS.name),
+      phone: clean(input.phone, LIMITS.phone),
+      grade: clean(input.grade, LIMITS.grade),
+      message: clean(input.message, LIMITS.message),
+    };
+    const row: Admission = { ...safe, id: nextId("HG-2027", list), createdAt: new Date().toISOString(), status: "nueva", notes: [] };
     write(KEYS.admissions, [row, ...list]);
     return row;
   },
   update(id: string, patch: Partial<Admission>) {
-    write(KEYS.admissions, this.list().map((r) => (r.id === id ? { ...r, ...patch } : r)));
+    write(KEYS.admissions, this.list().map((r) => (r.id === id ? withHistory(r, patch) : r)));
   },
 };
 
@@ -240,7 +279,18 @@ export const pqrsfStore = {
   add(input: Omit<Pqrsf, "id" | "createdAt" | "status" | "notes" | "answer" | "priority">) {
     const list = this.list();
     const priority: PqrsfPriority = input.urgent ? "alta" : DEFAULT_PRIORITY[input.type];
-    const row: Pqrsf = { ...input, priority, id: nextId("PQRSF-2026", list), createdAt: new Date().toISOString(), status: "radicada", answer: "", notes: [] };
+    const safe = {
+      ...input,
+      name: clean(input.name, LIMITS.name),
+      email: clean(input.email, LIMITS.email),
+      phone: clean(input.phone, LIMITS.phone),
+      student: clean(input.student, LIMITS.name),
+      grade: clean(input.grade, LIMITS.grade),
+      subject: clean(input.subject, LIMITS.subject),
+      description: clean(input.description, LIMITS.description),
+      attachment: clean(input.attachment, LIMITS.filename),
+    };
+    const row: Pqrsf = { ...safe, priority, id: nextId("PQRSF-2026", list), createdAt: new Date().toISOString(), status: "radicada", answer: "", notes: [] };
     write(KEYS.pqrsf, [row, ...list]);
     return row;
   },
@@ -249,13 +299,40 @@ export const pqrsfStore = {
     return this.list().find((r) => r.id === clean);
   },
   update(id: string, patch: Partial<Pqrsf>) {
-    write(KEYS.pqrsf, this.list().map((r) => (r.id === id ? { ...r, ...patch } : r)));
+    write(KEYS.pqrsf, this.list().map((r) => (r.id === id ? withHistory(r, patch) : r)));
   },
 };
 
 /* ── Sesión del panel (solo demostración, no es seguridad real) ── */
 export const DEMO_PASSWORD = "colegio2027";
 const notify = () => window.dispatchEvent(new Event("hg-demo-change"));
+
+/* Límite de intentos del acceso de demostración (OWASP A07). En producción: contraseña
+   cifrada en el servidor, bloqueo progresivo por usuario e IP y verificación en dos pasos opcional. */
+const MAX_ATTEMPTS = 5;
+const LOCK_MS = 60_000;
+export const loginGuard = {
+  lockedFor(): number {
+    try {
+      const until = Number(sessionStorage.getItem("hg-demo-bloqueo") || 0);
+      return Math.max(0, until - Date.now());
+    } catch { return 0; }
+  },
+  fail(): number {
+    try {
+      const n = Number(sessionStorage.getItem("hg-demo-intentos") || 0) + 1;
+      sessionStorage.setItem("hg-demo-intentos", String(n));
+      if (n >= MAX_ATTEMPTS) {
+        sessionStorage.setItem("hg-demo-bloqueo", String(Date.now() + LOCK_MS));
+        sessionStorage.setItem("hg-demo-intentos", "0");
+      }
+      return MAX_ATTEMPTS - (n % MAX_ATTEMPTS || MAX_ATTEMPTS);
+    } catch { return MAX_ATTEMPTS; }
+  },
+  reset() {
+    try { sessionStorage.removeItem("hg-demo-intentos"); sessionStorage.removeItem("hg-demo-bloqueo"); } catch {}
+  },
+};
 export const session = {
   isOpen: () => { try { return sessionStorage.getItem(KEYS.session) === "1"; } catch { return false; } },
   open: () => { try { sessionStorage.setItem(KEYS.session, "1"); } catch {} notify(); },
@@ -299,8 +376,11 @@ export function resetDemo() {
 /* ── Exportación a Excel (CSV con separador ; y BOM, como lo abre Excel en Colombia) ── */
 export function downloadCsv(filename: string, headers: string[], rows: (string | number)[][]) {
   const esc = (v: string | number) => {
-    const s = String(v ?? "").replace(/\r?\n/g, " ");
-    return /[;"]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    let s = String(v ?? "").replace(/\r?\n/g, " ");
+    // Inyección de fórmulas (OWASP CSV Injection): un texto que empieza por = + - @ o tabulador
+    // podría ejecutarse como fórmula al abrirlo en Excel. Se antepone un apóstrofo.
+    if (typeof v === "string" && /^[=+\-@\t\r]/.test(s)) s = "'" + s;
+    return /[;"']/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
   };
   const csv = "﻿" + [headers, ...rows].map((r) => r.map(esc).join(";")).join("\r\n");
   const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));

@@ -1,0 +1,14 @@
+# Revisión semanal de dependencias (OWASP Top 10:2025 · A03 Fallas en la cadena de suministro de software).
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+      timezone: "America/Bogota"
+    open-pull-requests-limit: 5
+    groups:
+      dependencias-menores:
+        update-types: ["minor", "patch"]

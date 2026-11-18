@@ -61,4 +61,11 @@ Cambio en el código: solo `lib/demo-store.ts` pasa de guardar en el navegador a
 - [ ] Validar la **Política de Tratamiento de Datos** con el área jurídica del colegio y añadir la fecha de vigencia. `app/politica-de-datos/page.tsx`
 
 ## Dominio
-- [ ] Dominio propio (ej. howardgardner.edu.co). Al tenerlo, cambiar `SITE_URL` en `lib/site.ts` y `public/llms.txt`.
+- [ ] **Dominio `.edu.co`** (ej. howardgardner.edu.co): Axentia hace el trámite en registrocolombia.co y paga el primer año ($30.000/año para colegios privados). El colegio entrega:
+  - RUT del colegio (generado hace máximo 6 meses).
+  - Carta de solicitud en papelería oficial, firmada por el rector, con uno o dos contactos directivos.
+  - Resolución de licencia o reconocimiento oficial (preescolar, básica y media).
+- [ ] Al tenerlo, cambiar `SITE_URL` en `lib/site.ts` y `public/llms.txt`.
+
+## Seguridad
+Ver `SECURITY.md` (matriz OWASP Top 10:2025 y ASVS 5.0, demo y producción).

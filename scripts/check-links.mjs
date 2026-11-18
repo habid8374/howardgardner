@@ -5,8 +5,8 @@
 const BASE = process.env.BASE_URL || "http://localhost:3000";
 
 const pages = [
-  "/es", "/es/nosotros", "/es/aprendizaje", "/es/reconocimientos", "/es/admisiones", "/es/contacto", "/es/pqrsf", "/es/politica-de-datos",
-  "/en", "/en/about", "/en/learning", "/en/achievements", "/en/admissions", "/en/contact", "/en/requests", "/en/privacy-policy",
+  "/es", "/es/nosotros", "/es/aprendizaje", "/es/reconocimientos", "/es/admisiones", "/es/contacto", "/es/pqrsf", "/es/politica-de-datos", "/es/politica-de-cookies",
+  "/en", "/en/about", "/en/learning", "/en/achievements", "/en/admissions", "/en/contact", "/en/requests", "/en/privacy-policy", "/en/cookie-policy",
 ];
 const files = ["/robots.txt", "/sitemap.xml", "/llms.txt"];
 let failures = 0;

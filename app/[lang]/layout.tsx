@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { Fraunces, Manrope } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
+import ConsentAnalytics from "@/components/ConsentAnalytics";
+import CookieBanner from "@/components/CookieBanner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
@@ -109,8 +109,8 @@ export default async function LangLayout({ children, params }: LayoutProps<"/[la
         <main id="contenido">{children}</main>
         <Footer lang={lang} t={t} />
         <WhatsAppFloat t={t} />
-        <Analytics />
-        <SpeedInsights />
+        <CookieBanner lang={lang} t={t.cookies} />
+        <ConsentAnalytics />
       </body>
     </html>
   );

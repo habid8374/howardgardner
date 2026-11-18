@@ -2,9 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { Download, MessageCircle, Phone, Search } from "lucide-react";
-import { ADMISSION_STATUSES, admissionsStore, downloadCsv, formatDate, type Admission, type AdmissionStatus } from "@/lib/demo-store";
+import { ADMISSION_STATUSES, LIMITS, admissionsStore, clean, downloadCsv, formatDate, type Admission, type AdmissionStatus } from "@/lib/demo-store";
 import type { AdminDict } from "@/lib/dictionaries/admin";
-import { Badge, Drawer, InfoGrid, Kpi, SampleTag, input } from "./ui";
+import { Badge, Drawer, HistoryList, InfoGrid, Kpi, SampleTag, input } from "./ui";
 
 type Lang = "es" | "en";
 const IN_PROCESS: AdmissionStatus[] = ["contactada", "visita", "evaluacion"];
@@ -185,17 +185,25 @@ export default function AdmissionsPanel({ rows, a: d, lang }: { rows: Admission[
                 onSubmit={(e) => {
                   e.preventDefault();
                   if (!note.trim()) return;
-                  admissionsStore.update(current.id, { notes: [...current.notes, { at: new Date().toISOString(), text: note.trim() }] });
+                  admissionsStore.update(current.id, { notes: [...current.notes, { at: new Date().toISOString(), text: clean(note, LIMITS.note) }] });
                   setNote("");
                 }}
               >
                 <label className="flex-1">
                   <span className="sr-only">{d.newNote}</span>
-                  <input value={note} onChange={(e) => setNote(e.target.value)} placeholder={d.notePlaceholder} className={input} />
+                  <input value={note} maxLength={LIMITS.note} onChange={(e) => setNote(e.target.value)} placeholder={d.notePlaceholder} className={input} />
                 </label>
                 <button type="submit" className="btn btn-primary !min-h-11 !px-5 !text-sm">{d.add}</button>
               </form>
             </div>
+
+            <HistoryList
+              entries={current.history}
+              title={d.history}
+              empty={d.noHistory}
+              lang={lang}
+              describe={(e) => `${d.status} → ${a.statuses[e.value as AdmissionStatus] ?? e.value}`}
+            />
           </div>
         )}
       </Drawer>

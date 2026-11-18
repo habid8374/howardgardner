@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { LockKeyhole } from "lucide-react";
+import CookiePrefsButton from "./CookiePrefsButton";
 import { LEGAL_NAME, NIT, ADDRESS_LINE, PHONE_DISPLAY, TEL_HREF, SOCIAL } from "@/lib/site";
 import { href, type Lang, type PageKey } from "@/lib/i18n";
 import type { Dict } from "@/lib/dictionaries";
@@ -41,6 +42,8 @@ export default function Footer({ lang, t }: { lang: Lang; t: Dict }) {
               <li><a href={SOCIAL.instagram} target="_blank" rel="noopener noreferrer" className="link inline-flex min-h-11 items-center">Instagram</a></li>
               <li><a href={SOCIAL.facebook} target="_blank" rel="noopener noreferrer" className="link inline-flex min-h-11 items-center">Facebook</a></li>
               <li><Link href={href(lang, "privacy")} className="link inline-flex min-h-11 items-center">{f.privacy}</Link></li>
+              <li><Link href={href(lang, "cookies")} className="link inline-flex min-h-11 items-center">{f.cookiePolicy}</Link></li>
+              <li><CookiePrefsButton label={f.cookiePrefs} className="link inline-flex min-h-11 items-center text-left" /></li>
             </ul>
           </div>
         </div>

@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink, FlaskConical, Globe, LogOut, RotateCcw } from "lucide-react";
 import {
-  DEMO_PASSWORD, adminLang, pqrsfAlert, resetDemo, session, snapshot, subscribeDemo, type Admission, type Pqrsf,
+  DEMO_PASSWORD, adminLang, loginGuard, pqrsfAlert, resetDemo, session, snapshot, subscribeDemo, type Admission, type Pqrsf,
 } from "@/lib/demo-store";
 import { adminDict, type AdminDict } from "@/lib/dictionaries/admin";
 import AdmissionsPanel from "./AdmissionsPanel";
@@ -50,14 +50,22 @@ function LangToggle({ lang, label, dark }: { lang: Lang; label: string; dark?: b
 
 function Login({ a, lang }: { a: AdminDict; lang: Lang }) {
   const [value, setValue] = useState("");
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   return (
     <main className="flex min-h-svh items-center justify-center bg-ink px-4 py-16">
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          if (value.trim() === DEMO_PASSWORD) session.open();
-          else setError(true);
+          const wait = loginGuard.lockedFor();
+          if (wait > 0) return setError(a.locked(Math.ceil(wait / 1000)));
+          if (value === DEMO_PASSWORD) {
+            loginGuard.reset();
+            session.open();
+            return;
+          }
+          const left = loginGuard.fail();
+          setValue("");
+          setError(left > 0 ? a.attemptsLeft(left) : a.locked(60));
         }}
         className="w-full max-w-md rounded-[28px] bg-paper p-8 text-ink sm:p-10"
       >
@@ -79,12 +87,13 @@ function Login({ a, lang }: { a: AdminDict; lang: Lang }) {
           type="password"
           autoComplete="current-password"
           value={value}
-          onChange={(e) => { setValue(e.target.value); setError(false); }}
-          aria-invalid={error}
+          maxLength={64}
+          onChange={(e) => { setValue(e.target.value); setError(null); }}
+          aria-invalid={!!error}
           aria-describedby={error ? "e-clave" : undefined}
           className="mt-2 block min-h-12 w-full rounded-xl border border-ink/20 bg-white px-4 text-base outline-none focus:border-navy focus:shadow-[0_0_0_3px_rgba(18,36,90,0.15)]"
         />
-        {error && <p id="e-clave" className="mt-1.5 text-sm font-medium text-red-700">{a.wrongPassword}</p>}
+        {error && <p id="e-clave" role="alert" className="mt-1.5 text-sm font-medium text-red-700">{error}</p>}
         <button type="submit" className="btn btn-primary mt-6 w-full">{a.enter}</button>
         <Link href={`/${lang}`} className="link mt-5 inline-flex min-h-11 items-center text-sm font-semibold text-navy">{a.backToSite}</Link>
       </form>

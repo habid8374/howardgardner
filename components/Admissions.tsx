@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, MessageCircle, Phone, Send } from "lucide-react";
 import DemoNote from "./DemoNote";
-import { admissionsStore, type Admission } from "@/lib/demo-store";
+import { LIMITS, admissionsStore, type Admission } from "@/lib/demo-store";
 import { TEL_HREF, PHONE_DISPLAY, waLink } from "@/lib/site";
 import { href, type Lang } from "@/lib/i18n";
 import type { Dict } from "@/lib/dictionaries";
@@ -43,6 +43,7 @@ export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "adm
       return;
     }
 
+    if (String(data.get("website") || "")) return; // robot: se descarta sin avisar
     setSent(admissionsStore.add({ lang, guardian: name, phone, grade, message }));
     requestAnimationFrame(() => document.getElementById("preinscripcion")?.scrollIntoView({ block: "start" }));
   }
@@ -110,16 +111,21 @@ export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "adm
           <DemoNote text={t.demo.note} badge={t.demo.badge} />
 
           <div className="mt-8 flex flex-col gap-5">
+            {/* Trampa para robots (OWASP A06): campo invisible que una persona no llena */}
+            <div aria-hidden="true" style={{ position: "absolute", left: "-10000px", width: 1, height: 1, overflow: "hidden" }}>
+              <label>Website<input type="text" name="website" tabIndex={-1} autoComplete="off" /></label>
+            </div>
+
             <div>
               <label htmlFor="nombre" className="text-sm font-semibold">{f.name}</label>
-              <input id="nombre" name="nombre" autoComplete="name" className={field} aria-invalid={!!errors.name} aria-describedby={errors.name ? "e-nombre" : undefined} />
+              <input id="nombre" name="nombre" autoComplete="name" maxLength={LIMITS.name} className={field} aria-invalid={!!errors.name} aria-describedby={errors.name ? "e-nombre" : undefined} />
               {err("e-nombre", errors.name)}
             </div>
 
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div>
                 <label htmlFor="telefono" className="text-sm font-semibold">{f.phone}</label>
-                <input id="telefono" name="telefono" type="tel" inputMode="tel" autoComplete="tel" className={field} aria-invalid={!!errors.phone} aria-describedby={errors.phone ? "e-telefono" : undefined} />
+                <input id="telefono" name="telefono" type="tel" inputMode="tel" autoComplete="tel" maxLength={LIMITS.phone} className={field} aria-invalid={!!errors.phone} aria-describedby={errors.phone ? "e-telefono" : undefined} />
                 {err("e-telefono", errors.phone)}
               </div>
               <div>
@@ -134,7 +140,7 @@ export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "adm
 
             <div>
               <label htmlFor="mensaje" className="text-sm font-semibold">{f.message}</label>
-              <textarea id="mensaje" name="mensaje" rows={3} className={`${field} py-3`} />
+              <textarea id="mensaje" name="mensaje" rows={3} maxLength={LIMITS.message} className={`${field} py-3`} />
             </div>
 
             <div>

@@ -12,6 +12,7 @@ import Faq from "@/components/Faq";
 import Visit from "@/components/Visit";
 import Privacy from "@/components/Privacy";
 import Pqrsf from "@/components/Pqrsf";
+import CookiePolicy from "@/components/CookiePolicy";
 import { LOCALES, PAGES, SUBPAGES, isLang, pageFromSlug, type Lang } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionaries";
 import { pageMetadata } from "@/lib/seo";
@@ -85,6 +86,8 @@ export default async function SubPage({ params }: PageProps<"/[lang]/[page]">) {
           <Pqrsf lang={lang} t={{ pqrsf: t.pqrsf, demo: t.demo, grades: t.admissions.form.grades }} />
         </>
       );
+    case "cookies":
+      return <CookiePolicy lang={lang} t={t} />;
     case "privacy":
       return <Privacy lang={lang} t={t} />;
     default:

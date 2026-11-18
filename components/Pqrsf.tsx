@@ -7,12 +7,12 @@ import { downloadPqrsfPdf } from "@/lib/pqrsf-pdf";
 import DemoNote from "./DemoNote";
 import { href, type Lang } from "@/lib/i18n";
 import type { Dict } from "@/lib/dictionaries";
-import { PQRSF_DAYS, formatDate, pqrsfDue, pqrsfStore, type Pqrsf as Row, type PqrsfType } from "@/lib/demo-store";
+import { ALLOWED_FILE_TYPES, LIMITS, MAX_FILE_MB, PQRSF_DAYS, formatDate, pqrsfDue, pqrsfStore, type Pqrsf as Row, type PqrsfType } from "@/lib/demo-store";
 
 /* PQRSF — demo: se guarda en el navegador y aparece en el panel del colegio (/admin). */
 
 type Props = { lang: Lang; t: { pqrsf: Dict["pqrsf"]; demo: Dict["demo"]; grades: string[] } };
-type Errors = Partial<Record<"type" | "name" | "email" | "subject" | "description" | "consent", string>>;
+type Errors = Partial<Record<"type" | "name" | "email" | "subject" | "description" | "consent" | "file", string>>;
 
 const TYPES: PqrsfType[] = ["peticion", "queja", "reclamo", "sugerencia", "felicitacion"];
 const days = (s: string) => s.replace("{DAYS}", String(PQRSF_DAYS));
@@ -60,11 +60,15 @@ export default function Pqrsf({ lang, t }: Props) {
     if (input.subject.length < 3) next.subject = p.errors.subject;
     if (input.description.length < 20) next.description = p.errors.description;
     if (d.get("acepta") !== "on") next.consent = p.errors.consent;
+    if (file instanceof File && file.size > 0 && (!ALLOWED_FILE_TYPES.includes(file.type) || file.size > MAX_FILE_MB * 1024 * 1024)) {
+      next.file = p.errors.file;
+    }
     setErrors(next);
     if (Object.keys(next).length) {
       e.currentTarget.querySelector<HTMLElement>("[aria-invalid='true']")?.focus();
       return;
     }
+    if (String(d.get("website") || "")) return; // robot: se descarta sin avisar
     setSent(pqrsfStore.add(input));
     requestAnimationFrame(() => document.getElementById("pqrsf-ok")?.scrollIntoView({ block: "center" }));
     setType("");
@@ -113,6 +117,10 @@ export default function Pqrsf({ lang, t }: Props) {
               <h3 id="pqrsf-titulo" className="h-display text-[1.9rem]">{p.formTitle}</h3>
               <DemoNote text={t.demo.note} badge={t.demo.badge} />
 
+              {/* Trampa para robots (OWASP A06): campo invisible que una persona no llena */}
+              <div aria-hidden="true" style={{ position: "absolute", left: "-10000px", width: 1, height: 1, overflow: "hidden" }}>
+                <label>Website<input type="text" name="website" tabIndex={-1} autoComplete="off" /></label>
+              </div>
               <fieldset className="mt-8">
                 <legend className="text-sm font-semibold">{p.type}</legend>
                 <div className="mt-3 flex flex-wrap gap-2" role="radiogroup" {...aria("type")}>
@@ -134,21 +142,21 @@ export default function Pqrsf({ lang, t }: Props) {
               <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div className="sm:col-span-2">
                   <label htmlFor="p-nombre" className="text-sm font-semibold">{p.name}</label>
-                  <input id="p-nombre" name="nombre" autoComplete="name" className={field} {...aria("name")} />
+                  <input id="p-nombre" name="nombre" autoComplete="name" maxLength={LIMITS.name} className={field} {...aria("name")} />
                   <Err id="e-name" msg={errors.name} />
                 </div>
                 <div>
                   <label htmlFor="p-correo" className="text-sm font-semibold">{p.email}</label>
-                  <input id="p-correo" name="correo" type="email" autoComplete="email" className={field} {...aria("email")} />
+                  <input id="p-correo" name="correo" type="email" autoComplete="email" maxLength={LIMITS.email} className={field} {...aria("email")} />
                   <Err id="e-email" msg={errors.email} />
                 </div>
                 <div>
                   <label htmlFor="p-telefono" className="text-sm font-semibold">{p.phone}</label>
-                  <input id="p-telefono" name="telefono" type="tel" inputMode="tel" autoComplete="tel" className={field} />
+                  <input id="p-telefono" name="telefono" type="tel" inputMode="tel" autoComplete="tel" maxLength={LIMITS.phone} className={field} />
                 </div>
                 <div>
                   <label htmlFor="p-estudiante" className="text-sm font-semibold">{p.student}</label>
-                  <input id="p-estudiante" name="estudiante" className={field} />
+                  <input id="p-estudiante" name="estudiante" maxLength={LIMITS.name} className={field} />
                 </div>
                 <div>
                   <label htmlFor="p-grado" className="text-sm font-semibold">{p.grade}</label>
@@ -159,12 +167,12 @@ export default function Pqrsf({ lang, t }: Props) {
                 </div>
                 <div className="sm:col-span-2">
                   <label htmlFor="p-asunto" className="text-sm font-semibold">{p.subject}</label>
-                  <input id="p-asunto" name="asunto" className={field} {...aria("subject")} />
+                  <input id="p-asunto" name="asunto" maxLength={LIMITS.subject} className={field} {...aria("subject")} />
                   <Err id="e-subject" msg={errors.subject} />
                 </div>
                 <div className="sm:col-span-2">
                   <label htmlFor="p-descripcion" className="text-sm font-semibold">{p.description}</label>
-                  <textarea id="p-descripcion" name="descripcion" rows={5} className={`${field} py-3`} {...aria("description")} />
+                  <textarea id="p-descripcion" name="descripcion" rows={5} maxLength={LIMITS.description} className={`${field} py-3`} {...aria("description")} />
                   <Err id="e-description" msg={errors.description} />
                 </div>
                 <div className="sm:col-span-2">
@@ -182,11 +190,13 @@ export default function Pqrsf({ lang, t }: Props) {
                     id="p-adjunto"
                     name="adjunto"
                     type="file"
-                    accept=".pdf,image/*"
+                    accept=".pdf,.jpg,.jpeg,.png,.webp"
+                    {...aria("file")}
                     aria-describedby="h-adjunto"
                     className="mt-2 block w-full text-sm text-muted file:mr-4 file:min-h-11 file:cursor-pointer file:rounded-full file:border-0 file:bg-paper-2 file:px-5 file:font-semibold file:text-ink"
                   />
                   <p id="h-adjunto" className="mt-1.5 text-xs text-muted">{p.attachmentHelp}</p>
+                  <Err id="e-file" msg={errors.file} />
                 </div>
               </div>
 
@@ -226,6 +236,7 @@ export default function Pqrsf({ lang, t }: Props) {
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder={p.lookupPlaceholder}
                   autoCapitalize="characters"
+                  maxLength={30}
                   className="mt-2 block min-h-12 w-full rounded-xl border border-white/20 bg-white/5 px-4 text-base uppercase text-white outline-none placeholder:normal-case placeholder:text-white/40 focus:border-gold"
                 />
               </div>

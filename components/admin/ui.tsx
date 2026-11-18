@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { AlertTriangle, Clock, X } from "lucide-react";
-import type { DueLevel, PqrsfPriority } from "@/lib/demo-store";
+import { formatDate, type DueLevel, type HistoryEntry, type PqrsfPriority } from "@/lib/demo-store";
 
 export const input =
   "block min-h-11 w-full rounded-xl border border-ink/15 bg-white px-3.5 text-[0.95rem] text-ink outline-none transition-[border-color,box-shadow] duration-200 focus:border-navy focus:shadow-[0_0_0_3px_rgba(18,36,90,0.12)]";
@@ -110,6 +110,31 @@ export function Drawer({ open, onClose, title, closeLabel, children }: { open: b
         <div className="flex-1 overflow-y-auto px-6 py-6">{children}</div>
       </div>
     </dialog>
+  );
+}
+
+/** Historial de cambios de una solicitud (OWASP A09: registro de eventos). */
+export function HistoryList({ entries, title, empty, describe, lang }: {
+  entries?: HistoryEntry[]; title: string; empty: string; describe: (e: HistoryEntry) => string; lang: "es" | "en";
+}) {
+  const list = [...(entries ?? [])].reverse();
+  return (
+    <div>
+      <h3 className="text-sm font-semibold">{title}</h3>
+      {list.length === 0 ? (
+        <p className="mt-2 text-sm text-muted">{empty}</p>
+      ) : (
+        <ol className="mt-3 border-l-2 border-line pl-4">
+          {list.map((e, i) => (
+            <li key={i} className="relative pb-3 text-sm">
+              <span className="absolute -left-[21px] top-1.5 h-2.5 w-2.5 rounded-full bg-navy" aria-hidden />
+              <p>{describe(e)}</p>
+              <p className="text-xs text-muted">{formatDate(e.at, lang, true)}</p>
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
   );
 }
 
