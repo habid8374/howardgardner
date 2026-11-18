@@ -362,6 +362,11 @@ export const en: Dict = {
     pqrsf: { eyebrow: "Requests & complaints", title: "Your feedback helps us improve.", lead: "Submit a request, complaint, claim, suggestion or compliment. You get a reference number to check its status." },
   },
 
+  og: {
+    badges: ["Only A+ in Sabanalarga · ICFES 2026", "Oxford Quality", "Pre-K to 11th grade"],
+    legal: { privacy: ["Data protection", "Personal Data Policy."], cookies: ["Privacy", "Cookie Policy."] },
+  },
+
   footer: {
     schoolTitle: "The school",
     contactTitle: "Contact",

@@ -361,6 +361,11 @@ export const es = {
     pqrsf: { eyebrow: "PQRSF", title: "Tu opinión nos ayuda a mejorar.", lead: "Radica una petición, queja, reclamo, sugerencia o felicitación. Recibes un número de radicado para consultar su estado." },
   },
 
+  og: {
+    badges: ["Único A+ de Sabanalarga · ICFES 2026", "Oxford Quality", "Preescolar a 11°"],
+    legal: { privacy: ["Protección de datos", "Política de Tratamiento de Datos Personales."], cookies: ["Privacidad", "Política de cookies."] },
+  },
+
   footer: {
     schoolTitle: "El colegio",
     contactTitle: "Contacto",

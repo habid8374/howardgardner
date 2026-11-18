@@ -3,7 +3,8 @@ import { SITE_URL } from "@/lib/site";
 import { href, OG_LOCALE, type Lang, type PageKey } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionaries";
 
-/* Metadatos por página e idioma, con hreflang para que Google
+/* Las imágenes para compartir salen de opengraph-image.tsx (una tarjeta por página e idioma).
+   Metadatos por página e idioma, con hreflang para que Google
    entienda que /es/admisiones y /en/admissions son la misma página. */
 export function pageMetadata(lang: Lang, page: PageKey): Metadata {
   const t = getDictionary(lang);
@@ -27,8 +28,7 @@ export function pageMetadata(lang: Lang, page: PageKey): Metadata {
       locale: OG_LOCALE[lang],
       alternateLocale: [OG_LOCALE[lang === "es" ? "en" : "es"]],
       type: "website",
-      images: [{ url: "/patio.jpg", width: 1080, height: 608, alt: t.hero.photoAlt }],
     },
-    twitter: { card: "summary_large_image", title: m.title, description, images: ["/patio.jpg"] },
+    twitter: { card: "summary_large_image", title: m.title, description },
   };
 }
