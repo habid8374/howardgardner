@@ -160,3 +160,23 @@ dialog.admin-drawer[open] { animation: drawer-in 280ms var(--ease-drawer); }
 .cookie-banner { animation: cookie-in 320ms var(--ease-out) both; }
 @keyframes cookie-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .cookie-banner { animation: enter-fade 200ms ease both; } }
+
+/* ── Carrusel principal ── */
+.hero-slide, .hero-bg { opacity: 0; visibility: hidden; transition: opacity 600ms var(--ease-out), visibility 0s linear 600ms; }
+.hero-slide[data-active], .hero-bg[data-active] { opacity: 1; visibility: visible; transition: opacity 600ms var(--ease-out), visibility 0s; }
+.hero-slide[data-active] .hs-rise { animation: enter-rise 700ms var(--ease-out) both; animation-delay: var(--d, 0ms); --rise: 14px; }
+.hero-slide .hs-media { transform: scale(0.97); transition: transform 900ms var(--ease-out); }
+.hero-slide[data-active] .hs-media { transform: none; }
+.hero-ctl {
+  display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 999px;
+  border: 1.5px solid rgba(255,255,255,0.28); color: #fff;
+  transition: background-color 200ms ease, border-color 200ms ease, transform 160ms var(--ease-out);
+}
+.hero-ctl:active { transform: scale(0.94); }
+@media (hover: hover) and (pointer: fine) { .hero-ctl:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.5); } }
+.hero-progress { width: 0; animation-name: hero-progress; animation-timing-function: linear; animation-fill-mode: forwards; }
+@keyframes hero-progress { from { width: 0; } to { width: 100%; } }
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide, .hero-bg, .hero-slide .hs-media { transition: none; transform: none; }
+  .hero-slide[data-active] .hs-rise { animation: enter-fade 300ms ease both; }
+}

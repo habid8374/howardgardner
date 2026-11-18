@@ -10,9 +10,13 @@ import type { Dict } from "@/lib/dictionaries";
 /* Orden: lo más reciente primero. Los textos alternativos están en los diccionarios. */
 const SRC = [
   "/a-plus-2026.jpg",
+  "/family-day-2026.jpg",
   "/ranking-icfes-2026.jpg",
+  "/family-day-2026-4.jpg",
   "/sabias-que-2026.jpg",
+  "/family-day-2026-1.jpg",
   "/inscripciones-2027.jpg",
+  "/family-day-2026-6.jpg",
   "/hero2.jpeg",
   "/hero6.jpeg",
   "/hero1.jpeg",

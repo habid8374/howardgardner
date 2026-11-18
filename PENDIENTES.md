@@ -23,7 +23,7 @@ En el código están marcados con `TODO(CLIENTE)`.
 - [ ] (Opcional) Ícono simplificado del escudo para tamaños muy pequeños (16 px). Hoy el favicon usa el escudo completo.
 - [ ] **Lámina 2 del carrusel del A+ (“¿Qué significa?”)** como archivo de imagen, para añadirla a la galería. Su texto ya está en las preguntas frecuentes.
 - [ ] **Fotografías reales** del colegio: fachada, aulas, estudiantes en clase, eventos, laboratorio, deportes (horizontales y en alta resolución, mínimo 2000 px de ancho). Hoy solo hay una foto del patio (1080 px) y piezas de redes sociales.
-- [ ] Autorización de uso de imagen de los estudiantes que aparecen en las piezas.
+- [ ] Autorización de uso de imagen de los estudiantes que aparecen en las piezas y en las fotos del **Family Day 2026** (hoy en el carrusel y la galería).
 - [ ] Foto del rector en mejor resolución y con fondo limpio.
 
 ## Versión en inglés
