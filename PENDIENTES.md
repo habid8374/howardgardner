@@ -35,7 +35,11 @@ En el código están marcados con `TODO(CLIENTE)`.
 Conectado el 18 nov 2026, todo en plan gratis:
 - **Base de datos: Neon** (`howardgardner-db`, Marketplace de Vercel). Tablas: `admissions`, `pqrsf`, `staff`, `rate_limits`, `audit_log` (`lib/server/schema.sql`).
 - **Adjuntos: Vercel Blob privado** (`howardgardner-files`). Solo se descargan desde el panel con sesión.
-- **Correos: Resend** — código listo (`lib/server/mail.ts`). **Falta aceptar los términos de Resend en Vercel** (enlace en el chat) y definir `SCHOOL_NOTIFY_EMAIL`.
+- **Correos: Resend** — código listo (`lib/server/mail.ts`) y términos aceptados en Vercel. **Se activa al registrar `howardgardner.edu.co`** (Resend exige un dominio propio):
+  1. `vercel integration add resend/resend-email --name howardgardner-mail --meta domain=howardgardner.edu.co --meta region=sa-east-1`
+  2. Agregar en el DNS del dominio los registros que indique Resend (SPF, DKIM) y esperar la verificación.
+  3. Variables: `MAIL_FROM="Howard Gardner Bilingual School <notificaciones@howardgardner.edu.co>"` y `SCHOOL_NOTIFY_EMAIL` (correo del colegio que recibe los avisos).
+  Mientras tanto la demo funciona igual, sin enviar correos.
 - Panel: `/admin` con usuario y contraseña verificados en el servidor. Usuario de demo: `demo` / `colegio2027` (se muestra en la pantalla de acceso solo con `DEMO_MODE=1`).
 - Crear o cambiar usuarios: `node --env-file=.env.local scripts/db-setup.mjs <usuario> <contraseña> "<Nombre>" [admin|consulta]` (traer variables con `vercel env pull`).
 
