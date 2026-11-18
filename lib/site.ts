@@ -24,22 +24,21 @@ const MAPS_QUERY = `Howard Gardner Bilingual School, ${ADDRESS.street}, ${ADDRES
 export const MAPS_URL = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(MAPS_QUERY);
 export const MAPS_EMBED = "https://maps.google.com/maps?q=" + encodeURIComponent(MAPS_QUERY) + "&z=16&output=embed";
 
-/* ── Sedes ──
-   La sede principal usa los datos de arriba. La nueva sede está "próximamente":
-   TODO(CLIENTE): dirección, teléfono, horario, grados y fecha de apertura de la nueva sede. */
-export type CampusInfo = {
-  id: "principal" | "sede2";
-  status: "open" | "soon";
-  address: string | null;
-  mapsUrl: string | null;
-  mapsEmbed: string | null;
-  phoneDisplay: string;
-  telHref: string;
-};
-export const CAMPUSES: CampusInfo[] = [
-  { id: "principal", status: "open", address: ADDRESS_LINE, mapsUrl: MAPS_URL, mapsEmbed: MAPS_EMBED, phoneDisplay: PHONE_DISPLAY, telHref: TEL_HREF },
-  { id: "sede2", status: "soon", address: null, mapsUrl: null, mapsEmbed: null, phoneDisplay: PHONE_DISPLAY, telHref: TEL_HREF },
-];
+/* ── Sedes: los datos viven en la base de datos y se editan desde el panel (pestaña Sedes) ── */
+type MapsInput = { nameEs: string; address: string; city: string; mapsUrl: string };
+export function campusMaps(c: MapsInput) {
+  if (!c.address) return { url: c.mapsUrl || null, embed: null };
+  const q = `Howard Gardner Bilingual School ${c.nameEs}, ${c.address}, ${c.city}, Colombia`;
+  return {
+    url: c.mapsUrl || "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q),
+    embed: "https://maps.google.com/maps?q=" + encodeURIComponent(q) + "&z=16&output=embed",
+  };
+}
+export const telHref = (phone: string) => `tel:+57${phone.replace(/\D/g, "").replace(/^57(?=\d{10}$)/, "")}`;
+export function waLinkTo(phone: string, message: string) {
+  const digits = phone.replace(/\D/g, "");
+  return `https://wa.me/${digits.length === 10 ? "57" + digits : digits}?text=${encodeURIComponent(message)}`;
+}
 
 /* Imagen principal del inicio (escritorio y celular). Cambiar aquí. */
 export const HERO_IMAGE_SRC = "/patio.jpg";

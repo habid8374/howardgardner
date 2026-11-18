@@ -10,12 +10,18 @@ En el código están marcados con `TODO(CLIENTE)`.
 - [ ] Confirmar el horario de atención (lunes a viernes, 7:00 a. m. – 5:00 p. m.).
 - [ ] Canal de YouTube (si existe). Se quitó el enlace vacío del sitio anterior.
 
-## Nueva sede (en preparación)
-La demo ya maneja dos sedes: los formularios piden la sede, el panel filtra por sede, el Excel la incluye y hay usuarios que solo ven su sede (demo: `nuevasede` / `colegio2027`). Hoy la nueva sede aparece como **"Próximamente"**. Datos solicitados al colegio (`lib/site.ts` → `CAMPUSES`, y `campuses` en los diccionarios):
-- [ ] Nombre oficial de la sede y municipio o barrio.
-- [ ] Dirección, teléfono o WhatsApp propio (si lo tiene) y horario.
+## Sedes y usuarios (se administran desde el panel)
+- **Sedes:** pestaña *Sedes* del panel. Crear, editar, poner como Abierta, Próximamente u Oculta. El sitio se actualiza solo al guardar. Las sedes no se borran (se ocultan) para no perder su historial.
+- **Usuarios:** pestaña *Usuarios*. Perfiles Rectoría, Coordinación y Solo consulta, o permisos a la medida (ver / gestionar preinscripciones y PQRSF, descargar Excel, administrar sedes, administrar usuarios) y la sede que puede ver. Los usuarios no se borran: se desactivan.
+- Reglas en el servidor: quien administra sedes o usuarios ve todas las sedes; nadie se quita a sí mismo el acceso; siempre queda al menos un administrador de usuarios.
+- Demo: `demo` / `colegio2027` (rectoría) y `nuevasede` / `colegio2027` (coordinación de la nueva sede).
+
+### Nueva sede (datos solicitados al colegio)
+Se cargan desde el panel, pestaña *Sedes* → "Nueva sede":
+- [ ] Nombre oficial, municipio o barrio y dirección.
+- [ ] Teléfono o WhatsApp propio (si lo tiene) y horario.
 - [ ] Grados que ofrecerá y fecha de apertura.
-- [ ] Responsable de preinscripciones y PQRSF de la sede (para su usuario del panel y `SCHOOL_NOTIFY_EMAIL_SEDE2`).
+- [ ] Responsable de preinscripciones y PQRSF (su usuario del panel y el correo de avisos de la sede).
 - [ ] Fotos de la sede y perfil de Google (Maps) propio.
 
 ## Contenido académico

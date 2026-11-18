@@ -1,6 +1,7 @@
 import "server-only";
 import { neon } from "@neondatabase/serverless";
-import type { Admission, CampusId, HistoryEntry, Note, Pqrsf, StaffUser } from "@/lib/records";
+import type { Admission, Campus, CampusId, HistoryEntry, Note, Pqrsf, PublicCampus, StaffUser } from "@/lib/records";
+import { ADDRESS, PHONE_DISPLAY } from "@/lib/site";
 
 /* Conexión a Neon (Postgres). Todas las consultas van parametrizadas con la plantilla sql`...`
    (OWASP A05: nunca se concatena texto del usuario dentro del SQL). */
@@ -51,7 +52,7 @@ export async function listPqrsf(user: StaffUser) {
   return rows.map(toPqrsf);
 }
 /** ¿Puede este usuario ver o cambiar un registro de esta sede? */
-export const canAccess = (user: StaffUser, campus: string) => !user.campus || user.campus === campus;
+export const canAccess = (user: StaffUser, campus: CampusId) => !user.campus || user.campus === campus;
 export async function getPqrsfRow(id: string) {
   const rows = (await sql`SELECT * FROM pqrsf WHERE id = ${id}`) as PqrsfRow[];
   return rows[0];
@@ -63,4 +64,56 @@ export async function getAdmissionRow(id: string) {
 
 export async function audit(actor: string, action: string, target = "", ip = "") {
   try { await sql`INSERT INTO audit_log (actor, action, target, ip) VALUES (${actor}, ${action}, ${target}, ${ip})`; } catch {}
+}
+
+/* ── Sedes ── */
+type CampusRow = {
+  id: string; name_es: string; name_en: string; status: Campus["status"]; address: string; city: string; phone: string;
+  whatsapp: string; email: string; hours_es: string; hours_en: string; grades: string; maps_url: string; notify_email: string;
+  note_es: string; note_en: string; sort: number;
+};
+export const toCampus = (r: CampusRow): Campus => ({
+  id: r.id, nameEs: r.name_es, nameEn: r.name_en, status: r.status, address: r.address, city: r.city, phone: r.phone,
+  whatsapp: r.whatsapp, email: r.email, hoursEs: r.hours_es, hoursEn: r.hours_en, grades: r.grades, mapsUrl: r.maps_url,
+  notifyEmail: r.notify_email, noteEs: r.note_es, noteEn: r.note_en, sort: r.sort,
+});
+
+/* Si la base de datos no responde (por ejemplo, al compilar sin conexión), el sitio muestra la sede principal. */
+const FALLBACK: Campus = {
+  id: "principal", nameEs: "Sede principal", nameEn: "Main campus", status: "open",
+  address: ADDRESS.street, city: `${ADDRESS.city}, ${ADDRESS.region}`, phone: PHONE_DISPLAY, whatsapp: PHONE_DISPLAY, email: "",
+  hoursEs: "", hoursEn: "", grades: "", mapsUrl: "", notifyEmail: "", noteEs: "", noteEn: "", sort: 0,
+};
+
+export async function listCampuses(): Promise<Campus[]> {
+  const rows = (await sql`SELECT * FROM campuses ORDER BY sort, created_at`) as CampusRow[];
+  return rows.map(toCampus);
+}
+
+/* Quita el correo interno de avisos antes de publicar una sede */
+const toPublic = (c: Campus): PublicCampus => {
+  const pub: Partial<Campus> = { ...c };
+  delete pub.notifyEmail;
+  return pub as PublicCampus;
+};
+
+/** Sedes visibles en el sitio (sin las ocultas y sin el correo interno de avisos). */
+export async function publicCampuses(): Promise<PublicCampus[]> {
+  try {
+    const list = (await listCampuses()).filter((c) => c.status !== "hidden");
+    return (list.length ? list : [FALLBACK]).map(toPublic);
+  } catch {
+    return [toPublic(FALLBACK)];
+  }
+}
+
+export async function getCampus(id: string): Promise<Campus | null> {
+  const rows = (await sql`SELECT * FROM campuses WHERE id = ${id}`) as CampusRow[];
+  return rows[0] ? toCampus(rows[0]) : null;
+}
+
+/** ¿Se pueden recibir solicitudes para esta sede? (existe y no está oculta) */
+export async function campusAccepts(id: string) {
+  const c = await getCampus(id);
+  return !!c && c.status !== "hidden";
 }

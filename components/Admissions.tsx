@@ -4,11 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, MessageCircle, Phone, Send } from "lucide-react";
 import DemoNote from "./DemoNote";
-import { ApiError, CAMPUS_IDS, LIMITS, admissionsStore, type Admission, type CampusId } from "@/lib/records";
-import { CAMPUSES } from "@/lib/site";
+import { ApiError, LIMITS, admissionsStore, type Admission, type CampusId, type CampusOption } from "@/lib/records";
 import { TEL_HREF, PHONE_DISPLAY, waLink } from "@/lib/site";
 import { href, type Lang } from "@/lib/i18n";
-import type { Dict } from "@/lib/dictionaries";
+import type { CampusFormText, Dict } from "@/lib/dictionaries";
 
 /* Proceso de admisión + preinscripción.
    La preinscripción se envía al servidor (/api/admisiones), se guarda en la base de datos
@@ -17,7 +16,7 @@ import type { Dict } from "@/lib/dictionaries";
 
 type Errors = Partial<Record<"name" | "phone" | "grade" | "campus" | "consent", string>>;
 
-export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "admissions" | "demo" | "campuses"> }) {
+export default function Admissions({ lang, t, campuses }: { lang: Lang; t: Pick<Dict, "admissions" | "demo"> & { campuses: CampusFormText }; campuses: CampusOption[] }) {
   const a = t.admissions;
   const f = a.form;
   const [errors, setErrors] = useState<Errors>({});
@@ -30,8 +29,8 @@ export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "adm
   // Enlace "Preinscribirme para la nueva sede" (?sede=sede2): deja la sede elegida en el formulario
   useEffect(() => {
     const s = new URLSearchParams(window.location.search).get("sede");
-    if (s && campusRef.current && (CAMPUS_IDS as string[]).includes(s)) campusRef.current.value = s;
-  }, []);
+    if (s && campusRef.current && campuses.some((x) => x.id === s)) campusRef.current.value = s;
+  }, [campuses]);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -47,7 +46,7 @@ export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "adm
     if (name.length < 3) next.name = f.errors.name;
     if (phone.replace(/\D/g, "").length < 7) next.phone = f.errors.phone;
     if (!grade) next.grade = f.errors.grade;
-    if (!CAMPUS_IDS.includes(campus)) next.campus = c.error;
+    if (!campuses.some((x) => x.id === campus)) next.campus = c.error;
     if (!consent) next.consent = f.errors.consent;
     setErrors(next);
     if (Object.keys(next).length) {
@@ -70,7 +69,7 @@ export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "adm
   }
 
   const waText = (r: Admission) =>
-    `${f.waIntro}\n${f.waNumber}: ${r.id}\n${c.label}: ${c.short[r.campus]}\n${f.waName}: ${r.guardian}\n${f.waPhone}: ${r.phone}\n${f.waGrade}: ${r.grade}` +
+    `${f.waIntro}\n${f.waNumber}: ${r.id}\n${c.label}: ${campuses.find((x) => x.id === r.campus)?.name ?? r.campus}\n${f.waName}: ${r.guardian}\n${f.waPhone}: ${r.phone}\n${f.waGrade}: ${r.grade}` +
     (r.message ? `\n${f.waMessage}: ${r.message}` : "") +
     `\n${f.waConsent}`;
 
@@ -147,8 +146,8 @@ export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "adm
               <label htmlFor="sede" className="text-sm font-semibold">{c.labelInterest}</label>
               <select id="sede" name="sede" ref={campusRef} defaultValue="" className={field} aria-invalid={!!errors.campus} aria-describedby={errors.campus ? "e-sede" : undefined}>
                 <option value="" disabled>{c.placeholder}</option>
-                {CAMPUSES.map((s) => (
-                  <option key={s.id} value={s.id}>{c.names[s.id]}{s.status === "soon" ? ` (${c.soonTag.toLowerCase()})` : ""}</option>
+                {campuses.map((s) => (
+                  <option key={s.id} value={s.id}>{s.name}{s.soon ? ` (${c.soonTag.toLowerCase()})` : ""}</option>
                 ))}
               </select>
               {err("e-sede", errors.campus)}

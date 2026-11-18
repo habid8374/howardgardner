@@ -1,7 +1,7 @@
 import "server-only";
 import { z } from "zod";
 import {
-  CAMPUS_IDS, ADMISSION_STATUSES, ALLOWED_FILE_TYPES, LIMITS, MAX_FILE_MB, PQRSF_STATUSES, PQRSF_TYPES, PRIORITIES, clean,
+  CAMPUS_STATUSES, ADMISSION_STATUSES, ALLOWED_FILE_TYPES, LIMITS, MAX_FILE_MB, PQRSF_STATUSES, PQRSF_TYPES, PRIORITIES, clean,
 } from "@/lib/records";
 
 /* Validación en el servidor de TODO lo que llega (OWASP A05/A06). La del navegador es solo ayuda. */
@@ -9,7 +9,7 @@ const text = (max: number, min = 0) =>
   z.string().transform((v) => clean(v, max)).pipe(z.string().min(min).max(max));
 
 const lang = z.enum(["es", "en"]);
-const campus = z.enum(CAMPUS_IDS as [string, ...string[]]);
+const campus = z.string().trim().regex(/^[a-z0-9-]{2,30}$/);
 
 export const admissionInput = z.object({
   lang,
@@ -71,3 +71,45 @@ export function sniffType(buf: Uint8Array): string | null {
 }
 export const EXT: Record<string, string> = { "application/pdf": "pdf", "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
 export { ALLOWED_FILE_TYPES };
+
+/* ── Configuración ── */
+const opt = (max: number) => text(max).default("");
+export const campusInput = z.object({
+  id: z.string().trim().toLowerCase().regex(/^[a-z0-9-]{2,30}$/),
+  nameEs: text(80, 2),
+  nameEn: opt(80),
+  status: z.enum(CAMPUS_STATUSES as [string, ...string[]]),
+  address: opt(150), city: opt(80),
+  phone: opt(20).refine((v) => v === "" || /^[0-9+()\s-]+$/.test(v)),
+  whatsapp: opt(20).refine((v) => v === "" || /^[0-9+()\s-]+$/.test(v)),
+  email: opt(254).refine((v) => v === "" || z.email().safeParse(v).success),
+  hoursEs: opt(120), hoursEn: opt(120),
+  grades: opt(120),
+  mapsUrl: opt(500).refine((v) => v === "" || /^https:\/\/(www\.)?(google\.[a-z.]+\/maps|maps\.google\.[a-z.]+|maps\.app\.goo\.gl|goo\.gl\/maps)/.test(v)),
+  notifyEmail: opt(254).refine((v) => v === "" || z.email().safeParse(v).success),
+  noteEs: opt(400), noteEn: opt(400),
+  sort: z.number().int().min(0).max(99).default(0),
+});
+
+const access = z.enum(["none", "ver", "gestionar"]);
+export const permsInput = z.object({
+  admisiones: access, pqrsf: access, exportar: z.boolean(), sedes: z.boolean(), usuarios: z.boolean(),
+}).strict();
+
+/* Contraseña: mínimo 10 caracteres (ASVS V6), sin máximo bajo */
+const password = z.string().min(10).max(128);
+export const staffCreate = z.object({
+  username: z.string().trim().toLowerCase().regex(/^[a-z0-9._-]{3,40}$/),
+  name: text(80, 3),
+  password,
+  campus: campus.nullable(),
+  perms: permsInput,
+  active: z.boolean().default(true),
+});
+export const staffUpdate = z.object({
+  name: text(80, 3),
+  password: z.union([password, z.literal("")]).optional(),
+  campus: campus.nullable(),
+  perms: permsInput,
+  active: z.boolean(),
+});

@@ -16,7 +16,7 @@ const save = (p: Promise<unknown>, msg: string) => p.catch(() => window.alert(ms
 type Lang = "es" | "en";
 type StatusFilter = "" | PqrsfStatus | "abiertas" | "urgentes" | "vencidas";
 
-export default function PqrsfPanel({ rows, a: d, lang, userName, campusLabel }: { rows: Pqrsf[]; a: AdminDict; lang: Lang; userName: string; campusLabel: string | null }) {
+export default function PqrsfPanel({ rows, a: d, lang, userName, campusLabel, campusNames, canEdit, canExport }: { rows: Pqrsf[]; a: AdminDict; lang: Lang; userName: string; campusLabel: string | null; campusNames: Record<string, string>; canEdit: boolean; canExport: boolean }) {
   const a = d.pqrsf;
   const [now] = useState(() => new Date());
   const [q, setQ] = useState("");
@@ -64,7 +64,7 @@ export default function PqrsfPanel({ rows, a: d, lang, userName, campusLabel }: 
       summary: d.xlsx.summaryPqrsf(levels.filter((l) => l !== "cerrada").length, count("vencida"), count("hoy"), count("pronto")),
       columns: a.csv.map((header, i) => ({ header, width: widths[i], wrap: [5, 6, 16].includes(i), date: i === 1 ? "datetime" : i === 14 ? "date" : undefined, center: [3, 4, 11, 13].includes(i) })),
       rows: filtered.map(({ r, alert }) => [
-        r.id, new Date(r.createdAt), d.campusNames[r.campus], a.types[r.type], a.priorities[r.priority], r.subject, r.description,
+        r.id, new Date(r.createdAt), campusNames[r.campus], a.types[r.type], a.priorities[r.priority], r.subject, r.description,
         r.name, r.email, r.phone, r.student, r.grade, r.attachment, a.statuses[r.status],
         pqrsfDue(r), alert.level === "cerrada" ? "" : a.due(alert.level, alert.days), r.answer,
       ]),
@@ -89,9 +89,9 @@ export default function PqrsfPanel({ rows, a: d, lang, userName, campusLabel }: 
           <h1 id="t-pqrsf" className="h-display text-[2.2rem] text-ink">{a.title}</h1>
           <p className="mt-1 text-muted">{a.lead}</p>
         </div>
-        <button type="button" onClick={exportCsv} className="btn btn-primary !min-h-11 !text-sm">
+        {canExport && <button type="button" onClick={exportCsv} className="btn btn-primary !min-h-11 !text-sm">
           <Download size={16} aria-hidden /> {d.download} ({filtered.length})
-        </button>
+        </button>}
       </div>
 
       {/* Alerta de plazos */}
@@ -182,7 +182,7 @@ export default function PqrsfPanel({ rows, a: d, lang, userName, campusLabel }: 
               >
                 <td className="whitespace-nowrap px-4 py-3">
                   <p className="font-mono text-xs">{r.id}</p>
-                  <p className="text-[11px] text-muted">{d.campusNames[r.campus]}</p>
+                  <p className="text-[11px] text-muted">{campusNames[r.campus]}</p>
                   <p className="text-xs text-muted">{formatDate(r.createdAt, lang)}</p>
                 </td>
                 <td className="px-4 py-3">{a.types[r.type]}</td>
@@ -224,7 +224,7 @@ export default function PqrsfPanel({ rows, a: d, lang, userName, campusLabel }: 
                 <PriorityBadge priority={r.priority} label={a.priorities[r.priority]} />
                 <DueBadge level={alert.level} label={a.due(alert.level, alert.days)} />
               </div>
-              <p className="mt-2 font-mono text-xs text-muted">{r.id} · {d.campusNames[r.campus]}</p>
+              <p className="mt-2 font-mono text-xs text-muted">{r.id} · {campusNames[r.campus]}</p>
             </button>
           </li>
         ))}
@@ -250,7 +250,7 @@ export default function PqrsfPanel({ rows, a: d, lang, userName, campusLabel }: 
 
             <InfoGrid
               items={[
-                [d.campus, d.campusNames[current.campus]],
+                [d.campus, campusNames[current.campus]],
                 [a.detail.subject, current.subject],
                 [a.detail.created, formatDate(current.createdAt, lang, true)],
                 [a.detail.description, current.description, true],
@@ -273,7 +273,8 @@ export default function PqrsfPanel({ rows, a: d, lang, userName, campusLabel }: 
                 <select
                   value={current.priority}
                   onChange={(e) => save(pqrsfStore.update(current.id, { priority: e.target.value as PqrsfPriority }), d.saveError)}
-                  className={`${input} mt-2`}
+                  disabled={!canEdit}
+                  className={`${input} mt-2 disabled:opacity-70`}
                 >
                   {PRIORITIES.map((p) => <option key={p} value={p}>{a.priorities[p]} · {PRIORITY_DAYS[p]} {lang === "es" ? "días" : "days"}</option>)}
                 </select>
@@ -284,7 +285,8 @@ export default function PqrsfPanel({ rows, a: d, lang, userName, campusLabel }: 
                 <select
                   value={current.status}
                   onChange={(e) => save(pqrsfStore.update(current.id, { status: e.target.value as PqrsfStatus }), d.saveError)}
-                  className={`${input} mt-2`}
+                  disabled={!canEdit}
+                  className={`${input} mt-2 disabled:opacity-70`}
                 >
                   {PQRSF_STATUSES.map((s) => <option key={s} value={s}>{a.statuses[s]}</option>)}
                 </select>
@@ -294,6 +296,7 @@ export default function PqrsfPanel({ rows, a: d, lang, userName, campusLabel }: 
             <form
               onSubmit={(e) => {
                 e.preventDefault();
+                if (!canEdit) return;
                 const text = clean(answer, LIMITS.answer);
                 save(pqrsfStore.update(current.id, { answer: text }), d.saveError);
                 setAnswerDraft(null);
@@ -305,13 +308,14 @@ export default function PqrsfPanel({ rows, a: d, lang, userName, campusLabel }: 
                 <textarea
                   value={answer}
                   onChange={(e) => setAnswerDraft({ id: current.id, text: e.target.value })}
+                  readOnly={!canEdit}
                   rows={5}
                   maxLength={LIMITS.answer}
                   className={`${input} mt-2 py-3`}
                 />
               </label>
               <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-                <button type="submit" className="btn btn-primary !min-h-11 !text-sm">{a.saveAnswer}</button>
+                {canEdit && <button type="submit" className="btn btn-primary !min-h-11 !text-sm">{a.saveAnswer}</button>}
                 {current.answer && (
                   <button
                     type="button"

@@ -29,9 +29,38 @@ export function clean(value: string, max: number) {
   return value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "").trim().slice(0, max);
 }
 
-/* Sedes del colegio. Los nombres y datos de cada sede están en lib/site.ts y en los diccionarios. */
-export type CampusId = "principal" | "sede2";
-export const CAMPUS_IDS: CampusId[] = ["principal", "sede2"];
+/* ── Sedes: se crean y editan desde el panel (tabla campuses) ── */
+export type CampusId = string;
+export type CampusStatus = "open" | "soon" | "hidden";
+export const CAMPUS_STATUSES: CampusStatus[] = ["open", "soon", "hidden"];
+export type Campus = {
+  id: CampusId;
+  nameEs: string; nameEn: string;
+  status: CampusStatus;
+  address: string; city: string;
+  phone: string; whatsapp: string; email: string;
+  hoursEs: string; hoursEn: string;
+  grades: string;
+  mapsUrl: string;
+  notifyEmail: string;          // solo en el panel; nunca se publica
+  noteEs: string; noteEn: string;
+  sort: number;
+};
+/** Lo que se publica de una sede en el sitio (sin el correo interno de avisos). */
+export type PublicCampus = Omit<Campus, "notifyEmail">;
+/** Sede como opción de un formulario público */
+export type CampusOption = { id: CampusId; name: string; soon: boolean };
+export const campusName = (c: Pick<Campus, "nameEs" | "nameEn">, lang: "es" | "en") => (lang === "en" && c.nameEn) || c.nameEs;
+
+/* ── Permisos del panel ── */
+export type Access = "none" | "ver" | "gestionar";
+export type Perms = { admisiones: Access; pqrsf: Access; exportar: boolean; sedes: boolean; usuarios: boolean };
+export const PERM_PRESETS: Record<"rectoria" | "coordinacion" | "consulta", Perms> = {
+  rectoria: { admisiones: "gestionar", pqrsf: "gestionar", exportar: true, sedes: true, usuarios: true },
+  coordinacion: { admisiones: "gestionar", pqrsf: "gestionar", exportar: true, sedes: false, usuarios: false },
+  consulta: { admisiones: "ver", pqrsf: "ver", exportar: false, sedes: false, usuarios: false },
+};
+export const NO_PERMS: Perms = { admisiones: "none", pqrsf: "none", exportar: false, sedes: false, usuarios: false };
 
 export type Admission = {
   id: string;            // HG-2027-0001
@@ -268,7 +297,10 @@ export const pqrsfStore = {
 
 /* ── Sesión del panel: cookie segura emitida por el servidor ── */
 /** campus: null = ve todas las sedes; si tiene sede, solo ve y gestiona la suya. */
-export type StaffUser = { username: string; name: string; role: "admin" | "consulta"; campus: CampusId | null };
+export type StaffUser = { username: string; name: string; campus: CampusId | null; perms: Perms };
+/** Usuario como lo ve quien administra usuarios */
+export type StaffRow = StaffUser & { active: boolean; lastLogin: string | null; createdAt: string };
+export type StaffInput = { username?: string; name: string; password?: string; campus: CampusId | null; perms: Perms; active: boolean };
 export const session = {
   me: () => api<{ user: StaffUser | null; demo: boolean }>("/api/admin/sesion"),
   login: (username: string, password: string) =>
@@ -276,7 +308,24 @@ export const session = {
   logout: () => api("/api/admin/sesion", { method: "DELETE" }),
 };
 
-export const fetchAll = () => api<{ admissions: Admission[]; pqrsf: Pqrsf[] }>("/api/admin/datos");
+export const fetchAll = () => api<{ admissions: Admission[]; pqrsf: Pqrsf[]; campuses: Campus[] }>("/api/admin/datos");
+
+/* ── Configuración: sedes y usuarios ── */
+export const campusesApi = {
+  save: async (c: Campus, isNew: boolean) => {
+    const r = await api<Campus>(isNew ? "/api/admin/sedes" : `/api/admin/sedes/${encodeURIComponent(c.id)}`, { method: isNew ? "POST" : "PATCH", body: JSON.stringify(c) });
+    notify();
+    return r;
+  },
+};
+export const staffApi = {
+  list: () => api<{ users: StaffRow[] }>("/api/admin/usuarios"),
+  save: async (u: StaffInput, username?: string) => {
+    const r = await api<StaffRow>(username ? `/api/admin/usuarios/${encodeURIComponent(username)}` : "/api/admin/usuarios", { method: username ? "PATCH" : "POST", body: JSON.stringify(u) });
+    notify();
+    return r;
+  },
+};
 export async function resetDemo() {
   await api("/api/admin/datos", { method: "DELETE" });
   notify();

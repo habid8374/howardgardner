@@ -1,5 +1,5 @@
 import { admissionInput } from "@/lib/server/validate";
-import { sql, toAdmission } from "@/lib/server/db";
+import { campusAccepts, sql, toAdmission } from "@/lib/server/db";
 import { clientIp, fail, json, sameOrigin } from "@/lib/server/http";
 import { hit } from "@/lib/server/rate";
 import { mailNewAdmission } from "@/lib/server/mail";
@@ -12,6 +12,7 @@ export async function POST(req: Request) {
     const parsed = admissionInput.safeParse(body);
     if (!parsed.success) return json({ error: "invalid" }, 400);
     const d = parsed.data;
+    if (!(await campusAccepts(d.campus))) return json({ error: "invalid" }, 400);
 
     const wait = await hit(`adm:${clientIp(req)}`, 8, 3600);
     if (wait) return json({ error: "rate", wait }, 429);

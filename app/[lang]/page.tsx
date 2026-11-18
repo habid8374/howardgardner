@@ -9,6 +9,7 @@ import Visit from "@/components/Visit";
 import { isLang, type Lang } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionaries";
 import { pageMetadata } from "@/lib/seo";
+import { publicCampuses } from "@/lib/server/db";
 
 export async function generateMetadata({ params }: PageProps<"/[lang]">) {
   const { lang } = await params;
@@ -18,6 +19,7 @@ export async function generateMetadata({ params }: PageProps<"/[lang]">) {
 export default async function Home({ params }: PageProps<"/[lang]">) {
   const lang = (await params).lang as Lang;
   const t = getDictionary(lang);
+  const campuses = await publicCampuses();
   return (
     <>
       <Hero lang={lang} t={t} />
@@ -27,7 +29,7 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
       <Pedagogy t={{ pedagogy: t.pedagogy, viewer: t.viewer }} />
       <Gallery lang={lang} t={{ gallery: t.gallery, viewer: t.viewer }} limit={4} />
       <AdmissionsBand lang={lang} t={t} />
-      <Visit t={t} lang={lang} />
+      <Visit t={t} lang={lang} campuses={campuses} />
     </>
   );
 }

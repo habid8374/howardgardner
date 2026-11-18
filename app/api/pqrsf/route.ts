@@ -2,7 +2,7 @@ import { put } from "@vercel/blob";
 import { randomBytes } from "node:crypto";
 import { DEFAULT_PRIORITY, pqrsfDue, type PqrsfPriority, type PqrsfType } from "@/lib/records";
 import { EXT, MAX_FILE_BYTES, pqrsfInput, sniffType } from "@/lib/server/validate";
-import { sql, toPqrsf } from "@/lib/server/db";
+import { campusAccepts, sql, toPqrsf } from "@/lib/server/db";
 import { clientIp, fail, json, sameOrigin } from "@/lib/server/http";
 import { hit } from "@/lib/server/rate";
 import { mailNewPqrsf } from "@/lib/server/mail";
@@ -26,6 +26,7 @@ export async function POST(req: Request) {
     });
     if (!parsed.success) return json({ error: "invalid" }, 400);
     const d = parsed.data;
+    if (!(await campusAccepts(d.campus))) return json({ error: "invalid" }, 400);
 
     const wait = await hit(`pqrsf:${clientIp(req)}`, 6, 3600);
     if (wait) return json({ error: "rate", wait }, 429);

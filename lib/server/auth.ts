@@ -3,7 +3,7 @@ import { createHmac, randomBytes, scrypt as _scrypt, timingSafeEqual } from "nod
 import { promisify } from "node:util";
 import { cookies } from "next/headers";
 import { sql } from "./db";
-import type { StaffUser } from "@/lib/records";
+import { NO_PERMS, type Perms, type StaffUser } from "@/lib/records";
 
 /* Acceso al panel (OWASP A01, A04, A07):
    - Contraseñas con scrypt y sal por usuario; comparación en tiempo constante.
@@ -36,11 +36,18 @@ export async function verifyPassword(pw: string, stored: string) {
 /* Hash de relleno: un usuario inexistente tarda lo mismo que uno real (no revela qué usuarios existen). */
 const DUMMY = "scrypt$AAAAAAAAAAAAAAAAAAAAAA==$" + Buffer.alloc(64).toString("base64");
 
+type StaffDb = { username: string; name: string; campus: string | null; perms: Partial<Perms> | null; active: boolean; pass_hash: string };
+const toUser = (r: Omit<StaffDb, "pass_hash">): StaffUser => ({
+  username: r.username, name: r.name, campus: r.campus ?? null, perms: { ...NO_PERMS, ...(r.perms ?? {}) },
+});
+
 export async function checkLogin(username: string, password: string): Promise<StaffUser | null> {
-  const rows = (await sql`SELECT username, name, role, campus, pass_hash FROM staff WHERE username = ${username}`) as (StaffUser & { pass_hash: string })[];
+  const rows = (await sql`SELECT username, name, campus, perms, active, pass_hash FROM staff WHERE username = ${username}`) as StaffDb[];
   const row = rows[0];
   const ok = await verifyPassword(password, row?.pass_hash ?? DUMMY);
-  return ok && row ? { username: row.username, name: row.name, role: row.role, campus: row.campus ?? null } : null;
+  if (!ok || !row || !row.active) return null; // usuario desactivado: no entra
+  await sql`UPDATE staff SET last_login = now() WHERE username = ${row.username}`;
+  return toUser(row);
 }
 
 const sign = (payload: string) => createHmac("sha256", secret()).update(payload).digest("base64url");
@@ -70,6 +77,7 @@ export async function currentUser(): Promise<StaffUser | null> {
   let data: { u?: string; exp?: number };
   try { data = JSON.parse(Buffer.from(payload, "base64url").toString()); } catch { return null; }
   if (!data.u || !data.exp || data.exp < Date.now() / 1000) return null;
-  const rows = (await sql`SELECT username, name, role, campus FROM staff WHERE username = ${data.u}`) as StaffUser[];
-  return rows[0] ? { ...rows[0], campus: rows[0].campus ?? null } : null;
+  // Se vuelve a leer el usuario: si lo desactivan o le cambian permisos, aplica en la siguiente petición
+  const rows = (await sql`SELECT username, name, campus, perms, active FROM staff WHERE username = ${data.u}`) as Omit<StaffDb, "pass_hash">[];
+  return rows[0]?.active ? toUser(rows[0]) : null;
 }

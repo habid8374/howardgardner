@@ -5,11 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink, FlaskConical, Globe, LogOut, RotateCcw } from "lucide-react";
 import {
-  ApiError, CAMPUS_IDS, adminLang, fetchAll, pqrsfAlert, resetDemo, session, subscribeDemo, type Admission, type CampusId, type Pqrsf, type StaffUser,
+  ApiError, adminLang, campusName, fetchAll, pqrsfAlert, resetDemo, session, subscribeDemo, type Admission, type Campus, type CampusId, type Pqrsf, type StaffUser,
 } from "@/lib/records";
 import { adminDict, type AdminDict } from "@/lib/dictionaries/admin";
 import AdmissionsPanel from "./AdmissionsPanel";
 import PqrsfPanel from "./PqrsfPanel";
+import CampusesPanel from "./CampusesPanel";
+import UsersPanel from "./UsersPanel";
 
 /* Panel del colegio, en español e inglés.
    Acceso con usuario y contraseña verificados en el servidor; la sesión es una cookie segura.
@@ -17,7 +19,8 @@ import PqrsfPanel from "./PqrsfPanel";
    y cada minuto, para ver lo que llega desde el sitio sin recargar la página. */
 
 type Lang = "es" | "en";
-type Data = { admissions: Admission[]; pqrsf: Pqrsf[] };
+type Data = { admissions: Admission[]; pqrsf: Pqrsf[]; campuses: Campus[] };
+type Tab = "admisiones" | "pqrsf" | "sedes" | "usuarios";
 const DEMO_USER = "demo";
 const DEMO_PASS = "colegio2027";
 
@@ -114,7 +117,7 @@ export default function AdminApp() {
   const lang = useSyncExternalStore(adminLang.subscribe, adminLang.get, () => "es" as Lang);
   const [auth, setAuth] = useState<{ user: StaffUser | null; demo: boolean } | null>(null);
   const [data, setData] = useState<Data | null>(null);
-  const [tab, setTab] = useState<"admisiones" | "pqrsf">("admisiones");
+  const [tabPick, setTab] = useState<Tab | null>(null);
   const [campusPick, setCampusPick] = useState<CampusId | "">("");
   const a = adminDict[lang];
   const user = auth?.user ?? null;
@@ -163,7 +166,9 @@ export default function AdminApp() {
   const view = campus
     ? { admissions: data.admissions.filter((r) => r.campus === campus), pqrsf: data.pqrsf.filter((r) => r.campus === campus) }
     : data;
-  const campusLabel = campus ? a.campusNames[campus] : null;
+  const campusNames = Object.fromEntries(data.campuses.map((c) => [c.id, campusName(c, lang)]));
+  const campusLabel = campus ? campusNames[campus] ?? campus : null;
+  const p = user.perms;
 
   const newAdmissions = view.admissions.filter((r) => r.status === "nueva").length;
   const now = new Date();
@@ -171,10 +176,15 @@ export default function AdminApp() {
   const pqrsfUrgent = alerts.filter((l) => l === "vencida" || l === "hoy").length;
   const pqrsfOpen = alerts.filter((l) => l !== "cerrada").length;
 
+  // Las pestañas dependen de los permisos del usuario
   const tabs = [
-    { key: "admisiones" as const, label: a.tabs.admissions, count: newAdmissions, urgent: false },
-    { key: "pqrsf" as const, label: a.tabs.pqrsf, count: pqrsfUrgent || pqrsfOpen, urgent: pqrsfUrgent > 0 },
-  ];
+    p.admisiones !== "none" && { key: "admisiones" as Tab, label: a.tabs.admissions, count: newAdmissions, urgent: false },
+    p.pqrsf !== "none" && { key: "pqrsf" as Tab, label: a.tabs.pqrsf, count: pqrsfUrgent || pqrsfOpen, urgent: pqrsfUrgent > 0 },
+    p.sedes && { key: "sedes" as Tab, label: a.settings.tabCampuses, count: 0, urgent: false },
+    p.usuarios && { key: "usuarios" as Tab, label: a.settings.tabUsers, count: 0, urgent: false },
+  ].filter(Boolean) as { key: Tab; label: string; count: number; urgent: boolean }[];
+  const tab: Tab | undefined = tabs.find((t) => t.key === tabPick)?.key ?? tabs[0]?.key;
+  const isRecords = tab === "admisiones" || tab === "pqrsf";
 
   return (
     <div className="min-h-svh bg-paper">
@@ -215,9 +225,9 @@ export default function AdminApp() {
               )}
             </button>
           ))}
-          <div className="ml-auto flex flex-none items-center gap-2 py-2 pl-4">
+          {isRecords && <div className="ml-auto flex flex-none items-center gap-2 py-2 pl-4">
             {user.campus ? (
-              <span className="rounded-full border border-gold/50 px-3 py-1.5 text-xs font-bold text-gold">{a.campusOnly}: {a.campusNames[user.campus]}</span>
+              <span className="rounded-full border border-gold/50 px-3 py-1.5 text-xs font-bold text-gold">{a.campusOnly}: {campusNames[user.campus] ?? user.campus}</span>
             ) : (
               <label className="flex items-center gap-2 text-xs font-semibold text-white/70">
                 <span className="hidden sm:inline">{a.campus}</span>
@@ -227,11 +237,11 @@ export default function AdminApp() {
                   className="min-h-9 rounded-full border border-white/25 bg-ink px-3 text-sm font-semibold text-white outline-none focus:border-gold"
                 >
                   <option value="">{a.campusAll}</option>
-                  {CAMPUS_IDS.map((id) => <option key={id} value={id}>{a.campusNames[id]}</option>)}
+                  {data.campuses.map((c) => <option key={c.id} value={c.id}>{campusNames[c.id]}</option>)}
                 </select>
               </label>
             )}
-          </div>
+          </div>}
         </nav>
       </header>
 
@@ -243,13 +253,20 @@ export default function AdminApp() {
           </p>
         )}
 
-        {tab === "admisiones"
-          ? <AdmissionsPanel key={`a-${campus}`} rows={view.admissions} a={a} lang={lang} userName={user.name} campusLabel={campusLabel} />
-          : <PqrsfPanel key={`p-${campus}`} rows={view.pqrsf} a={a} lang={lang} userName={user.name} campusLabel={campusLabel} />}
+        {tab === "admisiones" && (
+          <AdmissionsPanel key={`a-${campus}`} rows={view.admissions} a={a} lang={lang} userName={user.name} campusLabel={campusLabel}
+            campusNames={campusNames} canEdit={p.admisiones === "gestionar"} canExport={p.exportar} />
+        )}
+        {tab === "pqrsf" && (
+          <PqrsfPanel key={`p-${campus}`} rows={view.pqrsf} a={a} lang={lang} userName={user.name} campusLabel={campusLabel}
+            campusNames={campusNames} canEdit={p.pqrsf === "gestionar"} canExport={p.exportar} />
+        )}
+        {tab === "sedes" && <CampusesPanel campuses={data.campuses} admissions={data.admissions} pqrsf={data.pqrsf} a={a} lang={lang} />}
+        {tab === "usuarios" && <UsersPanel me={user} campuses={data.campuses} a={a} lang={lang} />}
 
         <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-line pt-6 text-sm text-muted sm:flex-row sm:items-center">
           <p>{auth.demo ? a.demoFooter : ""} {user.name}</p>
-          {auth.demo && user.role === "admin" && <button
+          {auth.demo && p.usuarios && <button
             type="button"
             onClick={() => window.confirm(a.resetConfirm) && resetDemo().catch(() => window.alert(a.saveError))}
             className="inline-flex min-h-11 items-center gap-2 rounded-full border border-ink/20 px-4 font-semibold text-ink hover:bg-paper-2"

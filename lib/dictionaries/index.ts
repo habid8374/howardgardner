@@ -11,3 +11,10 @@ export function getDictionary(lang: Lang): Dict {
 export type { Dict };
 export type NavItem = { label: string; page: PageKey; hash?: string };
 export type NavGroup = { label: string; page: PageKey; items: NavItem[] };
+
+/** Textos de sede que usan los formularios del navegador (solo texto, sin funciones). */
+export type CampusFormText = Pick<Dict["campuses"], "label" | "labelInterest" | "placeholder" | "error" | "soonTag">;
+export const campusFormText = (t: Dict): CampusFormText => {
+  const { label, labelInterest, placeholder, error, soonTag } = t.campuses;
+  return { label, labelInterest, placeholder, error, soonTag };
+};

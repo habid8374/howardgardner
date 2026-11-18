@@ -5,7 +5,7 @@ import { clientIp, fail, json, requireStaff } from "@/lib/server/http";
 /* Descargar el adjunto de una PQRSF. El archivo está en almacenamiento privado:
    solo sale por aquí, con sesión del panel, y queda registrado quién lo descargó. */
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const user = await requireStaff(req);
+  const user = await requireStaff(req, { need: { area: "pqrsf", level: "ver" } });
   if (user instanceof Response) return user;
   try {
     const { id } = await params;

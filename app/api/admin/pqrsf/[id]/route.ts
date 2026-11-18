@@ -4,10 +4,10 @@ import { clientIp, fail, json, requireStaff } from "@/lib/server/http";
 import { mailAnswer } from "@/lib/server/mail";
 import type { HistoryEntry, Note } from "@/lib/records";
 
-/* Cambiar prioridad, estado, respuesta o agregar una nota a una PQRSF (requiere rol administrador).
+/* Cambiar prioridad, estado, respuesta o agregar una nota a una PQRSF (permiso: gestionar PQRSF).
    Al guardar una respuesta, la PQRSF pasa a "respondida" y se le envía por correo a la familia. */
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const user = await requireStaff(req, { write: true });
+  const user = await requireStaff(req, { write: true, need: { area: "pqrsf", level: "gestionar" } });
   if (user instanceof Response) return user;
   try {
     const { id } = await params;

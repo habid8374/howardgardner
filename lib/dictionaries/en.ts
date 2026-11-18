@@ -359,15 +359,14 @@ export const en: Dict = {
     placeholder: "Choose a campus",
     error: "Choose the campus.",
     soonTag: "Coming soon",
-    names: { principal: "Main campus · Sabanalarga", sede2: "New campus" },
-    short: { principal: "Main campus", sede2: "New campus" },
-    soonTitle: "New campus: coming soon.",
-    soonBody: "We are getting ready to open a new Howard Gardner campus. Pre-register now and you will be the first to know when enrollment opens.",
-    soonAddress: "Address to be confirmed",
-    soonCta: "Pre-register for the new campus",
-    soonWa: "Hello, I would like information about the new Howard Gardner Bilingual School campus.",
+    soonTitle: (name: string) => `${name}: coming soon.`,
+    noAddress: "Address to be confirmed",
+    grades: "Grades",
+    soonCta: "Pre-register for this campus",
+    soonWa: (name: string) => `Hello, I would like information about the Howard Gardner Bilingual School ${name}.`,
     soonWaCta: "Ask for information",
   },
+
 
   pageHeaders: {
     about: { eyebrow: "About us", title: "A school that believes in every student's talent.", lead: "Our story, what drives us and a message from our principal." },

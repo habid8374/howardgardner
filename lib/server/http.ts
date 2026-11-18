@@ -1,7 +1,7 @@
 import "server-only";
 import { NextResponse } from "next/server";
 import { currentUser } from "./auth";
-import type { StaffUser } from "@/lib/records";
+import type { Perms, StaffUser } from "@/lib/records";
 
 export const json = (data: unknown, status = 200) =>
   NextResponse.json(data, { status, headers: { "Cache-Control": "no-store" } });
@@ -23,12 +23,25 @@ export function sameOrigin(req: Request) {
   }
 }
 
-/** Exige sesión válida (y rol de administrador si va a cambiar datos). Devuelve el usuario o la respuesta de error. */
-export async function requireStaff(req: Request, opts: { write?: boolean } = {}): Promise<StaffUser | Response> {
+type Need =
+  | { area: "admisiones" | "pqrsf"; level: "ver" | "gestionar" }
+  | { area: "sedes" | "usuarios" | "exportar" };
+
+/** ¿El usuario tiene este permiso? */
+export function allowed(user: StaffUser, need: Need) {
+  if (need.area === "admisiones" || need.area === "pqrsf") {
+    const v = user.perms[need.area];
+    return need.level === "ver" ? v === "ver" || v === "gestionar" : v === "gestionar";
+  }
+  return user.perms[need.area as keyof Perms] === true;
+}
+
+/** Exige sesión válida y, si se indica, un permiso. `write` además exige que la petición venga del mismo sitio (CSRF). */
+export async function requireStaff(req: Request, opts: { write?: boolean; need?: Need } = {}): Promise<StaffUser | Response> {
   if (opts.write && !sameOrigin(req)) return json({ error: "origin" }, 403);
   const user = await currentUser();
   if (!user) return json({ error: "auth" }, 401);
-  if (opts.write && user.role !== "admin") return json({ error: "forbidden" }, 403);
+  if (opts.need && !allowed(user, opts.need)) return json({ error: "forbidden" }, 403);
   return user;
 }
 

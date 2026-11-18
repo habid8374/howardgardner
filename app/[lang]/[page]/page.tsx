@@ -14,8 +14,10 @@ import Privacy from "@/components/Privacy";
 import Pqrsf from "@/components/Pqrsf";
 import CookiePolicy from "@/components/CookiePolicy";
 import { LOCALES, PAGES, SUBPAGES, isLang, pageFromSlug, type Lang } from "@/lib/i18n";
-import { getDictionary } from "@/lib/dictionaries";
+import { campusFormText, getDictionary } from "@/lib/dictionaries";
 import { pageMetadata } from "@/lib/seo";
+import { publicCampuses } from "@/lib/server/db";
+import { campusName } from "@/lib/records";
 
 export const dynamicParams = false;
 
@@ -37,6 +39,9 @@ export default async function SubPage({ params }: PageProps<"/[lang]/[page]">) {
   if (!key) notFound();
   const t = getDictionary(lang);
   const viewer = t.viewer;
+  // Sedes desde la base de datos (se editan en el panel; la página se regenera al guardar)
+  const campuses = ["admissions", "contact", "pqrsf"].includes(key) ? await publicCampuses() : [];
+  const options = campuses.map((c) => ({ id: c.id, name: campusName(c, lang), soon: c.status === "soon" }));
 
   switch (key) {
     case "about":
@@ -68,7 +73,7 @@ export default async function SubPage({ params }: PageProps<"/[lang]/[page]">) {
       return (
         <>
           <PageHeader {...t.pageHeaders.admissions} />
-          <Admissions lang={lang} t={{ admissions: t.admissions, demo: t.demo, campuses: t.campuses }} />
+          <Admissions lang={lang} t={{ admissions: t.admissions, demo: t.demo, campuses: campusFormText(t) }} campuses={options} />
           <Faq t={t} />
         </>
       );
@@ -76,14 +81,14 @@ export default async function SubPage({ params }: PageProps<"/[lang]/[page]">) {
       return (
         <>
           <PageHeader {...t.pageHeaders.contact} />
-          <Visit t={t} lang={lang} />
+          <Visit t={t} lang={lang} campuses={campuses} />
         </>
       );
     case "pqrsf":
       return (
         <>
           <PageHeader {...t.pageHeaders.pqrsf} />
-          <Pqrsf lang={lang} t={{ pqrsf: t.pqrsf, demo: t.demo, grades: t.admissions.form.grades, campuses: t.campuses }} />
+          <Pqrsf lang={lang} t={{ pqrsf: t.pqrsf, demo: t.demo, grades: t.admissions.form.grades, campuses: campusFormText(t) }} campuses={options} />
         </>
       );
     case "cookies":

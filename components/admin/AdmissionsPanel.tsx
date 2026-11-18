@@ -17,7 +17,7 @@ const toPhone = (p: string) => {
   return digits.startsWith("57") ? digits : `57${digits}`;
 };
 
-export default function AdmissionsPanel({ rows, a: d, lang, userName, campusLabel }: { rows: Admission[]; a: AdminDict; lang: Lang; userName: string; campusLabel: string | null }) {
+export default function AdmissionsPanel({ rows, a: d, lang, userName, campusLabel, campusNames, canEdit, canExport }: { rows: Admission[]; a: AdminDict; lang: Lang; userName: string; campusLabel: string | null; campusNames: Record<string, string>; canEdit: boolean; canExport: boolean }) {
   const a = d.admissions;
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<"" | AdmissionStatus>("");
@@ -49,7 +49,7 @@ export default function AdmissionsPanel({ rows, a: d, lang, userName, campusLabe
       summary: d.xlsx.summaryAdmissions(filtered.length, filtered.filter((r) => r.status === "nueva").length, filtered.filter((r) => r.status === "matriculado").length),
       columns: a.csv.map((header, i) => ({ header, width: widths[i], wrap: i >= 8, date: i === 1 ? "datetime" : undefined, center: i === 5 || i === 7 })),
       rows: filtered.map((r) => [
-        r.id, new Date(r.createdAt), d.campusNames[r.campus], r.guardian, r.phone, r.grade, a.statuses[r.status],
+        r.id, new Date(r.createdAt), campusNames[r.campus], r.guardian, r.phone, r.grade, a.statuses[r.status],
         d.langNames[r.lang], r.message, r.notes.map((n) => `${formatDate(n.at, lang)}: ${n.text}${n.by ? ` (${n.by})` : ""}`).join("\n"),
       ]),
       tone: (ri, ci) => {
@@ -71,9 +71,9 @@ export default function AdmissionsPanel({ rows, a: d, lang, userName, campusLabe
           <h1 id="t-admisiones" className="h-display text-[2.2rem] text-ink">{a.title}</h1>
           <p className="mt-1 text-muted">{a.lead}</p>
         </div>
-        <button type="button" onClick={exportCsv} className="btn btn-primary !min-h-11 !text-sm">
+        {canExport && <button type="button" onClick={exportCsv} className="btn btn-primary !min-h-11 !text-sm">
           <Download size={16} aria-hidden /> {d.download} ({filtered.length})
-        </button>
+        </button>}
       </div>
 
       <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -117,7 +117,7 @@ export default function AdmissionsPanel({ rows, a: d, lang, userName, campusLabe
           <tbody>
             {filtered.map((r) => (
               <tr key={r.id} className="border-t border-line transition-colors hover:bg-paper">
-                <td className="whitespace-nowrap px-4 py-3 font-mono text-xs">{r.id}<span className="mt-0.5 block font-sans text-[11px] text-muted">{d.campusNames[r.campus]}</span></td>
+                <td className="whitespace-nowrap px-4 py-3 font-mono text-xs">{r.id}<span className="mt-0.5 block font-sans text-[11px] text-muted">{campusNames[r.campus]}</span></td>
                 <td className="whitespace-nowrap px-4 py-3 text-muted">{formatDate(r.createdAt, lang)}</td>
                 <td className="px-4 py-3 font-semibold">{r.guardian}{r.sample && <SampleTag label={d.sample} />}</td>
                 <td className="whitespace-nowrap px-4 py-3">{r.phone}</td>
@@ -142,7 +142,7 @@ export default function AdmissionsPanel({ rows, a: d, lang, userName, campusLabe
                 <Badge status={r.status} label={a.statuses[r.status]} />
               </div>
               <p className="mt-1 text-sm text-muted">{r.grade} · {r.phone}</p>
-              <p className="mt-1 font-mono text-xs text-muted">{r.id} · {formatDate(r.createdAt, lang)} · {d.campusNames[r.campus]}</p>
+              <p className="mt-1 font-mono text-xs text-muted">{r.id} · {formatDate(r.createdAt, lang)} · {campusNames[r.campus]}</p>
             </button>
           </li>
         ))}
@@ -154,7 +154,7 @@ export default function AdmissionsPanel({ rows, a: d, lang, userName, campusLabe
           <div className="flex flex-col gap-8">
             <InfoGrid
               items={[
-                [d.campus, d.campusNames[current.campus]],
+                [d.campus, campusNames[current.campus]],
                 [a.detail.guardian, current.guardian],
                 [a.detail.phone, current.phone],
                 [a.detail.grade, current.grade],
@@ -180,7 +180,8 @@ export default function AdmissionsPanel({ rows, a: d, lang, userName, campusLabe
               <select
                 value={current.status}
                 onChange={(e) => save(admissionsStore.update(current.id, { status: e.target.value as AdmissionStatus }), d.saveError)}
-                className={`${input} mt-2`}
+                disabled={!canEdit}
+                className={`${input} mt-2 disabled:opacity-70`}
               >
                 {ADMISSION_STATUSES.map((s) => <option key={s} value={s}>{a.statuses[s]}</option>)}
               </select>
@@ -197,7 +198,7 @@ export default function AdmissionsPanel({ rows, a: d, lang, userName, campusLabe
                   </li>
                 ))}
               </ul>
-              <form
+              {canEdit && <form
                 className="mt-3 flex gap-2"
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -211,7 +212,7 @@ export default function AdmissionsPanel({ rows, a: d, lang, userName, campusLabe
                   <input value={note} maxLength={LIMITS.note} onChange={(e) => setNote(e.target.value)} placeholder={d.notePlaceholder} className={input} />
                 </label>
                 <button type="submit" className="btn btn-primary !min-h-11 !px-5 !text-sm">{d.add}</button>
-              </form>
+              </form>}
             </div>
 
             <HistoryList

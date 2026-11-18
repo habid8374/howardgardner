@@ -6,13 +6,12 @@ import { CheckCircle2, FileDown, Search, Send } from "lucide-react";
 import { downloadPqrsfPdf } from "@/lib/pqrsf-pdf";
 import DemoNote from "./DemoNote";
 import { href, type Lang } from "@/lib/i18n";
-import type { Dict } from "@/lib/dictionaries";
-import { CAMPUSES } from "@/lib/site";
-import { ALLOWED_FILE_TYPES, ApiError, CAMPUS_IDS, LIMITS, MAX_FILE_MB, PQRSF_DAYS, formatDate, pqrsfDue, pqrsfStore, type Pqrsf as Row, type PqrsfPublic, type PqrsfType } from "@/lib/records";
+import type { CampusFormText, Dict } from "@/lib/dictionaries";
+import { ALLOWED_FILE_TYPES, ApiError, type CampusOption, LIMITS, MAX_FILE_MB, PQRSF_DAYS, formatDate, pqrsfDue, pqrsfStore, type Pqrsf as Row, type PqrsfPublic, type PqrsfType } from "@/lib/records";
 
 /* PQRSF: se envía al servidor (/api/pqrsf), se guarda en la base de datos y aparece en el panel del colegio (/admin). */
 
-type Props = { lang: Lang; t: { pqrsf: Dict["pqrsf"]; demo: Dict["demo"]; grades: string[]; campuses: Dict["campuses"] } };
+type Props = { lang: Lang; t: { pqrsf: Dict["pqrsf"]; demo: Dict["demo"]; grades: string[]; campuses: CampusFormText }; campuses: CampusOption[] };
 type Errors = Partial<Record<"type" | "campus" | "name" | "email" | "subject" | "description" | "consent" | "file", string>>;
 
 const TYPES: PqrsfType[] = ["peticion", "queja", "reclamo", "sugerencia", "felicitacion"];
@@ -25,7 +24,7 @@ function Err({ id, msg }: { id: string; msg?: string }) {
   return msg ? <p id={id} className="mt-1.5 text-sm font-medium text-red-700">{msg}</p> : null;
 }
 
-export default function Pqrsf({ lang, t }: Props) {
+export default function Pqrsf({ lang, t, campuses }: Props) {
   const p = t.pqrsf;
   const [type, setType] = useState<PqrsfType | "">("");
   const [errors, setErrors] = useState<Errors>({});
@@ -60,7 +59,7 @@ export default function Pqrsf({ lang, t }: Props) {
 
     const next: Errors = {};
     if (!type) next.type = p.errors.type;
-    if (!(CAMPUS_IDS as string[]).includes(v("sede"))) next.campus = t.campuses.error;
+    if (!campuses.some((x) => x.id === v("sede"))) next.campus = t.campuses.error;
     if (input.name.length < 3) next.name = p.errors.name;
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.email)) next.email = p.errors.email;
     if (input.subject.length < 3) next.subject = p.errors.subject;
@@ -170,8 +169,8 @@ export default function Pqrsf({ lang, t }: Props) {
                   <label htmlFor="p-sede" className="text-sm font-semibold">{t.campuses.label}</label>
                   <select id="p-sede" name="sede" defaultValue="" className={field} {...aria("campus")}>
                     <option value="" disabled>{t.campuses.placeholder}</option>
-                    {CAMPUSES.map((s) => (
-                      <option key={s.id} value={s.id}>{t.campuses.names[s.id]}{s.status === "soon" ? ` (${t.campuses.soonTag.toLowerCase()})` : ""}</option>
+                    {campuses.map((s) => (
+                      <option key={s.id} value={s.id}>{s.name}{s.soon ? ` (${t.campuses.soonTag.toLowerCase()})` : ""}</option>
                     ))}
                   </select>
                   <Err id="e-campus" msg={errors.campus} />
@@ -303,7 +302,7 @@ export default function Pqrsf({ lang, t }: Props) {
                 <dl className="mt-8 grid grid-cols-1 gap-px overflow-hidden rounded-2xl bg-white/10 sm:grid-cols-2">
                   {[
                     [p.lookupLabel, found.id],
-                    [t.campuses.label, t.campuses.short[found.campus]],
+                    [t.campuses.label, campuses.find((x) => x.id === found.campus)?.name ?? found.campus],
                     [p.lookupStatus, p.statuses[found.status]],
                     [p.lookupPriority, p.priorities[found.priority]],
                     [p.lookupCreated, formatDate(found.createdAt, lang)],

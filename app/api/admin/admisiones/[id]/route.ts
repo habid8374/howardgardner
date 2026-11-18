@@ -3,9 +3,9 @@ import { audit, canAccess, getAdmissionRow, sql, toAdmission } from "@/lib/serve
 import { clientIp, fail, json, requireStaff } from "@/lib/server/http";
 import type { HistoryEntry, Note } from "@/lib/records";
 
-/* Cambiar el estado de una preinscripción o agregarle una nota (requiere rol administrador). */
+/* Cambiar el estado de una preinscripción o agregarle una nota (permiso: gestionar preinscripciones). */
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const user = await requireStaff(req, { write: true });
+  const user = await requireStaff(req, { write: true, need: { area: "admisiones", level: "gestionar" } });
   if (user instanceof Response) return user;
   try {
     const { id } = await params;

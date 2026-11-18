@@ -358,15 +358,14 @@ export const es = {
     placeholder: "Elige una sede",
     error: "Elige la sede.",
     soonTag: "Próximamente",
-    names: { principal: "Sede principal · Sabanalarga", sede2: "Nueva sede" },
-    short: { principal: "Sede principal", sede2: "Nueva sede" },
-    soonTitle: "Nueva sede: muy pronto.",
-    soonBody: "Estamos preparando la apertura de una nueva sede de Howard Gardner. Preinscríbete desde ya y te avisamos primero cuando abramos inscripciones.",
-    soonAddress: "Dirección por confirmar",
-    soonCta: "Preinscribirme para la nueva sede",
-    soonWa: "Hola, quiero información sobre la nueva sede de Howard Gardner Bilingual School.",
+    soonTitle: (name: string) => `${name}: muy pronto.`,
+    noAddress: "Dirección por confirmar",
+    grades: "Grados",
+    soonCta: "Preinscribirme para esta sede",
+    soonWa: (name: string) => `Hola, quiero información sobre la ${name} de Howard Gardner Bilingual School.`,
     soonWaCta: "Pedir información",
   },
+
 
   pageHeaders: {
     about: { eyebrow: "Nosotros", title: "Un colegio que cree en el talento de cada estudiante.", lead: "Conoce nuestra historia, lo que nos mueve y el mensaje de nuestro rector." },
