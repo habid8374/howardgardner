@@ -21,8 +21,6 @@ import UsersPanel from "./UsersPanel";
 type Lang = "es" | "en";
 type Data = { admissions: Admission[]; pqrsf: Pqrsf[]; campuses: Campus[] };
 type Tab = "admisiones" | "pqrsf" | "sedes" | "usuarios";
-const DEMO_USER = "demo";
-const DEMO_PASS = "colegio2027";
 
 function LangToggle({ lang, label, dark }: { lang: Lang; label: string; dark?: boolean }) {
   const other: Lang = lang === "es" ? "en" : "es";
@@ -41,7 +39,7 @@ function LangToggle({ lang, label, dark }: { lang: Lang; label: string; dark?: b
   );
 }
 
-function Login({ a, lang, demo, onLogin }: { a: AdminDict; lang: Lang; demo: boolean; onLogin: (u: StaffUser) => void }) {
+function Login({ a, lang, onLogin }: { a: AdminDict; lang: Lang; onLogin: (u: StaffUser) => void }) {
   const [username, setUsername] = useState("");
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -73,13 +71,6 @@ function Login({ a, lang, demo, onLogin }: { a: AdminDict; lang: Lang; demo: boo
         </div>
         <h1 className="h-display mt-6 text-[2rem]">{a.title}</h1>
         <p className="mt-2 text-muted">{a.loginLead}</p>
-
-        {demo && (
-          <p className="mt-6 flex items-start gap-3 rounded-xl border border-gold/50 bg-gold-soft/40 px-4 py-3 text-sm text-ink">
-            <FlaskConical size={18} className="mt-0.5 flex-none" aria-hidden />
-            <span>{a.loginDemo} <strong className="font-mono">{DEMO_USER}</strong> · <strong className="font-mono">{DEMO_PASS}</strong></span>
-          </p>
-        )}
 
         <label htmlFor="usuario" className="mt-6 block text-sm font-semibold">{a.username}</label>
         <input
@@ -158,7 +149,7 @@ export default function AdminApp() {
   }, [lang]);
 
   if (!auth) return <main className="doodle-bg doodle-full min-h-svh bg-ink" />;
-  if (!user) return <Login a={a} lang={lang} demo={auth.demo} onLogin={(u) => setAuth({ ...auth, user: u })} />;
+  if (!user) return <Login a={a} lang={lang} onLogin={(u) => setAuth({ ...auth, user: u })} />;
   if (!data) return <main className="flex min-h-svh items-center justify-center bg-paper text-muted">{a.loading}</main>;
 
   // Sede: un usuario de sede solo ve la suya (el servidor ya filtra); quien ve todas puede elegir

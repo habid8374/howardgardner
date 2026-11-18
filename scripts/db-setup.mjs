@@ -1,5 +1,5 @@
 // Prepara la base de datos (Neon): crea las tablas, el usuario del panel y, en la demo, los datos de ejemplo.
-// Uso:  node --env-file=.env.local scripts/db-setup.mjs <usuario> <contraseña> "<Nombre>" [--perfil=rectoria|coordinacion|consulta] [--sede=sede2] [--ejemplos]
+// Uso:  node --env-file=.env.local scripts/db-setup.mjs <usuario> <contraseña> "<Nombre>" [--perfil=rectoria|coordinacion|consulta] [--sede=sede2] [--superusuario] [--ejemplos]
 // Lo normal es crear y editar usuarios desde el panel (pestaña Usuarios); este script sirve para el primer usuario.
 // La contraseña se guarda cifrada (scrypt con sal); nunca en texto plano.
 import { readFile } from "node:fs/promises";
@@ -16,6 +16,7 @@ const PRESETS = {
   coordinacion: { admisiones: "gestionar", pqrsf: "gestionar", exportar: true, sedes: false, usuarios: false },
   consulta: { admisiones: "ver", pqrsf: "ver", exportar: false, sedes: false, usuarios: false },
 };
+const superuser = process.argv.includes("--superusuario"); // cuenta de soporte de Axentia
 const perfil = process.argv.find((a) => a.startsWith("--perfil="))?.split("=")[1] ?? (campus ? "coordinacion" : "rectoria");
 if (!PRESETS[perfil]) throw new Error("Perfil no válido: " + perfil);
 const withSamples = process.argv.includes("--ejemplos");
@@ -52,8 +53,9 @@ if (username && password) {
   const salt = randomBytes(16);
   const hash = `scrypt$${salt.toString("base64")}$${scryptSync(password.normalize("NFKC"), salt, 64).toString("base64")}`;
   const perms = JSON.stringify(PRESETS[perfil]);
-  await sql`INSERT INTO staff (username, name, pass_hash, role, campus, perms) VALUES (${username.toLowerCase()}, ${name}, ${hash}, ${role}, ${campus}, ${perms}::jsonb)
-    ON CONFLICT (username) DO UPDATE SET name = EXCLUDED.name, pass_hash = EXCLUDED.pass_hash, campus = EXCLUDED.campus, perms = EXCLUDED.perms, active = true`;
+  await sql`INSERT INTO staff (username, name, pass_hash, role, campus, perms, superuser) VALUES (${username.toLowerCase()}, ${name}, ${hash}, ${role}, ${superuser ? null : campus}, ${perms}::jsonb, ${superuser})
+    ON CONFLICT (username) DO UPDATE SET name = EXCLUDED.name, pass_hash = EXCLUDED.pass_hash, campus = EXCLUDED.campus, perms = EXCLUDED.perms, superuser = EXCLUDED.superuser, active = true`;
+  await sql`INSERT INTO audit_log (actor, action, target) VALUES ('script', ${superuser ? "superusuario_creado" : "usuario_creado"}, ${username.toLowerCase()})`;
   console.log(`✓ Usuario del panel: ${username.toLowerCase()} (${perfil}${campus ? `, solo ${campus}` : ", todas las sedes"})`);
 }
 

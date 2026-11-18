@@ -387,7 +387,7 @@ export const es = {
     privacy: "Política de Tratamiento de Datos",
     cookiePolicy: "Política de cookies",
     cookiePrefs: "Preferencias de cookies",
-    credit: "Sitio por",
+    credit: "Powered By",
     links: [
       { label: "Quiénes somos", page: "about" },
       { label: "Aprendizaje", page: "learning" },

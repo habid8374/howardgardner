@@ -3,6 +3,7 @@ import { audit, getCampus, sql } from "@/lib/server/db";
 import { hashPassword } from "@/lib/server/auth";
 import { clientIp, fail, json, requireStaff } from "@/lib/server/http";
 import { getStaff, listStaff, permsProblem } from "@/lib/server/settings";
+import { weakPassword } from "@/lib/server/password";
 
 /* Usuarios del panel (permiso: administrar usuarios). Nunca se devuelven contraseñas ni sus huellas. */
 export async function GET(req: Request) {
@@ -26,6 +27,7 @@ export async function POST(req: Request) {
     if (problem) return json({ error: problem }, 400);
     if (d.campus && !(await getCampus(d.campus))) return json({ error: "invalid", fields: ["campus"] }, 400);
     if (await getStaff(d.username)) return json({ error: "exists" }, 409);
+    if (weakPassword(d.password, d.username)) return json({ error: "weak_password", fields: ["password"] }, 400);
 
     const hash = await hashPassword(d.password);
     await sql`INSERT INTO staff (username, name, pass_hash, role, campus, perms, active)

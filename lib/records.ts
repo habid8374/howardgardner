@@ -297,10 +297,11 @@ export const pqrsfStore = {
 
 /* ── Sesión del panel: cookie segura emitida por el servidor ── */
 /** campus: null = ve todas las sedes; si tiene sede, solo ve y gestiona la suya. */
-export type StaffUser = { username: string; name: string; campus: CampusId | null; perms: Perms };
+export type StaffUser = { username: string; name: string; campus: CampusId | null; perms: Perms; superuser?: boolean };
 /** Usuario como lo ve quien administra usuarios */
 export type StaffRow = StaffUser & { active: boolean; lastLogin: string | null; createdAt: string };
 export type StaffInput = { username?: string; name: string; password?: string; campus: CampusId | null; perms: Perms; active: boolean };
+/* El nombre de usuario se puede cambiar al editar (`username` nuevo en el cuerpo). */
 export const session = {
   me: () => api<{ user: StaffUser | null; demo: boolean }>("/api/admin/sesion"),
   login: (username: string, password: string) =>

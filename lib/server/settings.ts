@@ -25,20 +25,20 @@ export async function upsertCampus(c: Campus, isNew: boolean) {
 /* ── Usuarios ── */
 type StaffDbRow = {
   username: string; name: string; campus: string | null; perms: Partial<Perms> | null; active: boolean;
-  last_login: string | Date | null; created_at: string | Date;
+  last_login: string | Date | null; created_at: string | Date; superuser: boolean;
 };
 const toRow = (r: StaffDbRow): StaffRow => ({
-  username: r.username, name: r.name, campus: r.campus ?? null, perms: { ...NO_PERMS, ...(r.perms ?? {}) }, active: r.active,
+  username: r.username, name: r.name, campus: r.campus ?? null, perms: { ...NO_PERMS, ...(r.perms ?? {}) }, active: r.active, superuser: r.superuser,
   lastLogin: r.last_login ? new Date(r.last_login).toISOString() : null, createdAt: new Date(r.created_at).toISOString(),
 });
 
 export async function listStaff(): Promise<StaffRow[]> {
-  const rows = (await sql`SELECT username, name, campus, perms, active, last_login, created_at FROM staff ORDER BY active DESC, name`) as StaffDbRow[];
+  const rows = (await sql`SELECT username, name, campus, perms, active, superuser, last_login, created_at FROM staff ORDER BY superuser DESC, active DESC, name`) as StaffDbRow[];
   return rows.map(toRow);
 }
 
 export async function getStaff(username: string): Promise<StaffRow | null> {
-  const rows = (await sql`SELECT username, name, campus, perms, active, last_login, created_at FROM staff WHERE username = ${username}`) as StaffDbRow[];
+  const rows = (await sql`SELECT username, name, campus, perms, active, superuser, last_login, created_at FROM staff WHERE username = ${username}`) as StaffDbRow[];
   return rows[0] ? toRow(rows[0]) : null;
 }
 

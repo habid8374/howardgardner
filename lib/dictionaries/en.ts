@@ -388,7 +388,7 @@ export const en: Dict = {
     privacy: "Personal Data Policy",
     cookiePolicy: "Cookie policy",
     cookiePrefs: "Cookie preferences",
-    credit: "Website by",
+    credit: "Powered By",
     links: [
       { label: "Who we are", page: "about" },
       { label: "Learning", page: "learning" },

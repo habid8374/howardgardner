@@ -14,7 +14,9 @@ En el código están marcados con `TODO(CLIENTE)`.
 - **Sedes:** pestaña *Sedes* del panel. Crear, editar, poner como Abierta, Próximamente u Oculta. El sitio se actualiza solo al guardar. Las sedes no se borran (se ocultan) para no perder su historial.
 - **Usuarios:** pestaña *Usuarios*. Perfiles Rectoría, Coordinación y Solo consulta, o permisos a la medida (ver / gestionar preinscripciones y PQRSF, descargar Excel, administrar sedes, administrar usuarios) y la sede que puede ver. Los usuarios no se borran: se desactivan.
 - Reglas en el servidor: quien administra sedes o usuarios ve todas las sedes; nadie se quita a sí mismo el acceso; siempre queda al menos un administrador de usuarios.
-- Demo: `demo` / `colegio2027` (rectoría) y `nuevasede` / `colegio2027` (coordinación de la nueva sede).
+- Superusuario de Axentia: `axentia` (clave entregada a Habid; no se guarda en el repositorio).
+- Demo: `demo` (rectoría) y `nuevasede` (coordinación de la nueva sede), con la clave de demostración. Ya no se muestra en la pantalla de acceso.
+- [ ] Antes de producción: desactivar `demo` y `nuevasede` desde la pestaña Usuarios.
 
 ### Nueva sede (datos solicitados al colegio)
 Se cargan desde el panel, pestaña *Sedes* → "Nueva sede":

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { KeyRound, Pencil, Plus, ShieldCheck, UserX } from "lucide-react";
+import { KeyRound, Lock, Pencil, Plus, ShieldCheck, UserX } from "lucide-react";
 import {
   ApiError, PERM_PRESETS, campusName, formatDate, staffApi, subscribeDemo,
   type Access, type Campus, type Perms, type StaffInput, type StaffRow, type StaffUser,
@@ -27,7 +27,7 @@ function genPassword() {
   return Array.from(buf, (n) => chars[n % chars.length]).join("").replace(/(.{5})(.{4})(.{5})/, "$1-$2-$3");
 }
 
-type Form = StaffInput & { username: string };
+type Form = StaffInput & { username: string; original?: string };
 
 export default function UsersPanel({ me, campuses, a: d, lang }: { me: StaffUser; campuses: Campus[]; a: AdminDict; lang: Lang }) {
   const s = d.settings;
@@ -52,7 +52,7 @@ export default function UsersPanel({ me, campuses, a: d, lang }: { me: StaffUser
   };
   const openEdit = (u: StaffRow) => {
     setError(null); setBad([]);
-    setEdit({ isNew: false, value: { username: u.username, name: u.name, password: "", campus: u.campus, perms: { ...u.perms }, active: u.active } });
+    setEdit({ isNew: false, value: { username: u.username, original: u.username, name: u.name, password: "", campus: u.campus, perms: { ...u.perms }, active: u.active } });
   };
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setEdit((e) => (e ? { ...e, value: { ...e.value, [k]: v } } : e));
   const setPerm = <K extends keyof Perms>(k: K, v: Perms[K]) =>
@@ -65,7 +65,7 @@ export default function UsersPanel({ me, campuses, a: d, lang }: { me: StaffUser
     const v = edit.value;
     try {
       if (edit.isNew) await staffApi.save(v);
-      else await staffApi.save({ name: v.name, password: v.password ?? "", campus: v.campus, perms: v.perms, active: v.active }, v.username);
+      else await staffApi.save({ username: v.username, name: v.name, password: v.password ?? "", campus: v.campus, perms: v.perms, active: v.active }, v.original);
       setEdit(null);
     } catch (err) {
       const code = err instanceof ApiError ? String(err.data.error ?? "") : "";
@@ -84,7 +84,7 @@ export default function UsersPanel({ me, campuses, a: d, lang }: { me: StaffUser
 
   const v = edit?.value;
   const preset = v ? presetOf(v.perms) : "custom";
-  const isSelf = !!v && !edit?.isNew && v.username === me.username;
+  const isSelf = !!v && !edit?.isNew && v.original === me.username;
   const adminPerm = !!v && (v.perms.sedes || v.perms.usuarios);
 
   return (
@@ -113,7 +113,7 @@ export default function UsersPanel({ me, campuses, a: d, lang }: { me: StaffUser
             {users?.map((u) => (
               <tr key={u.username} className={`border-t border-line ${u.active ? "" : "opacity-60"}`}>
                 <td className="px-4 py-3">
-                  <p className="font-semibold">{u.name}{u.username === me.username && <span className="ml-2 text-xs font-normal text-muted">({s.u.you})</span>}</p>
+                  <p className="font-semibold">{u.name}{u.username === me.username && <span className="ml-2 text-xs font-normal text-muted">({s.u.you})</span>}{u.superuser && <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-navy px-2 py-0.5 text-[11px] font-bold text-white" title={s.u.superuserHelp}><Lock size={11} aria-hidden /> {s.u.superuser}</span>}</p>
                   <p className="font-mono text-xs text-muted">{u.username}</p>
                 </td>
                 <td className="px-4 py-3">{cName(u.campus)}</td>
@@ -126,9 +126,13 @@ export default function UsersPanel({ me, campuses, a: d, lang }: { me: StaffUser
                 </td>
                 <td className="px-4 py-3 text-muted">{u.lastLogin ? formatDate(u.lastLogin, lang, true) : s.u.never}</td>
                 <td className="px-4 py-3 text-right">
-                  <button type="button" onClick={() => openEdit(u)} className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 font-semibold text-navy hover:bg-paper-2">
-                    <Pencil size={14} aria-hidden /> {s.editUser}
-                  </button>
+                  {u.superuser && !me.superuser ? (
+                    <span className="inline-flex min-h-11 items-center gap-2 px-3 text-xs text-muted" title={s.u.superuserHelp}><Lock size={14} aria-hidden /> {s.u.superuser}</span>
+                  ) : (
+                    <button type="button" onClick={() => openEdit(u)} className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 font-semibold text-navy hover:bg-paper-2">
+                      <Pencil size={14} aria-hidden /> {s.editUser}
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
@@ -147,7 +151,7 @@ export default function UsersPanel({ me, campuses, a: d, lang }: { me: StaffUser
               <label className="block">
                 <span className="text-sm font-semibold">{s.u.username}</span>
                 <input
-                  value={v.username} disabled={!edit.isNew} autoCapitalize="none" autoComplete="off" maxLength={40}
+                  value={v.username} autoCapitalize="none" autoComplete="off" maxLength={40}
                   onChange={(e) => set("username", e.target.value.toLowerCase().replace(/[^a-z0-9._-]/g, ""))}
                   aria-invalid={bad.includes("username")} className={`${input} mt-2 font-mono disabled:opacity-60 ${bad.includes("username") ? "!border-red-600" : ""}`}
                 />

@@ -58,9 +58,10 @@ export default function Footer({ lang, t }: { lang: Lang; t: Dict }) {
             <LockKeyhole size={16} aria-hidden /> {f.admin}
           </Link>
           <a href="https://axentiatechnologies.com" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 text-white/55 transition-colors hover:text-white">
+            {f.credit}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/axentia_icon_solo_A.ico" alt="" width={18} height={18} />
-            {f.credit} <strong className="font-semibold text-white/80">Axentia Technologies</strong>
+            <strong className="font-semibold text-white/80">Axentia Technologies</strong>
           </a>
         </div>
       </div>

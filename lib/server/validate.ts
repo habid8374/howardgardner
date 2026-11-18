@@ -89,7 +89,7 @@ export const campusInput = z.object({
   notifyEmail: opt(254).refine((v) => v === "" || z.email().safeParse(v).success),
   noteEs: opt(400), noteEn: opt(400),
   sort: z.number().int().min(0).max(99).default(0),
-});
+}).strict();
 
 const access = z.enum(["none", "ver", "gestionar"]);
 export const permsInput = z.object({
@@ -105,11 +105,12 @@ export const staffCreate = z.object({
   campus: campus.nullable(),
   perms: permsInput,
   active: z.boolean().default(true),
-});
+}).strict(); // campos no previstos (p. ej. "superuser") se rechazan: sin asignación masiva
 export const staffUpdate = z.object({
+  username: z.string().trim().toLowerCase().regex(/^[a-z0-9._-]{3,40}$/).optional(),
   name: text(80, 3),
   password: z.union([password, z.literal("")]).optional(),
   campus: campus.nullable(),
   perms: permsInput,
   active: z.boolean(),
-});
+}).strict();

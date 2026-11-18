@@ -36,13 +36,13 @@ export async function verifyPassword(pw: string, stored: string) {
 /* Hash de relleno: un usuario inexistente tarda lo mismo que uno real (no revela qué usuarios existen). */
 const DUMMY = "scrypt$AAAAAAAAAAAAAAAAAAAAAA==$" + Buffer.alloc(64).toString("base64");
 
-type StaffDb = { username: string; name: string; campus: string | null; perms: Partial<Perms> | null; active: boolean; pass_hash: string };
+type StaffDb = { username: string; name: string; campus: string | null; perms: Partial<Perms> | null; active: boolean; superuser: boolean; session_version: number; pass_hash: string };
 const toUser = (r: Omit<StaffDb, "pass_hash">): StaffUser => ({
-  username: r.username, name: r.name, campus: r.campus ?? null, perms: { ...NO_PERMS, ...(r.perms ?? {}) },
+  username: r.username, name: r.name, campus: r.campus ?? null, perms: { ...NO_PERMS, ...(r.perms ?? {}) }, superuser: !!r.superuser,
 });
 
 export async function checkLogin(username: string, password: string): Promise<StaffUser | null> {
-  const rows = (await sql`SELECT username, name, campus, perms, active, pass_hash FROM staff WHERE username = ${username}`) as StaffDb[];
+  const rows = (await sql`SELECT username, name, campus, perms, active, superuser, session_version, pass_hash FROM staff WHERE username = ${username}`) as StaffDb[];
   const row = rows[0];
   const ok = await verifyPassword(password, row?.pass_hash ?? DUMMY);
   if (!ok || !row || !row.active) return null; // usuario desactivado: no entra
@@ -53,8 +53,11 @@ export async function checkLogin(username: string, password: string): Promise<St
 const sign = (payload: string) => createHmac("sha256", secret()).update(payload).digest("base64url");
 
 export async function startSession(user: StaffUser) {
+  // La versión de sesión del usuario va firmada dentro de la cookie: si cambia, la cookie deja de servir
+  const rows = (await sql`SELECT session_version FROM staff WHERE username = ${user.username}`) as { session_version: number }[];
+  const v = rows[0]?.session_version ?? 1;
   const payload = Buffer.from(
-    JSON.stringify({ u: user.username, exp: Math.floor(Date.now() / 1000) + TTL_S, n: randomBytes(8).toString("hex") })
+    JSON.stringify({ u: user.username, v, exp: Math.floor(Date.now() / 1000) + TTL_S, n: randomBytes(8).toString("hex") })
   ).toString("base64url");
   (await cookies()).set(COOKIE, `${payload}.${sign(payload)}`, {
     httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "strict", path: "/", maxAge: TTL_S,
@@ -74,10 +77,13 @@ export async function currentUser(): Promise<StaffUser | null> {
   const expected = Buffer.from(sign(payload));
   const given = Buffer.from(mac);
   if (expected.length !== given.length || !timingSafeEqual(expected, given)) return null;
-  let data: { u?: string; exp?: number };
+  let data: { u?: string; v?: number; exp?: number };
   try { data = JSON.parse(Buffer.from(payload, "base64url").toString()); } catch { return null; }
   if (!data.u || !data.exp || data.exp < Date.now() / 1000) return null;
   // Se vuelve a leer el usuario: si lo desactivan o le cambian permisos, aplica en la siguiente petición
-  const rows = (await sql`SELECT username, name, campus, perms, active FROM staff WHERE username = ${data.u}`) as Omit<StaffDb, "pass_hash">[];
-  return rows[0]?.active ? toUser(rows[0]) : null;
+  const rows = (await sql`SELECT username, name, campus, perms, active, superuser, session_version FROM staff WHERE username = ${data.u}`) as Omit<StaffDb, "pass_hash">[];
+  const row = rows[0];
+  // Cuenta desactivada, o clave / usuario cambiados después de iniciar sesión: la sesión ya no vale
+  if (!row?.active || row.session_version !== (data.v ?? 1)) return null;
+  return toUser(row);
 }

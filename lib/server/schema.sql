@@ -103,3 +103,11 @@ ALTER TABLE staff ADD COLUMN IF NOT EXISTS perms jsonb NOT NULL DEFAULT '{}';
 ALTER TABLE staff ADD COLUMN IF NOT EXISTS active boolean NOT NULL DEFAULT true;
 ALTER TABLE staff ADD COLUMN IF NOT EXISTS updated_at timestamptz NOT NULL DEFAULT now();
 ALTER TABLE staff ADD COLUMN IF NOT EXISTS last_login timestamptz
+;
+
+-- Superusuario (soporte de Axentia): solo otro superusuario puede editarlo o desactivarlo
+ALTER TABLE staff ADD COLUMN IF NOT EXISTS superuser boolean NOT NULL DEFAULT false
+;
+
+-- Versión de sesión: al cambiar la clave, el usuario o desactivar la cuenta, se cierran todas sus sesiones abiertas
+ALTER TABLE staff ADD COLUMN IF NOT EXISTS session_version integer NOT NULL DEFAULT 1
