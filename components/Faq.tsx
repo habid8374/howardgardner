@@ -18,11 +18,19 @@ export const faqs = [
     a: "Sí. Somos la única institución bilingüe de Sabanalarga y el inglés hace parte de la formación desde preescolar.",
   },
   {
-    q: "¿Cómo les fue en las Pruebas Saber 11° 2025?",
-    a: "Obtuvimos el primer lugar del municipio con 297 puntos de puntaje global y categoría A+ en el Ranking Milton Ochoa 2025. Quedamos en el puesto 74 de 542 instituciones del Atlántico.",
+    q: "¿Qué significa que el colegio sea A+?",
+    a: "Estar en la categoría A+ según el ICFES significa que la institución (no un estudiante de forma individual) se encuentra en el nivel de desempeño más alto de todo el país en las Pruebas Saber 11°. Somos el único colegio de Sabanalarga en esta categoría según el Índice de Clasificación del ICFES 2026.",
   },
   {
-    q: "¿Cómo inscribo a mi hijo o hija para 2026?",
+    q: "¿Cómo les ha ido en las Pruebas Saber 11°?",
+    a: "En el Índice de Clasificación del ICFES 2026 ocupamos el primer puesto de Sabanalarga y el puesto 88 entre 553 instituciones del Atlántico. En 2026 también ocupamos el puesto 71 entre 540 colegios evaluados del departamento. En 2025 fuimos primeros del municipio con 297 puntos de puntaje global.",
+  },
+  {
+    q: "¿Qué es Oxford Quality?",
+    a: "Oficialmente formamos parte de Oxford Quality, en alianza con Oxford University Press. Para nuestros estudiantes significa aprender inglés con recursos confiables de calidad internacional.",
+  },
+  {
+    q: "¿Cómo inscribo a mi hijo o hija para 2027?",
     a: `Escríbenos por WhatsApp o llámanos al ${PHONE_DISPLAY}. Te contamos los requisitos, los costos y agendamos una visita al colegio.`,
   },
   {

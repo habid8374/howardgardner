@@ -44,8 +44,9 @@ export default function Hero() {
             data-enter
             style={{ "--d": "140ms", "--rise": "12px" } as React.CSSProperties}
           >
-            Primer lugar municipal en las Pruebas Saber 11° 2025, con 297 puntos y
-            categoría A+. Formamos niños y jóvenes en español e inglés desde preescolar.
+            Único colegio de Sabanalarga en categoría A+ según el Índice de Clasificación
+            del ICFES 2026. Hace 16 años formamos niños y jóvenes en español e inglés,
+            desde preescolar hasta grado 11°.
           </p>
 
           <div
@@ -57,7 +58,7 @@ export default function Hero() {
               <MessageCircle size={18} aria-hidden /> Agendar una visita
             </a>
             <a href="#admisiones" className="btn btn-ghost">
-              Ver inscripciones 2026
+              Inscripciones 2027
             </a>
           </div>
 
@@ -67,9 +68,9 @@ export default function Hero() {
             style={{ "--d": "260ms", "--rise": "6px" } as React.CSSProperties}
           >
             {[
-              ["297", "puntaje global ICFES"],
-              ["A+", "Milton Ochoa 2025"],
-              ["74°", "de 542 en el Atlántico"],
+              ["A+", "categoría ICFES 2026"],
+              ["#1", "en Sabanalarga"],
+              ["16", "años educando"],
             ].map(([n, l]) => (
               <div key={l}>
                 <dt className="sr-only">{l}</dt>

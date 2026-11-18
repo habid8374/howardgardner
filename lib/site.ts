@@ -46,7 +46,7 @@ export function waLink(message: string) {
 }
 
 export const WA_ADMISIONES = waLink(
-  "Hola, quiero información sobre inscripciones 2026 en Howard Gardner Bilingual School."
+  "Hola, quiero información sobre inscripciones 2027 en Howard Gardner Bilingual School."
 );
 export const WA_VISITA = waLink(
   "Hola, quiero agendar una visita al colegio Howard Gardner Bilingual School."

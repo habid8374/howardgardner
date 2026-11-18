@@ -6,7 +6,7 @@ import { MessageCircle, Phone } from "lucide-react";
 import { TEL_HREF, PHONE_DISPLAY, waLink } from "@/lib/site";
 
 /* TODO(CLIENTE): confirmar pasos reales del proceso de admisión,
-   documentos requeridos y fechas de inscripción 2026. */
+   documentos requeridos y fechas de inscripción 2027. */
 const steps = [
   { t: "Escríbenos", d: "Cuéntanos el grado al que aspira tu hijo o hija por WhatsApp o con este formulario." },
   { t: "Visita el colegio", d: "Agendamos un recorrido para que conozcas las instalaciones y al equipo." },
@@ -41,7 +41,7 @@ export default function Admissions() {
     if (Object.keys(next).length) return;
 
     const text =
-      `Hola, quiero información de inscripciones 2026.\n` +
+      `Hola, quiero información de inscripciones y matrículas 2027.\n` +
       `Nombre: ${nombre}\nTeléfono: ${telefono}\nGrado de interés: ${grado}` +
       (mensaje ? `\nMensaje: ${mensaje}` : "") +
       `\n(Autorizo el tratamiento de mis datos según la política del colegio.)`;
@@ -55,8 +55,8 @@ export default function Admissions() {
     <section id="admisiones" className="section bg-ink text-white">
       <div className="wrap grid grid-cols-1 gap-14 lg:grid-cols-[1fr_1fr] lg:gap-20">
         <div>
-          <p className="eyebrow text-gold">Admisiones 2026</p>
-          <h2 className="h-section mt-5">Inscripciones abiertas para todos los grados.</h2>
+          <p className="eyebrow text-gold">Inscripciones y matrículas 2027</p>
+          <h2 className="h-section mt-5">Inscripciones y matrículas abiertas para 2027.</h2>
           <p className="lead mt-6 max-w-lg text-white/75">
             De Prejardín a grado 11°. Te respondemos por WhatsApp en horario de atención.
           </p>

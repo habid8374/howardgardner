@@ -7,7 +7,7 @@ const links = [
   { href: "/#niveles", label: "Niveles" },
   { href: "/#bilinguismo", label: "Bilingüismo" },
   { href: "/#pedagogia", label: "Pedagogía" },
-  { href: "/#admisiones", label: "Admisiones 2026" },
+  { href: "/#admisiones", label: "Admisiones 2027" },
   { href: "/#preguntas", label: "Preguntas frecuentes" },
 ];
 

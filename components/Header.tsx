@@ -90,7 +90,7 @@ export default function Header() {
             rel="noopener noreferrer"
             className="btn btn-primary hidden !min-h-11 !px-5 !text-sm sm:inline-flex"
           >
-            Inscripciones 2026
+            Inscripciones 2027
           </a>
           <button
             type="button"
@@ -131,7 +131,7 @@ export default function Header() {
 
           <div className="mt-auto flex flex-col gap-3">
             <a href={WA_ADMISIONES} target="_blank" rel="noopener noreferrer" className="btn btn-primary w-full">
-              Inscripciones 2026 por WhatsApp
+              Inscripciones 2027 por WhatsApp
             </a>
             <a href={TEL_HREF} className="btn btn-ghost w-full">
               <Phone size={18} aria-hidden /> Llamar al {PHONE_DISPLAY}

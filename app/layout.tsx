@@ -21,7 +21,7 @@ const manrope = Manrope({
 });
 
 const DESCRIPTION =
-  "Colegio bilingüe en Sabanalarga, Atlántico, de preescolar a grado 11°. Primer lugar municipal en las Pruebas Saber 11° 2025 con 297 puntos y categoría A+. Inscripciones 2026 abiertas.";
+  "Colegio bilingüe en Sabanalarga, Atlántico, de preescolar a grado 11°. Único colegio A+ de Sabanalarga y primero del municipio en el Índice de Clasificación del ICFES 2026. Colegio Oxford Quality. Inscripciones y matrículas 2027 abiertas.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -34,9 +34,11 @@ export const metadata: Metadata = {
     "colegio bilingüe sabanalarga",
     "howard gardner sabanalarga",
     "mejor colegio sabanalarga",
-    "icfes 2025 atlántico",
+    "icfes 2026 atlántico",
     "colegio bilingüe atlántico",
-    "inscripciones 2026 sabanalarga",
+    "inscripciones 2027 sabanalarga",
+    "colegio a+ sabanalarga",
+    "oxford quality sabanalarga",
     "preescolar bilingüe sabanalarga",
   ],
   authors: [{ name: SITE_NAME }],
@@ -47,7 +49,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
   icons: { icon: "/favicon_256.png", apple: "/favicon_256.png" },
   openGraph: {
-    title: "Howard Gardner Bilingual School · #1 ICFES en Sabanalarga 2025",
+    title: "Howard Gardner Bilingual School · Único colegio A+ de Sabanalarga",
     description: DESCRIPTION,
     url: SITE_URL,
     siteName: SITE_NAME,
@@ -57,7 +59,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Howard Gardner Bilingual School · #1 ICFES en Sabanalarga 2025",
+    title: "Howard Gardner Bilingual School · Único colegio A+ de Sabanalarga",
     description: DESCRIPTION,
     images: ["/patio.jpg"],
   },
@@ -99,8 +101,10 @@ const jsonLd = {
   areaServed: "Sabanalarga, Atlántico, Colombia",
   sameAs: [SOCIAL.instagram, SOCIAL.facebook],
   award: [
+    "Categoría A+ Índice de Clasificación ICFES 2026 (único en Sabanalarga)",
+    "Primer puesto municipal Índice de Clasificación ICFES 2026",
     "Primer lugar municipal Pruebas Saber 11° 2025 (297 puntos)",
-    "Categoría A+ Ranking Milton Ochoa 2025",
+    "Oxford Quality (Oxford University Press)",
   ],
   hoursAvailable: HOURS,
 };
