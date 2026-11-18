@@ -40,6 +40,7 @@ export default function Footer({ lang, t }: { lang: Lang; t: Dict }) {
               <li><a href={SOCIAL.instagram} target="_blank" rel="noopener noreferrer" className="link inline-flex min-h-11 items-center">Instagram</a></li>
               <li><a href={SOCIAL.facebook} target="_blank" rel="noopener noreferrer" className="link inline-flex min-h-11 items-center">Facebook</a></li>
               <li><Link href={href(lang, "privacy")} className="link inline-flex min-h-11 items-center">{f.privacy}</Link></li>
+              <li><Link href="/admin" prefetch={false} className="link inline-flex min-h-11 items-center text-white/50">{f.admin}</Link></li>
             </ul>
           </div>
         </div>

@@ -2,22 +2,25 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { MessageCircle, Phone } from "lucide-react";
+import { CheckCircle2, MessageCircle, Phone, Send } from "lucide-react";
+import DemoNote from "./DemoNote";
+import { admissionsStore, type Admission } from "@/lib/demo-store";
 import { TEL_HREF, PHONE_DISPLAY, waLink } from "@/lib/site";
 import { href, type Lang } from "@/lib/i18n";
 import type { Dict } from "@/lib/dictionaries";
 
 /* Proceso de admisión + preinscripción.
-   Etapa actual: la preinscripción se envía por WhatsApp.
-   Siguiente etapa: guardar en base de datos y mostrar en el panel del colegio.
+   Demo: la preinscripción se guarda en el navegador (lib/demo-store.ts) y aparece
+   en el panel del colegio (/admin). En producción se guardará en una base de datos.
    TODO(CLIENTE): confirmar pasos reales, documentos requeridos y fechas 2027. */
 
 type Errors = Partial<Record<"name" | "phone" | "grade" | "consent", string>>;
 
-export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "admissions"> }) {
+export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "admissions" | "demo"> }) {
   const a = t.admissions;
   const f = a.form;
   const [errors, setErrors] = useState<Errors>({});
+  const [sent, setSent] = useState<Admission | null>(null);
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -40,12 +43,14 @@ export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "adm
       return;
     }
 
-    const text =
-      `${f.waIntro}\n${f.waName}: ${name}\n${f.waPhone}: ${phone}\n${f.waGrade}: ${grade}` +
-      (message ? `\n${f.waMessage}: ${message}` : "") +
-      `\n${f.waConsent}`;
-    window.open(waLink(text), "_blank", "noopener,noreferrer");
+    setSent(admissionsStore.add({ lang, guardian: name, phone, grade, message }));
+    requestAnimationFrame(() => document.getElementById("preinscripcion")?.scrollIntoView({ block: "start" }));
   }
+
+  const waText = (r: Admission) =>
+    `${f.waIntro}\n${f.waNumber}: ${r.id}\n${f.waName}: ${r.guardian}\n${f.waPhone}: ${r.phone}\n${f.waGrade}: ${r.grade}` +
+    (r.message ? `\n${f.waMessage}: ${r.message}` : "") +
+    `\n${f.waConsent}`;
 
   const field =
     "mt-2 block w-full min-h-12 rounded-xl border border-ink/20 bg-white px-4 text-base text-ink outline-none transition-[border-color,box-shadow] duration-200 focus:border-navy focus:shadow-[0_0_0_3px_rgba(18,36,90,0.15)]";
@@ -76,6 +81,23 @@ export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "adm
           </a>
         </div>
 
+        {sent ? (
+          <div id="preinscripcion" role="status" className="scroll-mt-24 rounded-[28px] bg-paper p-6 text-ink sm:p-10">
+            <CheckCircle2 size={40} className="text-[#1fa855]" aria-hidden />
+            <h3 className="h-display mt-5 text-[1.9rem]">{f.successTitle}</h3>
+            <p className="mt-6 text-sm font-semibold uppercase tracking-[0.14em] text-muted">{f.successNumber}</p>
+            <p className="h-display mt-1 text-[2.4rem] text-navy">{sent.id}</p>
+            <p className="mt-4 text-muted">{f.successBody}</p>
+            <div className="mt-8 flex flex-col gap-3">
+              <a href={waLink(waText(sent))} target="_blank" rel="noopener noreferrer" className="btn btn-primary w-full">
+                <MessageCircle size={18} aria-hidden /> {f.continueWa}
+              </a>
+              <button type="button" onClick={() => setSent(null)} className="btn btn-ghost on-light w-full text-ink">
+                {f.another}
+              </button>
+            </div>
+          </div>
+        ) : (
         <form
           id="preinscripcion"
           onSubmit={onSubmit}
@@ -85,6 +107,7 @@ export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "adm
         >
           <h3 id="form-titulo" className="h-display text-[1.9rem]">{f.title}</h3>
           <p className="mt-2 text-muted">{f.lead}</p>
+          <DemoNote text={t.demo.note} badge={t.demo.badge} />
 
           <div className="mt-8 flex flex-col gap-5">
             <div>
@@ -127,10 +150,11 @@ export default function Admissions({ lang, t }: { lang: Lang; t: Pick<Dict, "adm
             </div>
 
             <button type="submit" className="btn btn-primary mt-2 w-full">
-              <MessageCircle size={18} aria-hidden /> {f.submit}
+              <Send size={18} aria-hidden /> {f.submit}
             </button>
           </div>
         </form>
+        )}
       </div>
     </section>
   );

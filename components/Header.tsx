@@ -24,25 +24,20 @@ function LangSwitch({ lang, t, variant }: Props & { variant: "bar" | "menu" }) {
   const langs: Lang[] = ["es", "en"];
 
   if (variant === "bar") {
+    // Un solo botón con el otro idioma: ocupa poco y es el patrón más reconocible.
+    const other: Lang = lang === "es" ? "en" : "es";
     return (
-      <div role="group" aria-label={t.common.language} className="flex items-center rounded-full border border-white/20 p-0.5 text-xs font-bold">
-        {langs.map((l) => (
-          <Link
-            key={l}
-            href={href(l, page)}
-            hrefLang={l}
-            lang={l}
-            onClick={() => rememberLang(l)}
-            aria-current={l === lang ? "true" : undefined}
-            aria-label={t.common.langNames[l]}
-            className={`inline-flex h-9 min-w-10 items-center justify-center rounded-full px-2.5 uppercase tracking-wider transition-colors ${
-              l === lang ? "bg-white text-ink" : "text-white/75 hover:text-white"
-            }`}
-          >
-            {l}
-          </Link>
-        ))}
-      </div>
+      <Link
+        href={href(other, page)}
+        hrefLang={other}
+        lang={other}
+        onClick={() => rememberLang(other)}
+        aria-label={`${t.common.language}: ${t.common.langNames[other]}`}
+        title={t.common.langNames[other]}
+        className="inline-flex h-11 items-center gap-1.5 rounded-full border border-white/20 px-3.5 text-xs font-bold uppercase tracking-wider text-white/85 transition-colors hover:border-white/40 hover:text-white"
+      >
+        <Globe size={15} aria-hidden /> {other}
+      </Link>
     );
   }
 
@@ -82,7 +77,7 @@ function DesktopGroup({
         <Link
           href={href(lang, group.page)}
           aria-current={active ? "page" : undefined}
-          className={`link inline-flex min-h-11 items-center px-3 text-[0.93rem] font-medium transition-colors hover:text-white ${active ? "text-white" : "text-white/80"}`}
+          className={`link inline-flex min-h-11 items-center whitespace-nowrap px-2.5 text-[0.93rem] 2xl:px-3 font-medium transition-colors hover:text-white ${active ? "text-white" : "text-white/80"}`}
         >
           {group.label}
         </Link>
@@ -101,7 +96,7 @@ function DesktopGroup({
         aria-expanded={open}
         aria-controls={id}
         onClick={onToggle}
-        className={`inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-[0.93rem] font-medium transition-colors hover:text-white ${
+        className={`inline-flex min-h-11 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 text-[0.93rem] 2xl:px-3 font-medium transition-colors hover:text-white ${
           open || active ? "text-white" : "text-white/80"
         }`}
       >
@@ -282,7 +277,7 @@ export default function Header({ lang, t }: Props) {
         transition: "background-color 250ms ease, box-shadow 250ms ease",
       }}
     >
-      <div className="wrap flex h-[76px] items-center gap-6">
+      <div className="wrap flex h-[76px] items-center gap-4 xl:max-w-[1360px] xl:px-8 2xl:gap-6">
         <Link href={href(lang, "home")} className="flex min-h-11 flex-none items-center gap-3" aria-label={`${t.common.home}: Howard Gardner Bilingual School`}>
           <Image src="/howard_gardner_logo_sin_fondo.png" alt="" width={44} height={42} className="h-11 w-auto" />
           <span className="flex flex-col whitespace-nowrap leading-none">
@@ -308,7 +303,7 @@ export default function Header({ lang, t }: Props) {
           </ul>
         </nav>
 
-        <div className="ml-auto flex flex-none items-center gap-3 xl:ml-0">
+        <div className="ml-auto flex flex-none items-center gap-2.5 xl:ml-0">
           <div className="hidden md:block">
             <LangSwitch lang={lang} t={t} variant="bar" />
           </div>

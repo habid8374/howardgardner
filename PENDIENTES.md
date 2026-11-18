@@ -30,11 +30,17 @@ En el código están marcados con `TODO(CLIENTE)`.
 - [ ] Confirmar equivalencias de grados en inglés: Prejardín = Pre-K 3, Jardín = Pre-K 4, Transición = Kindergarten.
 - [ ] (Opcional) Versiones en inglés de las piezas de redes; hoy se muestran en español con descripción traducida.
 
-## Siguiente etapa (aprobada): admisiones y PQRSF con panel
-- [ ] Dominio propio (necesario para enviar correos automáticos).
-- [ ] Crear el proyecto de Supabase (base de datos, archivos y acceso al panel).
-- [ ] Nombres y correos del personal que usará el panel, y roles.
+## Demo de admisiones, PQRSF y panel (hecha, solo para mostrar)
+Funciona en Vercel sin base de datos: los envíos se guardan **solo en el navegador** de quien prueba (`lib/demo-store.ts`).
+- Panel: `/admin` · clave de demostración `colegio2027` (no es seguridad real).
+- Para presentarla: enviar el formulario y abrir el panel en el mismo navegador.
+
+Para pasar a producción hace falta:
+- [ ] Dominio propio (para correos automáticos de confirmación).
+- [ ] Base de datos y archivos con acceso protegido (p. ej. Supabase), usuarios por persona y roles.
+- [ ] Nombres y correos del personal que usará el panel.
 - [ ] Documentos requeridos por grado, edades de ingreso y responsable de responder PQRSF.
+- [ ] Validar con el abogado los plazos de respuesta de PQRSF (hoy: 15 días hábiles de referencia).
 
 ## Legal
 - [ ] Validar la **Política de Tratamiento de Datos** con el área jurídica del colegio y añadir la fecha de vigencia. `app/politica-de-datos/page.tsx`

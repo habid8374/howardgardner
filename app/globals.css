@@ -147,4 +147,11 @@ dialog.lightbox[open] { animation: lb-in 220ms var(--ease-out); }
 @keyframes lb-in { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: none; } }
 
 /* Barra de acción fija en celular: reserva espacio para no tapar el pie */
-@media (max-width: 767px) { body { padding-bottom: 76px; } }
+@media (max-width: 767px) { body:not(.admin-body) { padding-bottom: 76px; } }
+
+/* ── Panel del colegio: cajón lateral ── */
+dialog.admin-drawer { inset: 0 0 0 auto; border: 0; box-shadow: -24px 0 60px -20px rgba(12,22,49,0.35); }
+dialog.admin-drawer::backdrop { background: rgba(8, 14, 32, 0.45); }
+dialog.admin-drawer[open] { animation: drawer-in 280ms var(--ease-drawer); }
+@keyframes drawer-in { from { transform: translateX(100%); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { dialog.admin-drawer[open] { animation: enter-fade 200ms ease; } }

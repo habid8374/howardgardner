@@ -20,6 +20,7 @@ function preferredLang(request: NextRequest) {
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   if (LOCALES.some((l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`))) return;
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) return; // panel del colegio, solo en español
 
   const url = request.nextUrl.clone();
   url.pathname = LEGACY[pathname] ?? `/${preferredLang(request)}${pathname === "/" ? "" : pathname}`;

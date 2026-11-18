@@ -11,6 +11,7 @@ import Admissions from "@/components/Admissions";
 import Faq from "@/components/Faq";
 import Visit from "@/components/Visit";
 import Privacy from "@/components/Privacy";
+import Pqrsf from "@/components/Pqrsf";
 import { LOCALES, PAGES, SUBPAGES, isLang, pageFromSlug, type Lang } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionaries";
 import { pageMetadata } from "@/lib/seo";
@@ -66,7 +67,7 @@ export default async function SubPage({ params }: PageProps<"/[lang]/[page]">) {
       return (
         <>
           <PageHeader {...t.pageHeaders.admissions} />
-          <Admissions lang={lang} t={{ admissions: t.admissions }} />
+          <Admissions lang={lang} t={{ admissions: t.admissions, demo: t.demo }} />
           <Faq t={t} />
         </>
       );
@@ -75,6 +76,13 @@ export default async function SubPage({ params }: PageProps<"/[lang]/[page]">) {
         <>
           <PageHeader {...t.pageHeaders.contact} />
           <Visit t={t} />
+        </>
+      );
+    case "pqrsf":
+      return (
+        <>
+          <PageHeader {...t.pageHeaders.pqrsf} />
+          <Pqrsf lang={lang} t={{ pqrsf: t.pqrsf, demo: t.demo, grades: t.admissions.form.grades }} />
         </>
       );
     case "privacy":

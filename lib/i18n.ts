@@ -16,6 +16,7 @@ export const PAGES = {
   achievements: { es: "reconocimientos", en: "achievements" },
   admissions: { es: "admisiones", en: "admissions" },
   contact: { es: "contacto", en: "contact" },
+  pqrsf: { es: "pqrsf", en: "requests" },
   privacy: { es: "politica-de-datos", en: "privacy-policy" },
 } as const;
 
