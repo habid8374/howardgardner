@@ -5,10 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown, Globe, Menu, MessageSquareText, Phone, X } from "lucide-react";
-import { WhatsAppIcon } from "./BrandIcons";
 import { href, pageFromPath, type Lang } from "@/lib/i18n";
 import type { Dict, NavGroup } from "@/lib/dictionaries";
-import { PHONE_DISPLAY, TEL_HREF, waLink } from "@/lib/site";
+import { PHONE_DISPLAY, TEL_HREF } from "@/lib/site";
 
 type Props = { lang: Lang; t: Pick<Dict, "nav" | "common" | "wa"> };
 
@@ -265,7 +264,6 @@ export default function Header({ lang, t }: Props) {
   }, [mobileOpen]);
 
   const solid = scrolled || mobileOpen || currentPage !== "home";
-  const waAdmissions = waLink(t.wa.admissions);
 
   return (
     <header
@@ -316,9 +314,9 @@ export default function Header({ lang, t }: Props) {
           <div className="hidden md:block">
             <LangSwitch lang={lang} t={t} variant="bar" />
           </div>
-          <a href={waAdmissions} target="_blank" rel="noopener noreferrer" className="btn btn-primary hidden !min-h-11 !px-5 !text-sm sm:inline-flex">
+          <Link href={href(lang, "admissions", "preinscripcion")} className="btn btn-primary hidden !min-h-11 !px-5 !text-sm sm:inline-flex">
             {t.common.enroll}
-          </a>
+          </Link>
           <button
             type="button"
             className="-mr-2 inline-flex h-12 w-12 items-center justify-center rounded-full transition-colors hover:bg-white/10 xl:hidden"
@@ -356,9 +354,9 @@ export default function Header({ lang, t }: Props) {
             <Link href={href(lang, "pqrsf")} onClick={closeAll} className="btn w-full !whitespace-normal border-[1.5px] border-gold py-2 text-center leading-snug text-gold">
               <MessageSquareText size={18} aria-hidden /> {t.common.pqrsfLong}
             </Link>
-            <a href={waAdmissions} target="_blank" rel="noopener noreferrer" className="btn btn-primary w-full">
-              <WhatsAppIcon size={18} /> {t.common.enroll}
-            </a>
+            <Link href={href(lang, "admissions", "preinscripcion")} onClick={closeAll} className="btn btn-primary w-full">
+              {t.common.enroll}
+            </Link>
             <a href={TEL_HREF} className="btn btn-ghost w-full">
               <Phone size={18} aria-hidden /> {t.common.call} · {PHONE_DISPLAY}
             </a>

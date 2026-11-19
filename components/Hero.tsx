@@ -8,7 +8,7 @@ import HeroCarousel, { type HeroSlide } from "./HeroCarousel";
 export default function Hero({ lang, t }: { lang: Lang; t: Dict }) {
   const h = t.hero;
   const [enroll, family, aPlus, oxford] = h.slides;
-  const enrollHref = href(lang, "admissions");
+  const enrollHref = href(lang, "admissions", "preinscripcion");
 
   const slides: HeroSlide[] = [
     {
