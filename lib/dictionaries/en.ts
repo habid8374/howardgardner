@@ -510,7 +510,7 @@ export const en: Dict = {
     urgent: "It's urgent: it affects the student's safety, health or well-being.",
     urgentHelp: "Urgent requests get high priority and are answered within 5 business days at the latest.",
     attachment: "Attachment (optional)",
-    attachmentHelp: "PDF or image. In this demo only the file name is saved.",
+    attachmentHelp: "PDF or image (JPG, PNG, WEBP), 5 MB max.",
     consent: ["I authorize the processing of my personal data under the ", "Personal Data Policy", " (Colombian Law 1581 of 2012)."],
     submit: "Submit request",
     errors: {

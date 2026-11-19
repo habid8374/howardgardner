@@ -3,13 +3,13 @@ import { Fraunces, Manrope } from "next/font/google";
 import "../globals.css";
 import { SITE_URL } from "@/lib/site";
 
-/* Panel del colegio (demo). Diseño propio, sin el menú público. En español e inglés. */
+/* Panel del colegio. Diseño propio, sin el menú público. En español e inglés. */
 const fraunces = Fraunces({ variable: "--font-fraunces", subsets: ["latin"], axes: ["opsz", "SOFT"], display: "swap" });
 const manrope = Manrope({ variable: "--font-manrope", subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Panel del colegio (demo) | Howard Gardner Bilingual School",
+  title: "Panel del colegio | Howard Gardner Bilingual School",
   description: "Acceso exclusivo del personal: preinscripciones 2027, PQRSF con plazos y alertas, y reportes en Excel.",
   robots: { index: false, follow: false },
   openGraph: {

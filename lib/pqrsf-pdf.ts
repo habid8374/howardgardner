@@ -26,7 +26,6 @@ const T = {
     generated: "Documento generado el",
     page: "Página",
     of: "de",
-    demo: "Versión de demostración. Este documento no tiene validez oficial.",
     file: "respuesta",
   },
   en: {
@@ -48,7 +47,6 @@ const T = {
     generated: "Document generated on",
     page: "Page",
     of: "of",
-    demo: "Demo version. This document has no official validity.",
     file: "response",
   },
 };
@@ -192,7 +190,7 @@ export async function downloadPqrsfPdf(p: Pqrsf, lang: Lang) {
     doc.setPage(i);
     doc.setDrawColor(221, 213, 195).setLineWidth(0.3).line(M, H - 16, W - M, H - 16);
     doc.setFont("helvetica", "normal").setFontSize(8).setTextColor(...MUTED);
-    doc.text(`${generated} · ${t.demo}`, M, H - 11);
+    doc.text(generated, M, H - 11);
     doc.text(`${t.page} ${i} ${t.of} ${pages}`, W - M, H - 11, { align: "right" });
   }
 

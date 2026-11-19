@@ -1,11 +1,10 @@
-/* Textos del panel del colegio (demo), en español e inglés. */
+/* Textos del panel del colegio, en español e inglés. */
 import type { AdmissionStatus, DueLevel, PqrsfPriority, PqrsfStatus, PqrsfType } from "@/lib/records";
 
 const es = {
   title: "Panel del colegio",
   subtitle: "Howard Gardner",
   loginLead: "Preinscripciones y PQRSF de Howard Gardner Bilingual School.",
-  loginDemo: "Demostración. Usuario y clave de prueba:",
   username: "Usuario",
   badLogin: (n: number) => `Usuario o clave incorrectos. Te quedan ${n} ${n === 1 ? "intento" : "intentos"}.`,
   loginError: "No pudimos iniciar sesión. Inténtalo de nuevo.",
@@ -28,10 +27,9 @@ const es = {
   language: "Idioma del panel",
   tabs: { admissions: "Preinscripciones", pqrsf: "PQRSF" },
   tabsShort: { admisiones: "Admisiones", pqrsf: "PQRSF", sedes: "Sedes", usuarios: "Usuarios" },
-  demoBanner: "Demostración: los registros marcados como «ejemplo» son ficticios. Lo que se envíe desde los formularios del sitio, desde cualquier celular o computador, aparece aquí.",
   signedInAs: "Sesión iniciada como",
   reset: "Restaurar ejemplos",
-  resetConfirm: "¿Restaurar los datos de ejemplo? Los envíos reales de la demo no se borran.",
+  resetConfirm: "¿Restaurar los datos de ejemplo? Las solicitudes reales no se borran.",
   sample: "ejemplo",
   close: "Cerrar",
   view: "Ver",
@@ -195,7 +193,6 @@ const en: AdminDict = {
   title: "School dashboard",
   subtitle: "Howard Gardner",
   loginLead: "Pre-registrations and requests (PQRSF) for Howard Gardner Bilingual School.",
-  loginDemo: "Demo. Test username and password:",
   username: "Username",
   badLogin: (n: number) => `Wrong username or password. ${n} ${n === 1 ? "attempt" : "attempts"} left.`,
   loginError: "We couldn't sign you in. Please try again.",
@@ -218,10 +215,9 @@ const en: AdminDict = {
   language: "Dashboard language",
   tabs: { admissions: "Pre-registrations", pqrsf: "Requests (PQRSF)" },
   tabsShort: { admisiones: "Admissions", pqrsf: "Requests", sedes: "Campuses", usuarios: "Users" },
-  demoBanner: "Demo: records tagged “sample” are fictitious. Anything sent from the website forms, from any phone or computer, shows up here.",
   signedInAs: "Signed in as",
   reset: "Restore samples",
-  resetConfirm: "Restore the sample data? Real demo submissions are not deleted.",
+  resetConfirm: "Restore the sample data? Real requests are not deleted.",
   sample: "sample",
   close: "Close",
   view: "View",

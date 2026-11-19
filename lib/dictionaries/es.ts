@@ -509,7 +509,7 @@ export const es = {
     urgent: "Es urgente: afecta la seguridad, la salud o el bienestar del estudiante.",
     urgentHelp: "Las solicitudes urgentes tienen prioridad alta y se responden en máximo 5 días hábiles.",
     attachment: "Adjunto (opcional)",
-    attachmentHelp: "PDF o imagen. En la demo solo se guarda el nombre del archivo.",
+    attachmentHelp: "PDF o imagen (JPG, PNG, WEBP), máximo 5 MB.",
     consent: ["Autorizo el tratamiento de mis datos personales conforme a la ", "Política de Tratamiento de Datos", " (Ley 1581 de 2012)."],
     submit: "Radicar solicitud",
     errors: {
