@@ -19,6 +19,12 @@ Estado a 18 de noviembre de 2026. La demo ya funciona con **servidor real**: bas
 | **A09 Registro y alertas** | Historial por solicitud con **quién** hizo cada cambio. Tabla `audit_log`: inicios de sesión (también fallidos), cambios, descargas de adjuntos, con IP. | Alertas por correo ante muchos intentos fallidos. |
 | **A10 Condiciones excepcionales** | Errores registrados en el servidor con un código; al usuario solo le llega el código. Ante cualquier error de sesión se niega el acceso. | — |
 
+## Datos de menores (preinscripción)
+- Autorización expresa del padre, madre o representante legal para tratar los datos del menor (Ley 1581 de 2012, art. 7; Decreto 1377 de 2013, art. 12), más declaración de veracidad.
+- Minimización: solo los datos necesarios para el proceso de admisión; ningún dato sensible en la preinscripción.
+- Documentos adjuntos en almacenamiento privado, revisados por su contenido real; se descargan solo con permiso de ver preinscripciones y de la sede, y queda registro de quién los descargó. El correo al colegio no lleva documentos ni números de identidad.
+- Validación estricta en el servidor (`admissionInput`): tipo y número de documento, edad entre 2 y 21 años, sede existente, sin campos extra.
+
 ## Cuentas del panel
 - **Superusuario `axentia`** (soporte de Axentia): todos los permisos; solo otro superusuario puede modificarlo o desactivarlo. No se puede crear un superusuario desde el panel ni por la API: solo con `scripts/db-setup.mjs --superusuario`.
 - Los formularios de configuración rechazan campos no previstos (`.strict()`): sin asignación masiva de permisos.

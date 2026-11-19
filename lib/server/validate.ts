@@ -1,7 +1,7 @@
 import "server-only";
 import { z } from "zod";
 import {
-  CAMPUS_STATUSES, ADMISSION_STATUSES, ALLOWED_FILE_TYPES, LIMITS, MAX_FILE_MB, PQRSF_STATUSES, PQRSF_TYPES, PRIORITIES, clean,
+  CAMPUS_STATUSES, ADMISSION_STATUSES, GUARDIAN_DOC_TYPES, RELATIONS, SECTORS, SOURCES, STUDENT_DOC_TYPES, ageAt, ALLOWED_FILE_TYPES, LIMITS, MAX_FILE_MB, PQRSF_STATUSES, PQRSF_TYPES, PRIORITIES, clean,
 } from "@/lib/records";
 
 /* Validación en el servidor de TODO lo que llega (OWASP A05/A06). La del navegador es solo ayuda. */
@@ -11,15 +11,41 @@ const text = (max: number, min = 0) =>
 const lang = z.enum(["es", "en"]);
 const campus = z.string().trim().regex(/^[a-z0-9-]{2,30}$/);
 
+const docNumber = z.string().trim().toUpperCase().regex(/^[A-Z0-9-]{4,20}$/);
+const phone = (min: number) => text(LIMITS.phone, min).refine((v) => v === "" || /^[0-9+()\s-]{7,}$/.test(v));
+const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((v) => {
+  const age = ageAt(v);
+  return age !== null && age >= 2 && age <= 21; // de Prejardín a 11°, con margen
+});
+
+/* Preinscripción formal: aspirante, procedencia, acudiente(s). Todo se valida aquí, en el servidor. */
 export const admissionInput = z.object({
   lang,
   campus,
-  guardian: text(LIMITS.name, 3),
-  phone: text(LIMITS.phone, 7).refine((v) => /^[0-9+()\s-]+$/.test(v)),
   grade: text(LIMITS.grade, 1),
+  student: z.object({
+    firstNames: text(60, 2), lastNames: text(60, 2),
+    docType: z.enum(STUDENT_DOC_TYPES), docNumber,
+    birthDate: isoDate, sex: z.enum(["F", "M"]), nationality: text(40, 2),
+  }).strict(),
+  previous: z.object({
+    firstTime: z.boolean(),
+    school: text(120), city: text(80), sector: z.enum(["", ...SECTORS]), lastGrade: text(LIMITS.grade), reason: text(300),
+  }).strict().refine((p) => p.firstTime || (p.school.length >= 3 && p.city.length >= 2 && p.lastGrade.length >= 1)),
+  guardianName: text(LIMITS.name, 5),
+  phone: phone(7),
+  guardian: z.object({
+    relation: z.enum(RELATIONS), docType: z.enum(GUARDIAN_DOC_TYPES), docNumber,
+    email: text(LIMITS.email).pipe(z.email()), address: text(150, 5), city: text(80, 2),
+  }).strict(),
+  second: z.object({ name: text(LIMITS.name), relation: z.enum(["", ...RELATIONS]), phone: phone(0) }).strict(),
+  siblings: text(150),
+  source: z.enum(["", ...SOURCES]),
   message: text(LIMITS.message).default(""),
+  consent: z.literal(true),
+  truth: z.literal(true),
   website: z.string().max(200).optional(), // trampa para robots
-});
+}).strict();
 
 export const pqrsfInput = z.object({
   lang,

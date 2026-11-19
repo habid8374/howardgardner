@@ -33,6 +33,8 @@ Se cargan desde el panel, pestaña *Sedes* → "Nueva sede":
 - [ ] Bilingüismo: intensidad horaria de inglés, certificaciones de los docentes, exámenes internacionales que se preparan, intercambios. Se retiraron del sitio hasta confirmarlos. `components/Bilingual.tsx`
 - [ ] ¿Fue el colegio **#1 municipal en inglés** en Saber 11° 2025? El sitio anterior lo decía, pero las piezas oficiales solo dicen “destacado puntaje en inglés”.
 - [ ] Pasos reales del proceso de admisión, documentos requeridos y fechas de inscripción y matrícula 2027. `components/Admissions.tsx`
+- [ ] **Validar con el colegio el formulario de preinscripción formal** (`components/Admissions.tsx`): datos del aspirante (nombres, apellidos, tipo y número de documento, fecha de nacimiento, sexo, nacionalidad), procedencia escolar, acudiente (parentesco, documento, celular, correo, dirección), segundo acudiente opcional y adjuntos opcionales (documento de identidad y último boletín). No se piden datos sensibles (salud, discapacidad, etnia): van en la matrícula, con autorización especial (Ley 1581, art. 6) y sin condicionar el cupo (Decreto 1421 de 2017).
+- [ ] Confirmar la lista de documentos para la matrícula que se muestra al final de la preinscripción.
 - [ ] Preguntas frecuentes adicionales: costos, uniformes, transporte, jornada, alimentación. `components/Faq.tsx`
 
 ## Material visual

@@ -1,6 +1,6 @@
 import "server-only";
 import { neon } from "@neondatabase/serverless";
-import type { Admission, Campus, CampusId, HistoryEntry, Note, Pqrsf, PublicCampus, StaffUser } from "@/lib/records";
+import type { Admission, AdmissionDetails, AdmissionFileKind, Campus, CampusId, HistoryEntry, Note, Pqrsf, PublicCampus, StaffUser } from "@/lib/records";
 import { ADDRESS, PHONE_DISPLAY } from "@/lib/site";
 
 /* Conexión a Neon (Postgres). Todas las consultas van parametrizadas con la plantilla sql`...`
@@ -12,6 +12,7 @@ export const dbReady = Boolean(url);
 type AdmissionRow = {
   id: string; created_at: string | Date; lang: "es" | "en"; campus: CampusId; guardian: string; phone: string; grade: string;
   message: string; status: Admission["status"]; notes: Note[]; history: HistoryEntry[]; sample: boolean;
+  student_name: string; student_doc: string; details: Partial<AdmissionDetails>; files: { kind: AdmissionFileKind; name: string; path: string }[];
 };
 type PqrsfRow = {
   id: string; created_at: string | Date; lang: "es" | "en"; campus: CampusId; type: Pqrsf["type"]; name: string; email: string;
@@ -26,6 +27,8 @@ export function toAdmission(r: AdmissionRow): Admission {
   return {
     id: r.id, createdAt: iso(r.created_at), lang: r.lang, campus: r.campus, guardian: r.guardian, phone: r.phone, grade: r.grade,
     message: r.message, status: r.status, notes: r.notes ?? [], history: r.history ?? [], sample: r.sample,
+    studentName: r.student_name, studentDoc: r.student_doc, details: r.details ?? {},
+    files: (r.files ?? []).map(({ kind, name }) => ({ kind, name })), // la ruta privada no sale del servidor
   };
 }
 

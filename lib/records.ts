@@ -62,20 +62,64 @@ export const PERM_PRESETS: Record<"rectoria" | "coordinacion" | "consulta", Perm
 };
 export const NO_PERMS: Perms = { admisiones: "none", pqrsf: "none", exportar: false, sedes: false, usuarios: false };
 
+/* ── Preinscripción formal ──
+   Datos que pide un colegio en Colombia para iniciar el proceso de admisión (base para la matrícula
+   y el reporte en SIMAT): identificación del aspirante, procedencia escolar y acudiente responsable.
+   Datos sensibles (salud, discapacidad, etnia) NO se piden aquí: se tratan en la matrícula, con
+   autorización especial (Ley 1581, art. 6), y no pueden condicionar el cupo (Decreto 1421 de 2017). */
+export const STUDENT_DOC_TYPES = ["RC", "TI", "CE", "PPT", "PA", "OT"] as const;
+export const GUARDIAN_DOC_TYPES = ["CC", "CE", "PPT", "PA"] as const;
+export const RELATIONS = ["madre", "padre", "abuelo", "tio", "hermano", "tutor", "otro"] as const;
+export const SECTORS = ["privado", "oficial"] as const;
+export const SOURCES = ["recomendacion", "redes", "google", "visita", "publicidad", "otro"] as const;
+export type StudentDocType = (typeof STUDENT_DOC_TYPES)[number];
+export type GuardianDocType = (typeof GUARDIAN_DOC_TYPES)[number];
+export type Relation = (typeof RELATIONS)[number];
+
+export type AdmissionDetails = {
+  student: {
+    firstNames: string; lastNames: string; docType: StudentDocType; docNumber: string;
+    birthDate: string;    // AAAA-MM-DD
+    sex: "F" | "M"; nationality: string;
+  };
+  previous: { firstTime: boolean; school: string; city: string; sector: "" | "privado" | "oficial"; lastGrade: string; reason: string };
+  guardian: { relation: Relation; docType: GuardianDocType; docNumber: string; email: string; address: string; city: string };
+  second: { name: string; relation: "" | Relation; phone: string };
+  siblings: string;
+  source: string;
+};
+export type AdmissionFileKind = "documento" | "boletin";
+/** Adjunto de una preinscripción (la ruta del archivo nunca sale del servidor) */
+export type AdmissionFile = { kind: AdmissionFileKind; name: string };
+
 export type Admission = {
   id: string;            // HG-2027-0001
   createdAt: string;     // ISO
   lang: "es" | "en";
   campus: CampusId;
-  guardian: string;
+  guardian: string;      // nombre del acudiente
   phone: string;
   grade: string;
   message: string;
+  studentName: string;
+  studentDoc: string;
+  details: Partial<AdmissionDetails>;
+  files: AdmissionFile[];
   status: AdmissionStatus;
   notes: Note[];
   history?: HistoryEntry[];
   sample?: boolean;
 };
+
+/** Edad cumplida a una fecha (por defecto, hoy) */
+export function ageAt(birthDate: string, at = new Date()) {
+  const b = new Date(birthDate + "T00:00:00");
+  if (Number.isNaN(b.getTime())) return null;
+  let age = at.getFullYear() - b.getFullYear();
+  const m = at.getMonth() - b.getMonth();
+  if (m < 0 || (m === 0 && at.getDate() < b.getDate())) age--;
+  return age;
+}
 
 export type Pqrsf = {
   id: string;            // PQRSF-2026-0001
@@ -183,24 +227,40 @@ function daysAgo(n: number, hour = 9) {
 }
 
 export function sampleAdmissions(): Admission[] {
-  const rows: [string, string, string, AdmissionStatus, number, string][] = [
-    ["Familia Ejemplo Uno", "300 000 0001", "Transición", "nueva", 0, "Queremos conocer el colegio."],
-    ["Familia Ejemplo Dos", "300 000 0002", "1°", "nueva", 1, ""],
-    ["Familia Ejemplo Tres", "300 000 0003", "Prejardín", "contactada", 3, "¿Tienen transporte?"],
-    ["Familia Ejemplo Cuatro", "300 000 0004", "6°", "visita", 5, "Viene de otro colegio de Sabanalarga."],
-    ["Familia Ejemplo Cinco", "300 000 0005", "10°", "evaluacion", 9, ""],
-    ["Familia Ejemplo Seis", "300 000 0006", "Jardín", "admitido", 14, ""],
-    ["Familia Ejemplo Siete", "300 000 0007", "3°", "matriculado", 21, ""],
+  // [acudiente, parentesco, teléfono, aspirante (nombres, apellidos), sexo, edad, grado, estado, días atrás, colegio de procedencia, mensaje]
+  const rows: [string, Relation, string, string, string, "F" | "M", number, string, AdmissionStatus, number, string, string][] = [
+    ["Familia Ejemplo Uno", "madre", "300 000 0001", "Sofía", "Ejemplo Uno", "F", 5, "Transición", "nueva", 0, "Jardín Infantil de Ejemplo", "Queremos conocer el colegio."],
+    ["Familia Ejemplo Dos", "padre", "300 000 0002", "Mateo", "Ejemplo Dos", "M", 6, "1°", "nueva", 1, "Colegio de Ejemplo A", ""],
+    ["Familia Ejemplo Tres", "madre", "300 000 0003", "Valentina", "Ejemplo Tres", "F", 3, "Prejardín", "contactada", 3, "", "¿Tienen transporte?"],
+    ["Familia Ejemplo Cuatro", "abuelo", "300 000 0004", "Samuel", "Ejemplo Cuatro", "M", 11, "6°", "visita", 5, "Colegio de Ejemplo B", "Viene de otro colegio de Sabanalarga."],
+    ["Familia Ejemplo Cinco", "madre", "300 000 0005", "Isabella", "Ejemplo Cinco", "F", 15, "10°", "evaluacion", 9, "Colegio de Ejemplo C", ""],
+    ["Familia Ejemplo Seis", "padre", "300 000 0006", "Emiliano", "Ejemplo Seis", "M", 4, "Jardín", "admitido", 14, "", ""],
+    ["Familia Ejemplo Siete", "tutor", "300 000 0007", "Mariana", "Ejemplo Siete", "F", 8, "3°", "matriculado", 21, "Colegio de Ejemplo A", ""],
   ];
-  return rows.map(([guardian, phone, grade, status, ago, message], i) => ({
-    id: `HG-2027-${String(i + 1).padStart(4, "0")}`,
-    createdAt: daysAgo(ago, 8 + i),
-    lang: "es",
-    campus: (i === 1 || i === 4 ? "sede2" : "principal") as CampusId,
-    guardian, phone, grade, message, status,
-    notes: status === "nueva" ? [] : [{ at: daysAgo(Math.max(ago - 1, 0), 15), text: "Se llamó a la familia. (ejemplo)" }],
-    sample: true,
-  }));
+  const year = new Date().getFullYear();
+  return rows.map(([guardian, relation, phone, first, last, sex, age, grade, status, ago, school, message], i) => {
+    const doc = `10${String(48000000 + i * 1111)}`;
+    return {
+      id: `HG-2027-${String(i + 1).padStart(4, "0")}`,
+      createdAt: daysAgo(ago, 8 + i),
+      lang: "es",
+      campus: (i === 1 || i === 4 ? "sede2" : "principal") as CampusId,
+      guardian, phone, grade, message, status,
+      studentName: `${first} ${last}`,
+      studentDoc: doc,
+      details: {
+        student: { firstNames: first, lastNames: last, docType: age >= 7 ? "TI" : "RC", docNumber: doc, birthDate: `${year - age - 1}-0${(i % 9) + 1}-1${i}`, sex, nationality: "Colombiana" },
+        previous: { firstTime: !school, school, city: school ? "Sabanalarga" : "", sector: school ? "privado" : "", lastGrade: "", reason: "" },
+        guardian: { relation, docType: "CC", docNumber: `1000000${i}`, email: `acudiente${i + 1}@ejemplo.com`, address: "Dirección de ejemplo", city: "Sabanalarga" },
+        second: { name: "", relation: "", phone: "" },
+        siblings: "",
+        source: ["recomendacion", "redes", "google", "visita"][i % 4],
+      },
+      files: [],
+      notes: status === "nueva" ? [] : [{ at: daysAgo(Math.max(ago - 1, 0), 15), text: "Se llamó a la familia. (ejemplo)" }],
+      sample: true,
+    };
+  });
 }
 
 function businessDaysAgo(n: number, hour = 10) {
@@ -269,14 +329,15 @@ async function api<T>(url: string, init: RequestInit = {}): Promise<T> {
 /* Avisa al panel que vuelva a cargar los datos */
 const notify = () => window.dispatchEvent(new Event("hg-demo-change"));
 
-export type AdmissionInput = Pick<Admission, "lang" | "campus" | "guardian" | "phone" | "grade" | "message"> & { website?: string };
 export type AdmissionPatch = { status?: AdmissionStatus; note?: string };
 export type PqrsfPatch = { status?: PqrsfStatus; priority?: PqrsfPriority; answer?: string; note?: string };
 /** Lo que ve el acudiente al consultar su radicado (sin datos de otras personas) */
 export type PqrsfPublic = Pick<Pqrsf, "id" | "createdAt" | "lang" | "campus" | "type" | "name" | "subject" | "description" | "priority" | "status" | "answer" | "answeredAt" | "student" | "grade" | "email" | "phone" | "attachment" | "urgent" | "notes">;
 
 export const admissionsStore = {
-  add: (input: AdmissionInput) => api<Admission>("/api/admisiones", { method: "POST", body: JSON.stringify(input) }),
+  /** Formulario completo (con adjuntos opcionales) como multipart/form-data */
+  add: (form: FormData) => api<{ id: string; createdAt: string; campus: CampusId }>("/api/admisiones", { method: "POST", body: form }),
+  fileUrl: (id: string, kind: AdmissionFileKind) => `/api/admin/admisiones/${encodeURIComponent(id)}/adjunto/${kind}`,
   async update(id: string, patch: AdmissionPatch) {
     await api(`/api/admin/admisiones/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(patch) });
     notify();

@@ -61,9 +61,9 @@ if (username && password) {
 
 if (withSamples) {
   for (const a of sampleAdmissions()) {
-    await sql`INSERT INTO admissions (id, created_at, lang, campus, guardian, phone, grade, message, status, notes, sample)
+    await sql`INSERT INTO admissions (id, created_at, lang, campus, guardian, phone, grade, message, status, notes, sample, student_name, student_doc, details)
       VALUES (${a.id.replace("HG-2027-", "HG-2027-E")}, ${a.createdAt}, ${a.lang}, ${a.campus}, ${a.guardian}, ${a.phone}, ${a.grade}, ${a.message},
-        ${a.status}, ${JSON.stringify(a.notes)}::jsonb, true) ON CONFLICT (id) DO UPDATE SET campus = EXCLUDED.campus`;
+        ${a.status}, ${JSON.stringify(a.notes)}::jsonb, true, ${a.studentName}, ${a.studentDoc}, ${JSON.stringify(a.details)}::jsonb) ON CONFLICT (id) DO UPDATE SET campus = EXCLUDED.campus, student_name = EXCLUDED.student_name, student_doc = EXCLUDED.student_doc, details = EXCLUDED.details`;
   }
   for (const p of samplePqrsf()) {
     await sql`INSERT INTO pqrsf (id, created_at, lang, campus, type, name, email, phone, student, grade, subject, description, attachment,

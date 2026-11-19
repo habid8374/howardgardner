@@ -43,10 +43,21 @@ async function send(to: string, subject: string, html: string) {
 
 export async function mailNewAdmission(a: Admission) {
   const c = await campusInfo(a.campus);
-  await send(c.to, `Nueva preinscripción ${a.id} · ${a.grade} · ${c.name}`, layout("Nueva preinscripción 2027", `
-    <table role="presentation">${row("Radicado", a.id)}${row("Sede", c.name)}${row("Acudiente", a.guardian)}${row("Teléfono", a.phone)}${row("Grado", a.grade)}</table>
-    ${a.message ? `<p style="margin-top:16px;font-size:14px">${esc(a.message)}</p>` : ""}
+  const en = a.lang === "en";
+  const email = a.details.guardian?.email ?? "";
+  // Al colegio: aviso con lo esencial (el resto se ve en el panel; el correo no lleva documentos de identidad)
+  await send(c.to, `Nueva preinscripción ${a.id} · ${a.studentName} · ${a.grade} · ${c.name}`, layout("Nueva preinscripción 2027", `
+    <table role="presentation">${row("Radicado", a.id)}${row("Sede", c.name)}${row("Aspirante", a.studentName)}${row("Grado", a.grade)}${row("Acudiente", a.guardian)}${row("Teléfono", a.phone)}${row("Documentos adjuntos", String(a.files.length))}</table>
     <p style="margin-top:20px"><a href="${SITE_URL}/admin" style="background:#e3b23c;color:#0c1631;padding:10px 18px;border-radius:999px;text-decoration:none;font-weight:bold">Abrir el panel</a></p>`));
+  // A la familia: confirmación con su número de solicitud
+  if (email) {
+    await send(email, en ? `Pre-registration received · ${a.id}` : `Preinscripción recibida · ${a.id}`, layout(
+      en ? "We received your pre-registration" : "Recibimos tu preinscripción", `
+      <p style="font-size:14px;line-height:1.6">${en ? `Hello ${esc(a.guardian)}, thank you for choosing Howard Gardner Bilingual School. Keep this request number:` : `Hola ${esc(a.guardian)}, gracias por elegir Howard Gardner Bilingual School. Guarda este número de solicitud:`}</p>
+      <p style="font-size:24px;font-weight:bold;letter-spacing:1px;margin:8px 0 16px">${esc(a.id)}</p>
+      <table role="presentation">${row(en ? "Applicant" : "Aspirante", a.studentName)}${row(en ? "Grade" : "Grado", a.grade)}${row(en ? "Campus" : "Sede", c.name)}</table>
+      <p style="margin-top:16px;font-size:14px;line-height:1.6">${en ? "The admissions team will contact you to schedule the visit and the next steps." : "El equipo de admisiones te contactará para agendar la visita y los siguientes pasos."}</p>`));
+  }
 }
 
 const TYPE_ES: Record<string, string> = { peticion: "Petición", queja: "Queja", reclamo: "Reclamo", sugerencia: "Sugerencia", felicitacion: "Felicitación" };

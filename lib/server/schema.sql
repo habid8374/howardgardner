@@ -111,3 +111,15 @@ ALTER TABLE staff ADD COLUMN IF NOT EXISTS superuser boolean NOT NULL DEFAULT fa
 
 -- Versión de sesión: al cambiar la clave, el usuario o desactivar la cuenta, se cierran todas sus sesiones abiertas
 ALTER TABLE staff ADD COLUMN IF NOT EXISTS session_version integer NOT NULL DEFAULT 1
+;
+
+-- Preinscripción formal (nov 2026): datos del aspirante, procedencia, acudientes y documentos
+ALTER TABLE admissions ADD COLUMN IF NOT EXISTS student_name text NOT NULL DEFAULT ''
+;
+ALTER TABLE admissions ADD COLUMN IF NOT EXISTS student_doc text NOT NULL DEFAULT ''
+;
+ALTER TABLE admissions ADD COLUMN IF NOT EXISTS details jsonb NOT NULL DEFAULT '{}'
+;
+ALTER TABLE admissions ADD COLUMN IF NOT EXISTS files jsonb NOT NULL DEFAULT '[]'
+;
+CREATE INDEX IF NOT EXISTS admissions_student_doc_idx ON admissions (student_doc)
